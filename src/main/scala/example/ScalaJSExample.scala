@@ -19,7 +19,30 @@ class Obj(sizeX_ : Int, sizeY_ : Int)
 
 	def draw(ctx : dom.CanvasRenderingContext2D) =
 	{
-		1
+	}
+}
+
+class Actor(sizeX_ : Int, sizeY_ : Int, locX_ : Int, locY_ : Int) extends Obj(sizeX_, sizeY_)
+{
+	var locX = locX_
+	var locY = locY_
+
+	def changeLoc(newX : Int, newY : Int) =
+	{
+		locX = newX
+		locY = newY
+	}
+
+	def moveLoc(dx : Int, dy : Int) =
+	{
+		locX += dx
+		locY += dy
+	}
+
+	override def draw(ctx : dom.CanvasRenderingContext2D) =
+	{
+		ctx.fillStyle = "red"
+		ctx.fillRect(locX, locY, sizeX, sizeY)
 	}
 }
 
@@ -57,13 +80,29 @@ class Game(mSizeX : Int, mSizeY : Int)
 @JSExport
 object ScalaJSExample 
 {
+	def handlePlayerMovement(player : Actor, keys : collection.mutable.Set[Int]) =
+	{
+		if (keys(38)) player.moveLoc(0, -2)
+	    if (keys(37)) player.moveLoc(-2, 0)
+	    if (keys(39)) player.moveLoc(2, 0)
+	    if (keys(40)) player.moveLoc(0, 2)
+	}
+
+
+
 	@JSExport
 	def main(canvas: html.Canvas): Unit = 
 	{
+		dom.console.log("butts")
+		val keysDown = collection.mutable.Set[Int]()
 		val ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
 
 		//Make the game
 		val g = new Game(600, 600)
+
+		//Make the player
+		val player = new Actor(50, 50, 20, 20)
+		g.addObj(player)
 
 		//Make the map
 		val wall = new Wall(100, 100, 50, 200)
@@ -78,14 +117,32 @@ object ScalaJSExample
 
 		def run()
 		{
+			//handle player movement
+			handlePlayerMovement(player, keysDown)
+
+			//Clear the screen
+			clear()
+			
 			//Draw the map
 			g.drawAll(ctx)
 		}
 
 		clear()
 
-		dom.setInterval(() => run, 50)
 
+		// dom.onkeypress = {(e: dom.KeyboardEvent) =>
+	 //      if (e.keyCode.toInt == 32) bullets = player +: bullets
+	 //    }
+	    dom.onkeydown = {(e: dom.KeyboardEvent) =>
+	      keysDown.add(e.keyCode.toInt)
+	    }
+	    
+	    dom.onkeyup = {(e: dom.KeyboardEvent) =>
+	      keysDown.remove(e.keyCode.toInt)
+	    }
+
+
+		dom.setInterval(() => run, 50)
 
 
 
