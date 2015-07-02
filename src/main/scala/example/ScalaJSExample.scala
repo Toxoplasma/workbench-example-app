@@ -4,7 +4,7 @@ import org.scalajs.dom
 import org.scalajs.dom.html
 import scala.util.Random
 
-
+import scala.math.{abs}
 
 case class Point(x: Int, y: Int)
 {
@@ -12,20 +12,57 @@ case class Point(x: Int, y: Int)
 	def /(d: Int) = Point(x / d, y / d)
 }
 
-class Obj(sizeX_ : Int, sizeY_ : Int)
+class Obj(locX_ : Int, locY_ : Int, sizeX_ : Int, sizeY_ : Int)
 {
 	val sizeX = sizeX_
 	val sizeY = sizeY_
+	var locX = locX_
+	var locY = locY_
+
+	val blocksMovement = true
+
+	def collides(loX : Int, loY : Int, sX : Int, sY : Int) : Boolean =
+	{
+		//return abs(locX - loX) * 2 < sizeX + sX && abs(locY - loY) * 2 < sizeY + sY
+		if(locX < loX + sX &&
+			locX + sizeX > loX &&
+			locY < loY + sY &&
+			locY + sizeY > loY)
+		{
+			return true
+		}
+		return false
+		// val ul = (locX, locY)
+		// val ur = (locX + sizeX, locY)
+		// val ll = (locX, locY + sizeY)
+		// val lr = (locX + sizeX, locY + sizeY)
+
+		// val oul = (loX, loY)
+		// val our = (loX + sX, loY)
+		// val oll = (loX, loY + sY)
+		// val olr = (loX + sX, loY + sY)
+
+		// def insideOther(p : (Int, Int)) : Boolean = 
+		// {
+		// 	if(p._1 > oul._1 && p._1 < olr._1 && p._2 > oul._2 && p._2 < olr._2) true
+		// 	else false
+		// }
+
+		// return insideOther(ul) || insideOther(ur) || insideOther(ll) || insideOther(lr)
+	}
+
+	def collides(other : Obj) : Boolean =
+	{
+		collides(other.locX, other.locY, other.sizeX, other.sizeY)
+	}
 
 	def draw(ctx : dom.CanvasRenderingContext2D) =
 	{
 	}
 }
 
-class Actor(sizeX_ : Int, sizeY_ : Int, locX_ : Int, locY_ : Int) extends Obj(sizeX_, sizeY_)
+class Actor(locX_ : Int, locY_ : Int, sizeX_ : Int, sizeY_ : Int) extends Obj(locX_, locY_, sizeX_, sizeY_)
 {
-	var locX = locX_
-	var locY = locY_
 
 	def changeLoc(newX : Int, newY : Int) =
 	{
@@ -33,10 +70,31 @@ class Actor(sizeX_ : Int, sizeY_ : Int, locX_ : Int, locY_ : Int) extends Obj(si
 		locY = newY
 	}
 
-	def moveLoc(dx : Int, dy : Int) =
+	def canMoveTo(newX : Int, newY : Int, g : Game) : Boolean = 
 	{
-		locX += dx
-		locY += dy
+		for(o <- g.objs)
+		{
+			if(o != this && o.blocksMovement && o.collides(newX, newY, sizeX, sizeY))
+			{
+				return false
+			}
+		}
+		return true
+	}
+
+	def moveLoc(dx : Int, dy : Int, g : Game) : Boolean =
+	{
+		//Check collisions
+		if(canMoveTo(locX + dx, locY + dy, g))
+		{
+			locX += dx
+			locY += dy
+			return true
+		}
+		else
+		{
+			return false
+		}
 	}
 
 	override def draw(ctx : dom.CanvasRenderingContext2D) =
@@ -46,11 +104,8 @@ class Actor(sizeX_ : Int, sizeY_ : Int, locX_ : Int, locY_ : Int) extends Obj(si
 	}
 }
 
-class Wall(sizeX_ : Int, sizeY_ : Int, locX_ : Int, locY_ : Int) extends Obj(sizeX_, sizeY_)
+class Wall(locX_ : Int, locY_ : Int, sizeX_ : Int, sizeY_ : Int) extends Obj(locX_, locY_, sizeX_, sizeY_)
 {
-	val locX = locX_
-	val locY = locY_
-
 	override def draw(ctx : dom.CanvasRenderingContext2D) =
 	{
 		ctx.fillStyle = "blue"
@@ -80,12 +135,12 @@ class Game(mSizeX : Int, mSizeY : Int)
 @JSExport
 object ScalaJSExample 
 {
-	def handlePlayerMovement(player : Actor, keys : collection.mutable.Set[Int]) =
+	def handlePlayerMovement(player : Actor, keys : collection.mutable.Set[Int], g : Game) =
 	{
-		if (keys(38)) player.moveLoc(0, -2)
-	    if (keys(37)) player.moveLoc(-2, 0)
-	    if (keys(39)) player.moveLoc(2, 0)
-	    if (keys(40)) player.moveLoc(0, 2)
+		if (keys(38)) player.moveLoc(0, -2, g)
+	    if (keys(37)) player.moveLoc(-2, 0, g)
+	    if (keys(39)) player.moveLoc(2, 0, g)
+	    if (keys(40)) player.moveLoc(0, 2, g)
 	}
 
 
@@ -118,11 +173,11 @@ object ScalaJSExample
 		def run()
 		{
 			//handle player movement
-			handlePlayerMovement(player, keysDown)
+			handlePlayerMovement(player, keysDown, g)
 
 			//Clear the screen
 			clear()
-			
+
 			//Draw the map
 			g.drawAll(ctx)
 		}
@@ -142,7 +197,7 @@ object ScalaJSExample
 	    }
 
 
-		dom.setInterval(() => run, 50)
+		dom.setInterval(() => run, 20)
 
 
 
