@@ -1,0 +1,10 @@
+
+
+
+Major stuff:
+
+Limited ammo / ammo boxes / health kits
+
+Actual pathfinding
+
+highscores / scores
