@@ -1,7 +1,7 @@
 package objects
 
 import org.scalajs.dom
-import scala.math.{abs, signum, sqrt, pow}
+import scala.math.{abs, signum, sqrt, pow, min, max, round}
 
 object GVs
 {
@@ -14,7 +14,44 @@ object GVs
 	val NORMUNITSIZE = 20
 }
 
+
+
+
+
 case class SimpleLine(start : (Int, Int), end : (Int, Int), color : String)
+{
+	def length() =
+	{
+		val dist = sqrt(pow(start._1 - end._1, 2) + pow(start._2 - end._2, 2))
+		dist
+	}
+
+	def points() =
+	{
+		dom.console.log("points from " + start + " to " + end)
+		var cx : Double = start._1.toDouble
+		var cy : Double = start._2.toDouble
+
+		val dx = (end._1 - start._1) / length
+		val dy = (end._2 - start._2) / length
+
+		val ps  = scala.collection.mutable.Buffer[(Int, Int)]()
+		while(round(cx) != end._1 || round(cy) != end._2)
+		{
+			dom.console.log(cx + ", " + cy)
+			val pair = (round(cx).toInt, round(cy).toInt)
+			ps += pair
+			cx += dx
+			cy += dy
+		}
+
+		ps
+	}
+}
+
+
+
+
 
 
 class Obj(locX_ : Int, locY_ : Int, sizeX_ : Int, sizeY_ : Int)
@@ -44,8 +81,73 @@ class Obj(locX_ : Int, locY_ : Int, sizeX_ : Int, sizeY_ : Int)
 		collides(other.locX, other.locY, other.sizeX, other.sizeY)
 	}
 
+	def inside(x : Int, y : Int) : Boolean = 
+	{
+		if(x > locX &&
+			x < locX + sizeX &&
+			y > locY &&
+			y < locY + sizeY)
+		{
+			return true
+		}
+		return false
+	}
+
+	def collidesLine(l : SimpleLine) : Boolean =
+	{
+	    // Completely outside.
+	    if ((l.start._1 <= locX && l.end._1 <= locX) || 
+	    	(l.start._2 <= locY && l.end._2 <= locY) || 
+	    	(l.start._1 >= locX + sizeX && l.end._1 >= locX + sizeX) || 
+	    	(l.start._1 >= locY + sizeY && l.end._2 >= locY + sizeY))
+	        return false
+
+	    val m = (l.end._2 - l.start._2) * 1.0 / (l.end._1 - l.start._1)
+
+	    //Left wall
+	    val y1 = m * (locX - l.start._1) + l.start._2
+	    if (y1 > locY && y1 < locY + sizeY) return true
+
+	    //right wall
+	    val y2 = m * (locX + sizeX - l.start._1) + l.start._2
+	    if (y2 > locY && y2 < locY + sizeY) return true
+
+	    //top wall
+	    val x1 = (locY - l.start._2) / m + l.start._1
+	    if (x1 > locX && x1 < locX + sizeX) return true
+
+	    //bot wall
+	    val x2 = (locY + sizeY - l.start._2) / m + l.start._1
+	    if (x2 > locX && x2 < locX + sizeX) return true
+
+	    return false
+	}
+
+	def pointSetCollides(ps : scala.collection.mutable.Seq[(Int, Int)]) : Boolean = 
+	{
+		val filtered = ps filter(p => ! inside(p._1, p._2))
+		return filtered.length == ps.length
+	}
+
+	def hasLosTo(o : Obj, g : Game) : Boolean =
+	{
+		val l = SimpleLine(center, o.center, "black")
+
+		for(ob <- g.objs)
+		{
+			if(ob != this && ob != o && ob.collidesLine(l)) return false
+		}
+		
+		return true
+	}
+
 	def draw(ctx : dom.CanvasRenderingContext2D) =
 	{
+	}
+
+	def center() = 
+	{
+		(locX + sizeX / 2, locY + sizeY / 2)
 	}
 }
 
@@ -78,7 +180,7 @@ extends Obj(locX_, locY_, sizeX_, sizeY_)
 		{
 			if(o != this && o.blocksMovement && o.collides(newX, newY, sizeX, sizeY))
 			{
-				dom.console.log(name + " can't move there!")
+				//dom.console.log(name + " can't move there!")
 				return false
 			}
 		}
@@ -146,6 +248,7 @@ extends Actor(locX_, locY_, GVs.NORMUNITSIZE, GVs.NORMUNITSIZE, hp_, "human", "h
 {
 	var timeToNextShot = 0
 	var shotCooldown = 20
+
 	override def draw(ctx : dom.CanvasRenderingContext2D) =
 	{
 		ctx.fillStyle = "red"
@@ -167,7 +270,8 @@ extends Actor(locX_, locY_, GVs.NORMUNITSIZE, GVs.NORMUNITSIZE, hp_, "human", "h
 			var distance = 100000
 			for(a <- g.acts)
 			{
-				if(a.faction != "NA" && a.faction != faction)
+				if(a.faction != "NA" && a.faction != faction &&
+					hasLosTo(a, g))
 				{
 					val dist = sqrt(pow(a.locX - locX, 2) + pow(a.locY - locY, 2))
 					if(dist < distance) //new closest
@@ -185,7 +289,7 @@ extends Actor(locX_, locY_, GVs.NORMUNITSIZE, GVs.NORMUNITSIZE, hp_, "human", "h
 				timeToNextShot = shotCooldown
 
 				//add it to the graphics
-				g.linesToDraw += SimpleLine((locX, locY), (closestAct.locX, closestAct.locY), "black")
+				g.linesToDraw += SimpleLine(center(), closestAct.center(), "black")
 			}
 		}
 		else
@@ -205,6 +309,8 @@ extends Actor(locX_, locY_, GVs.NORMUNITSIZE, GVs.NORMUNITSIZE, hp_, "zombie", "
 {
 	var target = target_
 
+	var direction = (0, 0)
+
 	override def draw(ctx: dom.CanvasRenderingContext2D) =
 	{
 		ctx.fillStyle = s"rgb(30, 150, 30)"
@@ -219,15 +325,29 @@ extends Actor(locX_, locY_, GVs.NORMUNITSIZE, GVs.NORMUNITSIZE, hp_, "zombie", "
 		moveLoc(changeX, changeY, g)
 		momentum = (changeX, changeY)
 
+		//Can we see the player?
+		if(hasLosTo(g.player, g))
+		{
+			val dest = (g.player.locX, g.player.locY)
 
-		//Get which way we should move
-		val dx = signum(target.locX - locX)
-		val dy = signum(target.locY - locY)
+			val dx = signum(target.locX - locX)
+			val dy = signum(target.locY - locY)
+
+			direction = (dx, dy)
+		}
+		else if((0, 0) == direction)
+		{
+			//we're stuck, wander in a different direction
+			direction = (g.r.nextInt(2) - 1, g.r.nextInt(2) - 1)
+		}		
 
 		//try to move there, see if it works
-		moveLoc(dx, dy, g)
+		if(! moveLoc(direction._1, direction._2, g))
+		{
+			direction = (0, 0)
+		}
 		
-		if(target.collides(locX + dx, locY + dy, sizeX, sizeY))
+		if(target.collides(locX + direction._1, locY + direction._2, sizeX, sizeY))
 		{
 			//Hell yeah we are, bit him!
 			//g.player.hp -= 10 //ZOMBIEDAMAGE
@@ -273,6 +393,43 @@ extends Actor(locX_, locY_, GVs.NORMUNITSIZE, GVs.NORMUNITSIZE, -1, "NA", "zombi
 	}
 }
 
+class DelayedActor(act_ : Actor, delayTime_ : Int)
+extends Actor(-1, -1, 0, 0, -1, "none", "delayed " + act_.name)
+{
+	val act = act_
+	var time = delayTime_
+
+	override def draw(ctx: dom.CanvasRenderingContext2D) =
+	{
+		//nothin'
+	}
+
+	override def aiMove(g : Game)
+	{
+		//Tick
+		if(time <= 0)
+		{
+			if(! g.collision(act))
+			{
+				//Spawn the dude
+				g.addActor(act)
+				g.removeActor(this)
+			}
+			else
+			{
+				//dom.console.log(act.name + " unable to spawn!")
+			}
+		}
+		else
+		{
+			time -= 1
+		}
+
+	}
+}
+
+
+
 //Terrain stuff
 class Wall(locX_ : Int, locY_ : Int, sizeX_ : Int, sizeY_ : Int) extends Obj(locX_, locY_, sizeX_, sizeY_)
 {
@@ -290,6 +447,10 @@ class Wall(locX_ : Int, locY_ : Int, sizeX_ : Int, sizeY_ : Int) extends Obj(loc
 
 class Game(mSizeX : Int, mSizeY : Int)
 {
+	var difficulty = 0
+
+	val r = new scala.util.Random()
+
 	val mapSizeX = mSizeX
 	val mapSizeY = mSizeY
 
@@ -306,6 +467,19 @@ class Game(mSizeX : Int, mSizeY : Int)
 	player.name = "Tim Jones"
 	addActor(player)
 
+	def collision(ob : Obj) : Boolean =
+	{
+		for(o <- objs)
+		{
+			if(o != ob && o.blocksMovement && o.collides(ob))
+			{
+				//dom.console.log(ob.getClass + " collision with " + o.getClass)
+				return true
+			}
+		}
+		return false
+	}
+
 
 	def addObj(newObj : Obj) =
 	{
@@ -316,6 +490,12 @@ class Game(mSizeX : Int, mSizeY : Int)
 	{
 		acts += newAct
 		objs += newAct
+	}
+
+	def removeActor(act : Actor) =
+	{
+		acts remove act
+		objs remove act
 	}
 
 	def runAllAIs() =
@@ -347,15 +527,61 @@ class Game(mSizeX : Int, mSizeY : Int)
 
 	def genMap() =
 	{
+		dom.console.log("Generating map with difficulty " + difficulty)
+		objs.clear()
+	
+		acts.clear()
+
+		if(difficulty != 0) player.changeLoc(player.locX, GVs.GAMEY - 50)
+		addActor(player)
+
 		//Bounding walls
-		val topWall = new Wall(0, 0, GVs.GAMEX, 5)
+		val topWallLeft = new Wall(0, 0, GVs.GAMEX/2 - 50, 5)
+		val topWallRight = new Wall(GVs.GAMEX/2 + 50, 0, GVs.GAMEX/2 - 50, 5)
 		val leftWall = new Wall(0, 0, 5, GVs.GAMEY)
 		val rightWall = new Wall(GVs.GAMEX - 5, 0, 5, GVs.GAMEY)
-		val botWall = new Wall(0, GVs.GAMEY - 5, GVs.GAMEX, 5)
+		val botWallLeft = new Wall(0, GVs.GAMEY - 5, GVs.GAMEX / 2 - 50, 5)
+		val botWallRight = new Wall(GVs.GAMEX/2 + 50, GVs.GAMEY - 5, GVs.GAMEX/2 - 50, 5)
 
-		addObj(topWall)
+
+		addObj(topWallLeft)
+		addObj(topWallRight)
 		addObj(leftWall)
 		addObj(rightWall)
-		addObj(botWall)
+		addObj(botWallLeft)
+		addObj(botWallRight)
+		
+		//More stuff!
+		//Add random walls
+		//TODO: make sure there's a clear path to the next level
+		for(i <- 1 to difficulty)
+		{
+			val r = scala.util.Random
+			val width = r.nextInt(80) + 20
+			val height = r.nextInt(80) + 20
+			val x = r.nextInt(GVs.GAMEX - width)
+			val y = r.nextInt(GVs.GAMEY - height - GVs.GAMEY / 5)
+			//Random wall
+			val randWall = new Wall(x, y, width, height)
+			addObj(randWall)
+		}
+
+		//Add random enemies
+		for(i <- 1 to difficulty * 3)
+		{
+			val r = scala.util.Random
+			val x = r.nextInt(GVs.GAMEX - GVs.NORMUNITSIZE)
+			val y = r.nextInt(GVs.GAMEY - GVs.NORMUNITSIZE - GVs.GAMEY/4)
+			//Random wall
+			val randDude = new Zombie(x, y, 20, player)
+			if(! collision(randDude))
+			{
+				addActor(randDude)
+			}
+		}
+
+
+		//Now, increase the difficulty
+		difficulty += 1
 	}
 }
