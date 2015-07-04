@@ -95,11 +95,12 @@ class Obj(locX_ : Int, locY_ : Int, sizeX_ : Int, sizeY_ : Int)
 
 	def collidesLine(l : SimpleLine) : Boolean =
 	{
+		//dom.console.log("Checking " + (locX, locY))
 	    // Completely outside.
 	    if ((l.start._1 <= locX && l.end._1 <= locX) || 
 	    	(l.start._2 <= locY && l.end._2 <= locY) || 
 	    	(l.start._1 >= locX + sizeX && l.end._1 >= locX + sizeX) || 
-	    	(l.start._1 >= locY + sizeY && l.end._2 >= locY + sizeY))
+	    	(l.start._2 >= locY + sizeY && l.end._2 >= locY + sizeY))
 	        return false
 
 	    val m = (l.end._2 - l.start._2) * 1.0 / (l.end._1 - l.start._1)
@@ -149,6 +150,11 @@ class Obj(locX_ : Int, locY_ : Int, sizeX_ : Int, sizeY_ : Int)
 	{
 		(locX + sizeX / 2, locY + sizeY / 2)
 	}
+
+	def distanceTo(o : Obj) : Int =
+	{
+		return sqrt(pow(o.locX - locX, 2) + pow(o.locY - locY, 2)).toInt
+	}
 }
 
 
@@ -156,13 +162,14 @@ class Obj(locX_ : Int, locY_ : Int, sizeX_ : Int, sizeY_ : Int)
 
 class Actor(locX_ : Int, locY_ : Int, 
 			sizeX_ : Int, sizeY_ : Int,
-			hp_ : Int, faction_ : String,
-			name_ : String)
+			hp_ : Int, speed_ : Int,
+			faction_ : String, name_ : String)
 extends Obj(locX_, locY_, sizeX_, sizeY_)
 {
 	var maxHp = hp_
 	var hp = hp_
 	var name = name_
+	var speed = speed_
 
 	var faction = faction_
 
@@ -240,14 +247,42 @@ extends Obj(locX_, locY_, sizeX_, sizeY_)
 			g.objs remove this
 		}
 	}
+
+	def getClosestEnemyInLOS(g : Game) : Actor = 
+	{
+		var closestAct : Actor = null
+		var distance = 100000
+		for(a <- g.acts)
+		{
+			if(a.faction != "NA" && a.faction != faction &&
+				hasLosTo(a, g))
+			{
+				val dist = distanceTo(a)
+				if(dist < distance) //new closest
+				{
+					closestAct = a
+					distance = dist.toInt //TODO: CHECK FOR LINE OF SIGHT
+				}
+			}
+		}
+
+		return closestAct
+	}
+
+	def moveToNewMap(g : Game)
+	{
+		//meh
+	}
 }
 
-class Human(locX_ : Int, locY_ : Int, 
+class BaseHuman(locX_ : Int, locY_ : Int, 
 			hp_ : Int)
-extends Actor(locX_, locY_, GVs.NORMUNITSIZE, GVs.NORMUNITSIZE, hp_, "human", "human")
+extends Actor(locX_, locY_, GVs.NORMUNITSIZE, GVs.NORMUNITSIZE, hp_, 2, "human", "human")
 {
 	var timeToNextShot = 0
 	var shotCooldown = 20
+
+	var gun = new Gun(20, 10, 200, this)
 
 	override def draw(ctx : dom.CanvasRenderingContext2D) =
 	{
@@ -263,53 +298,113 @@ extends Actor(locX_, locY_, GVs.NORMUNITSIZE, GVs.NORMUNITSIZE, hp_, "human", "h
 		moveLoc(changeX, changeY, g)
 		momentum = (changeX, changeY)
 
+		gun.tick()
+
 		//Now, check if we can SHOOT STUFF
-		if(timeToNextShot == 0)
+		if(gun.canShoot)
 		{
-			var closestAct : Actor = g.acts.head
-			var distance = 100000
-			for(a <- g.acts)
+			val closestAct = getClosestEnemyInLOS(g)
+			if(closestAct != null)
 			{
-				if(a.faction != "NA" && a.faction != faction &&
-					hasLosTo(a, g))
+				val distance =  distanceTo(closestAct)
+
+				if(distance <= gun.range)
 				{
-					val dist = sqrt(pow(a.locX - locX, 2) + pow(a.locY - locY, 2))
-					if(dist < distance) //new closest
-					{
-						closestAct = a
-						distance = dist.toInt //TODO: CHECK FOR LINE OF SIGHT
-					}
+					gun.shoot(closestAct, g)
 				}
 			}
-
-			if(distance <= 200)
-			{
-				//SHOOOOT ITTTT
-				closestAct.takeDamage(this, 10, g)
-				timeToNextShot = shotCooldown
-
-				//add it to the graphics
-				g.linesToDraw += SimpleLine(center(), closestAct.center(), "black")
-			}
-		}
-		else
-		{
-			timeToNextShot -= 1
 		}
 	}
 }
 
+class Human(locX_ : Int, locY_ : Int, 
+			hp_ : Int)
+extends BaseHuman(locX_, locY_, hp_)
+{
+	var dest = (-1, -1)
+
+	override def draw(ctx : dom.CanvasRenderingContext2D) =
+	{
+		ctx.fillStyle = "red"
+		ctx.fillRect(locX, locY, sizeX, sizeY)
+	}
+
+	override def aiMove(g : Game) =
+	{
+		//Bot humans do everything player humans do except for movement
+		super.aiMove(g)
+
+		dom.console.log("Hooman: " + (locX, locY))
+
+		//Now decide where to go!
+		if(dest == (-1, -1))
+		{
+			//pick a new dest!
+			dest = (g.player.locX + g.r.nextInt(200) - 100, g.player.locY + g.r.nextInt(200) - 100)
+		}
+
+		//Now cheap pathfinding as usual
+		var dx = min(dest._1 - locX, 2)
+		dx = max(dx, -2)
+		
+		var dy = min(dest._2 - locY, 2)
+		dy = max(dy, -2)
+
+		if(! moveLoc(dx, dy, g))
+		{
+			dest = (-1, -1)
+		}
+	}
+
+	override def moveToNewMap(g : Game)
+	{
+		dest = (-1, -1)
+	}
+}
+
+class Gun(firingSpeed_ : Int, damage_ : Int, range_ : Int, owner_ : Actor)
+{
+	val firingSpeed = firingSpeed_
+	val damage = damage_
+	val range = range_
+
+	var owner = owner_
+
+	var shotCountdown = 0
+
+	def canShoot() =
+	{
+		shotCountdown == 0
+	}
+
+	def shoot(target : Actor, g : Game)
+	{
+		//SHOOOOT ITTTT
+		target.takeDamage(owner, damage, g)
+		shotCountdown = firingSpeed
+
+		//add it to the graphics
+		g.linesToDraw += SimpleLine(owner.center(), target.center(), "black")
+	}
+
+	def tick()
+	{
+		if(shotCountdown > 0) shotCountdown -= 1
+	}
+}
 
 
 
 class Zombie(locX_ : Int, locY_ : Int, 
 			hp_ : Int,
 			target_ : Actor)
-extends Actor(locX_, locY_, GVs.NORMUNITSIZE, GVs.NORMUNITSIZE, hp_, "zombie", "zombie")
+extends Actor(locX_, locY_, GVs.NORMUNITSIZE, GVs.NORMUNITSIZE, hp_, 1, "zombie", "zombie")
 {
 	var target = target_
 
 	var direction = (0, 0)
+
+	val chanceToChangeDirection = 400
 
 	override def draw(ctx: dom.CanvasRenderingContext2D) =
 	{
@@ -338,13 +433,21 @@ extends Actor(locX_, locY_, GVs.NORMUNITSIZE, GVs.NORMUNITSIZE, hp_, "zombie", "
 		else if((0, 0) == direction)
 		{
 			//we're stuck, wander in a different direction
-			direction = (g.r.nextInt(2) - 1, g.r.nextInt(2) - 1)
+			direction = (g.r.nextInt(3) - 1, g.r.nextInt(3) - 1)
 		}		
 
 		//try to move there, see if it works
 		if(! moveLoc(direction._1, direction._2, g))
 		{
 			direction = (0, 0)
+		}
+		else
+		{
+			//even if it worked, we sometimes wanna quit
+			if(g.r.nextInt(chanceToChangeDirection) == 0)
+			{
+				direction = (0, 0)
+			}
 		}
 		
 		if(target.collides(locX + direction._1, locY + direction._2, sizeX, sizeY))
@@ -358,7 +461,7 @@ extends Actor(locX_, locY_, GVs.NORMUNITSIZE, GVs.NORMUNITSIZE, hp_, "zombie", "
 
 class ZombieSpawner(locX_ : Int, locY_ : Int, 
 			spawnRate_ : Int)
-extends Actor(locX_, locY_, GVs.NORMUNITSIZE, GVs.NORMUNITSIZE, -1, "NA", "zombie spawner")
+extends Actor(locX_, locY_, GVs.NORMUNITSIZE, GVs.NORMUNITSIZE, -1, 1, "NA", "zombie spawner")
 {
 	val spawnRate = spawnRate_
 	var timeToNextSpawn = spawnRate
@@ -394,7 +497,7 @@ extends Actor(locX_, locY_, GVs.NORMUNITSIZE, GVs.NORMUNITSIZE, -1, "NA", "zombi
 }
 
 class DelayedActor(act_ : Actor, delayTime_ : Int)
-extends Actor(-1, -1, 0, 0, -1, "none", "delayed " + act_.name)
+extends Actor(-1, -1, 0, 0, -1, act_.speed, "none", "delayed " + act_.name)
 {
 	val act = act_
 	var time = delayTime_
@@ -448,6 +551,7 @@ class Wall(locX_ : Int, locY_ : Int, sizeX_ : Int, sizeY_ : Int) extends Obj(loc
 class Game(mSizeX : Int, mSizeY : Int)
 {
 	var difficulty = 0
+	var score = 0
 
 	val r = new scala.util.Random()
 
@@ -463,7 +567,7 @@ class Game(mSizeX : Int, mSizeY : Int)
 	val acts = scala.collection.mutable.Set[Actor]()
 
 	//make the player
-	val player = new Human(GVs.GAMEX / 2, GVs.GAMEY/2, 100)
+	val player = new BaseHuman(GVs.GAMEX / 2, GVs.GAMEY/2, 100)
 	player.name = "Tim Jones"
 	addActor(player)
 
@@ -543,13 +647,28 @@ class Game(mSizeX : Int, mSizeY : Int)
 		val botWallLeft = new Wall(0, GVs.GAMEY - 5, GVs.GAMEX / 2 - 50, 5)
 		val botWallRight = new Wall(GVs.GAMEX/2 + 50, GVs.GAMEY - 5, GVs.GAMEX/2 - 50, 5)
 
-
 		addObj(topWallLeft)
 		addObj(topWallRight)
 		addObj(leftWall)
 		addObj(rightWall)
 		addObj(botWallLeft)
 		addObj(botWallRight)
+
+		val topTopBound = new Wall(GVs.GAMEX / 2 - 50, -20, 100, 5)
+		val topLeftBound = new Wall(GVs.GAMEX / 2 - 55, -20, 5, 20)
+		val topRightBound = new Wall(GVs.GAMEX / 2 + 50, -20, 5, 20)
+
+		val botBotBound = new Wall(GVs.GAMEX / 2 - 50, GVs.GAMEY + 20, 100, 5)
+		val botLeftBound = new Wall(GVs.GAMEX / 2 - 55, GVs.GAMEY, 5, 20)
+		val botRightBound = new Wall(GVs.GAMEX / 2 + 50, GVs.GAMEY, 5, 20)
+
+		addObj(topTopBound)
+		addObj(topLeftBound)
+		addObj(topRightBound)
+		addObj(botBotBound)
+		addObj(botLeftBound)
+		addObj(botRightBound)
+
 		
 		//More stuff!
 		//Add random walls
