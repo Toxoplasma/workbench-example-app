@@ -28,7 +28,7 @@ object ScalaJSExample
 
 	
 		//Make the game
-		val g = new Game(GVs.GAMEX, GVs.GAMEY)
+		val g = new Game(GV.GAMEX, GV.GAMEY)
 
 		//Make the player
 		//val player = 
@@ -38,7 +38,7 @@ object ScalaJSExample
 		g.genMap()
 
 		//MAKEA THA ZOMBIE
-		val zed = new Zombie(GVs.GAMEX / 2 - 10, GVs.GAMEY - 50, 20, g.player)
+		val zed = new Zombie(GV.GAMEX / 2 - 10, GV.GAMEY - 50, 20, g.player)
 		g.addActor(zed)
 
 		//make a hooman
@@ -49,14 +49,14 @@ object ScalaJSExample
 		val wall = new Wall(200, 400, 200, 10)
 		g.addObj(wall)
 
-		val zedSpawner = new ZombieSpawner(GVs.GAMEX / 2 - 10, GVs.GAMEY - 50, 20)
+		val zedSpawner = new ZombieSpawner(GV.GAMEX / 2 - 10, GV.GAMEY - 50, 20)
 		g.addActor(zedSpawner)
 
 
 		def clear() = 
 		{
 			ctx.fillStyle = s"rgb(200, 200, 200)"
-			ctx.fillRect(0, 0, GVs.FULLX, GVs.FULLY)
+			ctx.fillRect(0, 0, GV.FULLX, GV.FULLY)
 		}
 
 		def run()
@@ -70,7 +70,7 @@ object ScalaJSExample
 				//it's over
 				ctx.font = "75px sans-serif"
 				ctx.fillStyle = "white"
-				ctx.fillText("It's over!", GVs.GAMEX/2, GVs.GAMEY/2)
+				ctx.fillText("It's over!", GV.GAMEX/2, GV.GAMEY/2)
 			}
 			else
 			{
@@ -99,15 +99,15 @@ object ScalaJSExample
 							a match
 							{
 								case delayed : DelayedActor =>
-									delayed.time += GVs.GAMEY / delayed.speed
+									delayed.time += GV.GAMEY / delayed.speed
 									g.addActor(delayed)
 								case _ =>
 									val time = a.locY / a.speed
 
 									//Move them to valid spots
-									a.locY = GVs.GAMEY //all the way down
-									a.locX = max(a.locX, GVs.GAMEX / 2 - 50) //minimum right they can be
-									a.locX = min(a.locX, GVs.GAMEX/2 + 50 - a.sizeX)
+									a.locY = GV.GAMEY //all the way down
+									a.locX = max(a.locX, GV.GAMEX / 2 - 50) //minimum right they can be
+									a.locX = min(a.locX, GV.GAMEX/2 + 50 - a.sizeX)
 
 									a.moveToNewMap(g)
 
@@ -131,17 +131,17 @@ object ScalaJSExample
 
 				//health
 				ctx.fillStyle = s"rgb(200, 0, 0)"
-				ctx.fillRect(GVs.GAMEX, 0, max((GVs.FULLX - GVs.GAMEX) * g.player.hp * 1.0/g.player.maxHp, 0), 80)
+				ctx.fillRect(GV.GAMEX, 0, max((GV.FULLX - GV.GAMEX) * g.player.hp * 1.0/g.player.maxHp, 0), 80)
 				ctx.fillStyle = "black"
 				ctx.font = "12px sans-serif"
-				ctx.fillText("health", GVs.GAMEX, 10)
+				ctx.fillText("health", GV.GAMEX, 10)
 
 				//score!
 				ctx.fillStyle = "black"
 				ctx.font = "12px sans-serif"
-				ctx.fillText("score", GVs.GAMEX, 90)
+				ctx.fillText("score", GV.GAMEX, 90)
 				ctx.font = "50px sans-serif"
-				ctx.fillText(g.score.toString, GVs.GAMEX, 130)
+				ctx.fillText(g.score.toString, GV.GAMEX, 130)
 				
 
 				//Draw the map

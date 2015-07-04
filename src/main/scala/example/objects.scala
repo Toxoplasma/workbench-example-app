@@ -3,7 +3,7 @@ package objects
 import org.scalajs.dom
 import scala.math.{abs, signum, sqrt, pow, min, max, round}
 
-object GVs
+object GV
 {
 	val GAMEX = 600
 	val GAMEY = 600
@@ -11,7 +11,7 @@ object GVs
 	val FULLX = 800
 	val FULLY = 800
 
-	val NORMUNITSIZE = 20
+	val NORMUNITSIZE = 10
 }
 
 
@@ -277,7 +277,7 @@ extends Obj(locX_, locY_, sizeX_, sizeY_)
 
 class BaseHuman(locX_ : Int, locY_ : Int, 
 			hp_ : Int)
-extends Actor(locX_, locY_, GVs.NORMUNITSIZE, GVs.NORMUNITSIZE, hp_, 2, "human", "human")
+extends Actor(locX_, locY_, GV.NORMUNITSIZE, GV.NORMUNITSIZE, hp_, 2, "human", "human")
 {
 	var timeToNextShot = 0
 	var shotCooldown = 20
@@ -334,13 +334,15 @@ extends BaseHuman(locX_, locY_, hp_)
 		//Bot humans do everything player humans do except for movement
 		super.aiMove(g)
 
-		dom.console.log("Hooman: " + (locX, locY))
+		//dom.console.log("Hooman: " + (locX, locY))
 
 		//Now decide where to go!
 		if(dest == (-1, -1))
 		{
 			//pick a new dest!
-			dest = (g.player.locX + g.r.nextInt(200) - 100, g.player.locY + g.r.nextInt(200) - 100)
+			val destX = g.player.locX + g.r.nextInt(GV.NORMUNITSIZE * 10) - GV.NORMUNITSIZE*5
+			val destY = g.player.locY + g.r.nextInt(GV.NORMUNITSIZE * 10) - GV.NORMUNITSIZE*5
+			dest = (destX, destY)
 		}
 
 		//Now cheap pathfinding as usual
@@ -398,7 +400,7 @@ class Gun(firingSpeed_ : Int, damage_ : Int, range_ : Int, owner_ : Actor)
 class Zombie(locX_ : Int, locY_ : Int, 
 			hp_ : Int,
 			target_ : Actor)
-extends Actor(locX_, locY_, GVs.NORMUNITSIZE, GVs.NORMUNITSIZE, hp_, 1, "zombie", "zombie")
+extends Actor(locX_, locY_, GV.NORMUNITSIZE, GV.NORMUNITSIZE, hp_, 1, "zombie", "zombie")
 {
 	var target = target_
 
@@ -420,13 +422,15 @@ extends Actor(locX_, locY_, GVs.NORMUNITSIZE, GVs.NORMUNITSIZE, hp_, 1, "zombie"
 		moveLoc(changeX, changeY, g)
 		momentum = (changeX, changeY)
 
-		//Can we see the player?
-		if(hasLosTo(g.player, g))
+		//Get closest in-LOS enemy
+		val closestAct = getClosestEnemyInLOS(g)
+		if(closestAct != null)
 		{
-			val dest = (g.player.locX, g.player.locY)
+			val dest = (closestAct.locX, closestAct.locY)
+			target = closestAct
 
-			val dx = signum(target.locX - locX)
-			val dy = signum(target.locY - locY)
+			val dx = signum(dest._1 - locX)
+			val dy = signum(dest._2 - locY)
 
 			direction = (dx, dy)
 		}
@@ -461,7 +465,7 @@ extends Actor(locX_, locY_, GVs.NORMUNITSIZE, GVs.NORMUNITSIZE, hp_, 1, "zombie"
 
 class ZombieSpawner(locX_ : Int, locY_ : Int, 
 			spawnRate_ : Int)
-extends Actor(locX_, locY_, GVs.NORMUNITSIZE, GVs.NORMUNITSIZE, -1, 1, "NA", "zombie spawner")
+extends Actor(locX_, locY_, GV.NORMUNITSIZE, GV.NORMUNITSIZE, -1, 1, "NA", "zombie spawner")
 {
 	val spawnRate = spawnRate_
 	var timeToNextSpawn = spawnRate
@@ -567,7 +571,7 @@ class Game(mSizeX : Int, mSizeY : Int)
 	val acts = scala.collection.mutable.Set[Actor]()
 
 	//make the player
-	val player = new BaseHuman(GVs.GAMEX / 2, GVs.GAMEY/2, 100)
+	val player = new BaseHuman(GV.GAMEX / 2, GV.GAMEY/2, 100)
 	player.name = "Tim Jones"
 	addActor(player)
 
@@ -636,16 +640,16 @@ class Game(mSizeX : Int, mSizeY : Int)
 	
 		acts.clear()
 
-		if(difficulty != 0) player.changeLoc(player.locX, GVs.GAMEY - 50)
+		if(difficulty != 0) player.changeLoc(player.locX, GV.GAMEY - 50)
 		addActor(player)
 
 		//Bounding walls
-		val topWallLeft = new Wall(0, 0, GVs.GAMEX/2 - 50, 5)
-		val topWallRight = new Wall(GVs.GAMEX/2 + 50, 0, GVs.GAMEX/2 - 50, 5)
-		val leftWall = new Wall(0, 0, 5, GVs.GAMEY)
-		val rightWall = new Wall(GVs.GAMEX - 5, 0, 5, GVs.GAMEY)
-		val botWallLeft = new Wall(0, GVs.GAMEY - 5, GVs.GAMEX / 2 - 50, 5)
-		val botWallRight = new Wall(GVs.GAMEX/2 + 50, GVs.GAMEY - 5, GVs.GAMEX/2 - 50, 5)
+		val topWallLeft = new Wall(0, 0, GV.GAMEX/2 - 50, 5)
+		val topWallRight = new Wall(GV.GAMEX/2 + 50, 0, GV.GAMEX/2 - 50, 5)
+		val leftWall = new Wall(0, 0, 5, GV.GAMEY)
+		val rightWall = new Wall(GV.GAMEX - 5, 0, 5, GV.GAMEY)
+		val botWallLeft = new Wall(0, GV.GAMEY - 5, GV.GAMEX / 2 - 50, 5)
+		val botWallRight = new Wall(GV.GAMEX/2 + 50, GV.GAMEY - 5, GV.GAMEX/2 - 50, 5)
 
 		addObj(topWallLeft)
 		addObj(topWallRight)
@@ -654,13 +658,13 @@ class Game(mSizeX : Int, mSizeY : Int)
 		addObj(botWallLeft)
 		addObj(botWallRight)
 
-		val topTopBound = new Wall(GVs.GAMEX / 2 - 50, -20, 100, 5)
-		val topLeftBound = new Wall(GVs.GAMEX / 2 - 55, -20, 5, 20)
-		val topRightBound = new Wall(GVs.GAMEX / 2 + 50, -20, 5, 20)
+		val topTopBound = new Wall(GV.GAMEX / 2 - 50, -20, 100, 5)
+		val topLeftBound = new Wall(GV.GAMEX / 2 - 55, -20, 5, 20)
+		val topRightBound = new Wall(GV.GAMEX / 2 + 50, -20, 5, 20)
 
-		val botBotBound = new Wall(GVs.GAMEX / 2 - 50, GVs.GAMEY + 20, 100, 5)
-		val botLeftBound = new Wall(GVs.GAMEX / 2 - 55, GVs.GAMEY, 5, 20)
-		val botRightBound = new Wall(GVs.GAMEX / 2 + 50, GVs.GAMEY, 5, 20)
+		val botBotBound = new Wall(GV.GAMEX / 2 - 50, GV.GAMEY + 20, 100, 5)
+		val botLeftBound = new Wall(GV.GAMEX / 2 - 55, GV.GAMEY, 5, 20)
+		val botRightBound = new Wall(GV.GAMEX / 2 + 50, GV.GAMEY, 5, 20)
 
 		addObj(topTopBound)
 		addObj(topLeftBound)
@@ -678,8 +682,8 @@ class Game(mSizeX : Int, mSizeY : Int)
 			val r = scala.util.Random
 			val width = r.nextInt(80) + 20
 			val height = r.nextInt(80) + 20
-			val x = r.nextInt(GVs.GAMEX - width)
-			val y = r.nextInt(GVs.GAMEY - height - GVs.GAMEY / 5)
+			val x = r.nextInt(GV.GAMEX - width)
+			val y = r.nextInt(GV.GAMEY - height - GV.GAMEY / 5)
 			//Random wall
 			val randWall = new Wall(x, y, width, height)
 			addObj(randWall)
@@ -689,8 +693,8 @@ class Game(mSizeX : Int, mSizeY : Int)
 		for(i <- 1 to difficulty * 3)
 		{
 			val r = scala.util.Random
-			val x = r.nextInt(GVs.GAMEX - GVs.NORMUNITSIZE)
-			val y = r.nextInt(GVs.GAMEY - GVs.NORMUNITSIZE - GVs.GAMEY/4)
+			val x = r.nextInt(GV.GAMEX - GV.NORMUNITSIZE)
+			val y = r.nextInt(GV.GAMEY - GV.NORMUNITSIZE - GV.GAMEY/4)
 			//Random wall
 			val randDude = new Zombie(x, y, 20, player)
 			if(! collision(randDude))
