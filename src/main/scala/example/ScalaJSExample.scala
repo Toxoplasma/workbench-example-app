@@ -38,8 +38,9 @@ object ScalaJSExample
 		g.genMap()
 
 		//MAKEA THA ZOMBIE
-		val zed = new Zombie(GV.GAMEX / 2 - 10, GV.GAMEY - 50, 20, g.player)
-		g.addActor(zed)
+		//val zed = new Zombie(GV.GAMEX / 2 - 10, GV.GAMEY - 50, 20, g.player)
+		val zed = new Charger(GV.GAMEX / 2 - 10, GV.GAMEY - 50)
+		//g.addActor(zed)
 
 		//make a hooman
 		val hooman = new Human(g.player.locX + 50, g.player.locY, 50)
@@ -62,7 +63,7 @@ object ScalaJSExample
 		def run()
 		{
 			//bump score
-			g.score += 1
+			//g.score += 1
 
 			//Check if the game is over
 			if(g.player.hp <= 0)
@@ -79,7 +80,7 @@ object ScalaJSExample
 				if(g.player.locY < 0)
 				{
 					//score boost!
-					g.score += g.difficulty * 1000
+					g.score += g.difficulty * 10
 
 					dom.console.log("Generating new map")
 
@@ -91,32 +92,33 @@ object ScalaJSExample
 
 					dom.console.log("Copying " + oldActs.size + " actors")
 
+					//Update the delays on all our delayed guys
+					for(delAct <- g.delayedActs)
+					{
+						delAct.time += GV.GAMEY / delAct.speed
+					}
+
 					//Add all the actors as delays
 					for(a <- oldActs)
 					{
 						if(a != g.player)
 						{
-							a match
-							{
-								case delayed : DelayedActor =>
-									delayed.time += GV.GAMEY / delayed.speed
-									g.addActor(delayed)
-								case _ =>
-									val time = a.locY / a.speed
+							val time = a.locY / a.speed
 
-									//Move them to valid spots
-									a.locY = GV.GAMEY //all the way down
-									a.locX = max(a.locX, GV.GAMEX / 2 - 50) //minimum right they can be
-									a.locX = min(a.locX, GV.GAMEX/2 + 50 - a.sizeX)
+							//Move them to valid spots
+							a.locY = GV.GAMEY //all the way down
+							a.locX = max(a.locX, GV.GAMEX / 2 - 50) //minimum right they can be
+							a.locX = min(a.locX, GV.GAMEX/2 + 50 - a.sizeX)
 
-									a.moveToNewMap(g)
+							a.moveToNewMap(g)
 
-									val delayedAct = new DelayedActor(a, time)
+							val delayedAct = new DelayedActor(a, time)
 
-									g.addActor(delayedAct)
-							}
+							g.addDelayed(delayedAct)
 						}
 					}
+
+					
 				}
 				//handle player movement
 				handlePlayerMovement(g.player, keysDown, g)
