@@ -2,6 +2,7 @@ package objects
 
 import org.scalajs.dom
 import scala.math.{abs, signum, sqrt, pow, min, max, round}
+import Array._
 
 object GV
 {
@@ -12,50 +13,47 @@ object GV
 	val FULLY = 800
 
 	val NORMUNITSIZE = 10
-	val BIGUNITSIZE = 12
+	val BIGUNITSIZE = 14
 }
 
-case class Pt(x : Int, y : Int)
+class Pt(x_ : Double, y_ : Double)
+{
+	var x = x_
+	var y = y_
 
-case class PtD(x : Double, y : Double)
+	def is_zero() : Boolean =
+	{
+		return x == 0.0 && y == 0.0
+	}
+
+	def is_neg_one() : Boolean =
+	{
+		return x == -1.0 && y == -1.0
+	}
+
+	def cloone() : Pt =
+	{
+		return new Pt(x, y)
+	}
+
+	override def toString(): String = "(" + x + ", " + y + ")"
+}
 
 
-case class SimpleLine(start : (Int, Int), end : (Int, Int), color : String)
+case class SimpleLine(start : Pt, end : Pt, color : String)
 {
 	def length() =
 	{
-		val dist = sqrt(pow(start._1 - end._1, 2) + pow(start._2 - end._2, 2))
+		val dist = sqrt(pow(start.x - end.x, 2) + pow(start.y - end.y, 2))
 		dist
 	}
 
-	def points() =
+	def unitStep() : Pt =
 	{
-		dom.console.log("points from " + start + " to " + end)
-		var cx : Double = start._1.toDouble
-		var cy : Double = start._2.toDouble
+		val ux = (end.x - start.x) / length
+		val uy = (end.y - start.y) / length
 
-		val dx = (end._1 - start._1) / length
-		val dy = (end._2 - start._2) / length
-
-		val ps  = scala.collection.mutable.Buffer[(Int, Int)]()
-		while(round(cx) != end._1 || round(cy) != end._2)
-		{
-			dom.console.log(cx + ", " + cy)
-			val pair = (round(cx).toInt, round(cy).toInt)
-			ps += pair
-			cx += dx
-			cy += dy
-		}
-
-		ps
-	}
-
-	def unitStep() : (Double, Double) =
-	{
-		val ux = (end._1 - start._1) / length
-		val uy = (end._2 - start._2) / length
-
-		return (ux, uy)
+		return new Pt(ux, uy)
 	}
 }
 
@@ -64,22 +62,24 @@ case class SimpleLine(start : (Int, Int), end : (Int, Int), color : String)
 
 
 
-class Obj(locX_ : Int, locY_ : Int, sizeX_ : Int, sizeY_ : Int)
+class Obj(loc_ : Pt, size_ : Pt)
 {
-	val sizeX = sizeX_
-	val sizeY = sizeY_
-	var locX = locX_
-	var locY = locY_
+	var loc = loc_
+	val size = size_
 
 	var blocksMovement = true
+	var blocksLos = false
+	var alwaysVisible = false
 
-	def collides(loX : Int, loY : Int, sX : Int, sY : Int) : Boolean =
+	var lowPriority = false
+
+	def collides(lo : Pt, s : Pt) : Boolean =
 	{
-		//return abs(locX - loX) * 2 < sizeX + sX && abs(locY - loY) * 2 < sizeY + sY
-		if(locX < loX + sX &&
-			locX + sizeX > loX &&
-			locY < loY + sY &&
-			locY + sizeY > loY)
+		//return abs(loc.x - loX) * 2 < size.x + sX && abs(loc.y - loY) * 2 < size.y + sY
+		if(loc.x < lo.x + s.x &&
+			loc.x + size.x > lo.x &&
+			loc.y < lo.y + s.y &&
+			loc.y + size.y > lo.y)
 		{
 			return true
 		}
@@ -88,15 +88,15 @@ class Obj(locX_ : Int, locY_ : Int, sizeX_ : Int, sizeY_ : Int)
 
 	def collides(other : Obj) : Boolean =
 	{
-		collides(other.locX, other.locY, other.sizeX, other.sizeY)
+		collides(other.loc, other.size)
 	}
 
-	def inside(x : Int, y : Int) : Boolean = 
+	def inside(x : Double, y : Double) : Boolean = 
 	{
-		if(x > locX &&
-			x < locX + sizeX &&
-			y > locY &&
-			y < locY + sizeY)
+		if(x > loc.x &&
+			x < loc.x + size.x &&
+			y > loc.y &&
+			y < loc.y + size.y)
 		{
 			return true
 		}
@@ -105,42 +105,42 @@ class Obj(locX_ : Int, locY_ : Int, sizeX_ : Int, sizeY_ : Int)
 
 	def collidesLine(l : SimpleLine) : Boolean =
 	{
-		//dom.console.log("Checking " + (locX, locY))
+		//dom.console.log("Checking " + (loc.x, loc.y))
 	    // Completely outside.
-	    if ((l.start._1 <= locX && l.end._1 <= locX) || 
-	    	(l.start._2 <= locY && l.end._2 <= locY) || 
-	    	(l.start._1 >= locX + sizeX && l.end._1 >= locX + sizeX) || 
-	    	(l.start._2 >= locY + sizeY && l.end._2 >= locY + sizeY))
+	    if ((l.start.x <= loc.x && l.end.x <= loc.x) || 
+	    	(l.start.y <= loc.y && l.end.y <= loc.y) || 
+	    	(l.start.x >= loc.x + size.x && l.end.x >= loc.x + size.x) || 
+	    	(l.start.y >= loc.y + size.y && l.end.y >= loc.y + size.y))
 	        return false
 
-	    val m = (l.end._2 - l.start._2) * 1.0 / (l.end._1 - l.start._1)
+	    val m = (l.end.y - l.start.y) * 1.0 / (l.end.x - l.start.x)
 
 	    //Left wall
-	    val y1 = m * (locX - l.start._1) + l.start._2
-	    if (y1 > locY && y1 < locY + sizeY) return true
+	    val y1 = m * (loc.x - l.start.x) + l.start.y
+	    if (y1 > loc.y && y1 < loc.y + size.y) return true
 
 	    //right wall
-	    val y2 = m * (locX + sizeX - l.start._1) + l.start._2
-	    if (y2 > locY && y2 < locY + sizeY) return true
+	    val y2 = m * (loc.x + size.x - l.start.x) + l.start.y
+	    if (y2 > loc.y && y2 < loc.y + size.y) return true
 
 	    //top wall
-	    val x1 = (locY - l.start._2) / m + l.start._1
-	    if (x1 > locX && x1 < locX + sizeX) return true
+	    val x1 = (loc.y - l.start.y) / m + l.start.x
+	    if (x1 > loc.x && x1 < loc.x + size.x) return true
 
 	    //bot wall
-	    val x2 = (locY + sizeY - l.start._2) / m + l.start._1
-	    if (x2 > locX && x2 < locX + sizeX) return true
+	    val x2 = (loc.y + size.y - l.start.y) / m + l.start.x
+	    if (x2 > loc.x && x2 < loc.x + size.x) return true
 
 	    return false
 	}
 
-	def pointSetCollides(ps : scala.collection.mutable.Seq[(Int, Int)]) : Boolean = 
+	def pointSetCollides(ps : scala.collection.mutable.Seq[Pt]) : Boolean = 
 	{
-		val filtered = ps filter(p => ! inside(p._1, p._2))
+		val filtered = ps filter(p => ! inside(p.x, p.y))
 		return filtered.length == ps.length
 	}
 
-	def hasLosTo(o : Obj, g : Game) : Boolean =
+	/*def hasLosTo(o : Obj, g : Game) : Boolean =
 	{
 		val l = SimpleLine(center, o.center, "black")
 
@@ -150,6 +150,51 @@ class Obj(locX_ : Int, locY_ : Int, sizeX_ : Int, sizeY_ : Int)
 		}
 		
 		return true
+	}*/
+
+	def hasClearCenterLosTo(p : Pt, o : Obj, g : Game) : Boolean =
+	{
+		var l = SimpleLine(center, p, "black")
+		var losBroken = false
+		for(ob <- g.objs)
+		{
+			if(ob != this && ob != o && ob.collidesLine(l)) losBroken = true
+		}
+		if(! losBroken) return true
+
+		return false
+	}
+
+	def hasCenterLosTo(p : Pt, o : Obj, g : Game) : Boolean =
+	{
+		var l = SimpleLine(center, p, "black")
+		var losBroken = false
+		for(ob <- g.objs)
+		{
+			if(ob != this && ob != o && 
+				ob.blocksLos && ob.collidesLine(l)) losBroken = true
+		}
+		if(! losBroken) return true
+
+		return false
+	}
+
+	def hasLosTo(o : Obj, g : Game) : Boolean =
+	{
+		return hasCenterLosTo(o.center, o, g) ||
+			   hasCenterLosTo(o.upperLeft, o, g) ||
+			   hasCenterLosTo(o.upperRight, o, g) ||
+			   hasCenterLosTo(o.lowerLeft, o, g) ||
+			   hasCenterLosTo(o.lowerRight, o, g)
+	}
+
+	def hasClearLosTo(o : Obj, g : Game) : Boolean =
+	{
+		return hasClearCenterLosTo(o.center, o, g) ||
+			   hasClearCenterLosTo(o.upperLeft, o, g) ||
+			   hasClearCenterLosTo(o.upperRight, o, g) ||
+			   hasClearCenterLosTo(o.lowerLeft, o, g) ||
+			   hasClearCenterLosTo(o.lowerRight, o, g)
 	}
 
 	def draw(ctx : dom.CanvasRenderingContext2D) =
@@ -158,28 +203,32 @@ class Obj(locX_ : Int, locY_ : Int, sizeX_ : Int, sizeY_ : Int)
 
 	def center() = 
 	{
-		(locX + sizeX / 2, locY + sizeY / 2)
+		new Pt(loc.x + size.x / 2, loc.y + size.y / 2)
 	}
+
+	def upperLeft() = loc.cloone
+	def upperRight() = new Pt(loc.x + size.x, loc.y)
+	def lowerLeft() = new Pt(loc.x, loc.y + size.y)
+	def lowerRight() = new Pt(loc.x + size.x, loc.y + size.y)
 
 	def distanceTo(o : Obj) : Int =
 	{
-		return sqrt(pow(o.locX - locX, 2) + pow(o.locY - locY, 2)).toInt
+		return sqrt(pow(o.loc.x - loc.x, 2) + pow(o.loc.y - loc.y, 2)).toInt
 	}
 
 	def distanceTo(p : Pt) : Int =
 	{
-		return sqrt(pow(p.x - locX, 2) + pow(p.y - locY, 2)).toInt
+		return sqrt(pow(p.x - loc.x, 2) + pow(p.y - loc.y, 2)).toInt
 	}
 }
 
 
 
 
-class Actor(locX_ : Int, locY_ : Int, 
-			sizeX_ : Int, sizeY_ : Int,
+class Actor(loc_ : Pt, size_ : Pt,
 			hp_ : Int, speed_ : Int,
 			faction_ : String, points_ : Int, name_ : String)
-extends Obj(locX_, locY_, sizeX_, sizeY_)
+extends Obj(loc_, size_)
 {
 	var maxHp = hp_
 	var hp = hp_
@@ -189,21 +238,28 @@ extends Obj(locX_, locY_, sizeX_, sizeY_)
 
 	var faction = faction_
 
-	var momentum = (0, 0)
+	var momentum = new Pt(0, 0)
 
 	var important = false
 
-	def changeLoc(newX : Int, newY : Int) =
+	def changeLoc(newLoc : Pt) = //newX : Int, newY : Int) =
 	{
-		locX = newX
-		locY = newY
+		loc = newLoc.cloone
+		// loc.x = newX
+		// loc.y = newY
 	}
 
-	def canMoveTo(newX : Int, newY : Int, g : Game) : Boolean = 
+	def changeLocRel(dx : Double, dy : Double) =
+	{
+		loc.x += dx
+		loc.y += dy
+	}
+
+	def canMoveTo(newLoc : Pt, g : Game) : Boolean = 
 	{
 		for(o <- g.objs)
 		{
-			if(o != this && o.blocksMovement && o.collides(newX, newY, sizeX, sizeY))
+			if(o != this && o.blocksMovement && o.collides(newLoc, size))
 			{
 				//dom.console.log(name + " can't move there!")
 				return false
@@ -212,19 +268,19 @@ extends Obj(locX_, locY_, sizeX_, sizeY_)
 		return true
 	}
 
-	def moveLoc(dx : Int, dy : Int, g : Game) : Boolean =
+	def moveLoc(dx : Double, dy : Double, g : Game) : Boolean =
 	{
 		var moved = false
 		//Check collisions
-		if(dx != 0 && canMoveTo(locX + dx, locY, g)) //check x movement
+		if(dx != 0 && canMoveTo(new Pt(loc.x + dx, loc.y), g)) //check x movement
 		{
-			locX += dx
+			loc.x += dx
 			moved = true
 		}
 
-		if(dy != 0 && canMoveTo(locX, locY + dy, g))
+		if(dy != 0 && canMoveTo(new Pt(loc.x, loc.y + dy), g))
 		{
-			locY += dy
+			loc.y += dy
 			moved = true
 		}
 		
@@ -234,25 +290,25 @@ extends Obj(locX_, locY_, sizeX_, sizeY_)
 	override def draw(ctx : dom.CanvasRenderingContext2D) =
 	{
 		ctx.fillStyle = "red"
-		ctx.fillRect(locX, locY, sizeX, sizeY)
+		ctx.fillRect(loc.x, loc.y, size.x, size.y)
 	}
 
 	//Has the unit's ai pick a move and then does the move
 	def aiMove(g : Game) =
 	{
 		//Knockback
-		val changeX = momentum._1 * 3 / 4
-		val changeY = momentum._2 * 3 / 4
+		val changeX = momentum.x * 3 / 4
+		val changeY = momentum.y * 3 / 4
 		moveLoc(changeX, changeY, g)
-		momentum = (changeX, changeY)
+		momentum = new Pt(changeX, changeY)
 	}
 
-	def takeDamage(source : Actor, damage : Int, g : Game) =
+	def takeDamage(source : Actor, damage : Int, pushFactor : Int, g : Game) =
 	{
 		dom.console.log(source.name + " does " + damage + " damage to " + name)
 		hp -= damage
 
-		push(source, damage, g)
+		push(source, damage * pushFactor, g)
 
 		//Are we dead?
 		if(hp <= 0) //we're dead
@@ -267,10 +323,10 @@ extends Obj(locX_, locY_, sizeX_, sizeY_)
 	def push(source : Actor, amount : Int, g : Game) =
 	{
 		//Now compute knockback
-		val dx = -1 * signum(source.locX - locX)
-		val dy = -1 * signum(source.locY - locY)
+		val dx = -1 * signum(source.loc.x - loc.x)
+		val dy = -1 * signum(source.loc.y - loc.y)
 
-		momentum = (dx * amount, dy * amount)
+		momentum = new Pt(dx * amount, dy * amount)
 	}
 
 	def getClosestEnemyInLOS(g : Game) : Actor = 
@@ -300,9 +356,8 @@ extends Obj(locX_, locY_, sizeX_, sizeY_)
 	}
 }
 
-class BaseHuman(locX_ : Int, locY_ : Int, 
-			hp_ : Int)
-extends Actor(locX_, locY_, GV.NORMUNITSIZE, GV.NORMUNITSIZE, hp_, 2, "human", 0, "human")
+class BaseHuman(loc_ : Pt, hp_ : Int)
+extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE), hp_, 2, "human", 0, "human")
 {
 	var timeToNextShot = 0
 	var shotCooldown = 20
@@ -312,16 +367,16 @@ extends Actor(locX_, locY_, GV.NORMUNITSIZE, GV.NORMUNITSIZE, hp_, 2, "human", 0
 	override def draw(ctx : dom.CanvasRenderingContext2D) =
 	{
 		ctx.fillStyle = "red"
-		ctx.fillRect(locX, locY, sizeX, sizeY)
+		ctx.fillRect(loc.x, loc.y, size.x, size.y)
 	}
 
 	override def aiMove(g : Game) =
 	{
 		//Knockback
-		val changeX = momentum._1 * 3 / 4
-		val changeY = momentum._2 * 3 / 4
+		val changeX = momentum.x * 3 / 4
+		val changeY = momentum.y * 3 / 4
 		moveLoc(changeX, changeY, g)
-		momentum = (changeX, changeY)
+		momentum = new Pt(changeX, changeY)
 
 		gun.tick()
 
@@ -342,16 +397,15 @@ extends Actor(locX_, locY_, GV.NORMUNITSIZE, GV.NORMUNITSIZE, hp_, 2, "human", 0
 	}
 }
 
-class Human(locX_ : Int, locY_ : Int, 
-			hp_ : Int)
-extends BaseHuman(locX_, locY_, hp_)
+class Human(loc_ : Pt, hp_ : Int)
+extends BaseHuman(loc_, hp_)
 {
-	var dest = (-1, -1)
+	var dest = new Pt(-1, -1)
 
 	override def draw(ctx : dom.CanvasRenderingContext2D) =
 	{
-		ctx.fillStyle = "red"
-		ctx.fillRect(locX, locY, sizeX, sizeY)
+		ctx.fillStyle = "pink"
+		ctx.fillRect(loc.x, loc.y, size.x, size.y)
 	}
 
 	override def aiMove(g : Game) =
@@ -359,33 +413,33 @@ extends BaseHuman(locX_, locY_, hp_)
 		//Bot humans do everything player humans do except for movement
 		super.aiMove(g)
 
-		//dom.console.log("Hooman: " + (locX, locY))
+		//dom.console.log("Hooman: " + (loc.x, loc.y))
 
 		//Now decide where to go!
-		if(dest == (-1, -1))
+		if(dest.is_neg_one)
 		{
 			//pick a new dest!
-			val destX = g.player.locX + g.r.nextInt(GV.NORMUNITSIZE * 10) - GV.NORMUNITSIZE*5
-			val destY = g.player.locY + g.r.nextInt(GV.NORMUNITSIZE * 10) - GV.NORMUNITSIZE*5
-			dest = (destX, destY)
+			val destX = g.player.loc.x + g.r.nextInt(GV.NORMUNITSIZE * 10) - GV.NORMUNITSIZE*5
+			val destY = g.player.loc.y + g.r.nextInt(GV.NORMUNITSIZE * 10) - GV.NORMUNITSIZE*5
+			dest = new Pt(destX, destY)
 		}
 
 		//Now cheap pathfinding as usual
-		var dx = min(dest._1 - locX, 2)
+		var dx = min(dest.x - loc.x, 2)
 		dx = max(dx, -2)
 		
-		var dy = min(dest._2 - locY, 2)
+		var dy = min(dest.y - loc.y, 2)
 		dy = max(dy, -2)
 
 		if(! moveLoc(dx, dy, g))
 		{
-			dest = (-1, -1)
+			dest = new Pt(-1, -1)
 		}
 	}
 
 	override def moveToNewMap(g : Game)
 	{
-		dest = (-1, -1)
+		dest = new Pt(-1, -1)
 	}
 }
 
@@ -407,7 +461,7 @@ class Gun(firingSpeed_ : Int, damage_ : Int, range_ : Int, owner_ : Actor)
 	def shoot(target : Actor, g : Game)
 	{
 		//SHOOOOT ITTTT
-		target.takeDamage(owner, damage, g)
+		target.takeDamage(owner, damage, 1, g)
 		shotCountdown = firingSpeed
 
 		//add it to the graphics
@@ -422,75 +476,73 @@ class Gun(firingSpeed_ : Int, damage_ : Int, range_ : Int, owner_ : Actor)
 
 
 
-class Zombie(locX_ : Int, locY_ : Int)
-extends Actor(locX_, locY_, 
-	GV.NORMUNITSIZE, GV.NORMUNITSIZE, 
+class Zombie(loc_ : Pt)
+extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE),
 	20, 1, 
 	"zombie", 1, "zombie")
 {
 	var target : Actor = null
 
-	var direction = (0, 0)
+	var direction = new Pt(0, 0)
 
 	val chanceToChangeDirection = 400
 
 	override def draw(ctx: dom.CanvasRenderingContext2D) =
 	{
 		ctx.fillStyle = s"rgb(30, 150, 30)"
-		ctx.fillRect(locX, locY, sizeX, sizeY)
+		ctx.fillRect(loc.x, loc.y, size.x, size.y)
 	}
 
 	override def aiMove(g : Game) =
 	{
 		//Knockback
-		val changeX = momentum._1 * 3 / 4
-		val changeY = momentum._2 * 3 / 4
+		val changeX = momentum.x * 3 / 4
+		val changeY = momentum.y * 3 / 4
 		moveLoc(changeX, changeY, g)
-		momentum = (changeX, changeY)
+		momentum = new Pt(changeX, changeY)
 
 		//Get closest in-LOS enemy
 		target = getClosestEnemyInLOS(g)
 		if(target != null)
 		{
-			val dest = (target.locX, target.locY)
+			val dest = target.loc
 
-			val dx = signum(dest._1 - locX)
-			val dy = signum(dest._2 - locY)
+			val dx = signum(dest.x - loc.x)
+			val dy = signum(dest.y - loc.y)
 
-			direction = (dx, dy)
+			direction = new Pt(dx, dy)
 		}
-		else if((0, 0) == direction)
+		else if(direction.is_zero)
 		{
 			//we're stuck, wander in a different direction
-			direction = (g.r.nextInt(3) - 1, g.r.nextInt(3) - 1)
+			direction = new Pt(g.r.nextInt(3) - 1, g.r.nextInt(3) - 1)
 		}		
 
 		//try to move there, see if it works
-		if(! moveLoc(direction._1, direction._2, g))
+		if(! moveLoc(direction.x, direction.y, g))
 		{
-			direction = (0, 0)
+			direction = new Pt(0, 0)
 		}
 		else
 		{
 			//even if it worked, we sometimes wanna quit
 			if(g.r.nextInt(chanceToChangeDirection) == 0)
 			{
-				direction = (0, 0)
+				direction = new Pt(0, 0)
 			}
 		}
 		
-		if(target != null && target.collides(locX + direction._1, locY + direction._2, sizeX, sizeY))
+		if(target != null && target.collides(new Pt(loc.x + direction.x, loc.y + direction.y), new Pt(size.x, size.y)))
 		{
 			//Hell yeah we are, bit him!
 			//g.player.hp -= 10 //ZOMBIEDAMAGE
-			target.takeDamage(this, 10, g)
+			target.takeDamage(this, 10, 1, g)
 		}
 	}
 }
 
-class Charger(locX_ : Int, locY_ : Int)
-extends Actor(locX_, locY_, 
-	GV.BIGUNITSIZE, GV.BIGUNITSIZE, 
+class Charger(loc_ : Pt)
+extends Actor(loc_, new Pt(GV.BIGUNITSIZE, GV.BIGUNITSIZE),
 	200, 1, 
 	"zombie", 5, "charger")
 {
@@ -500,7 +552,7 @@ extends Actor(locX_, locY_,
 
 	var state = "moving"
 	var chargeLine : SimpleLine = null
-	var chargeError = PtD(0.0, 0.0)
+	var chargeError = new Pt(0.0, 0.0)
 	var chargeCooldown = 400
 	var chargeTimer = 0
 	var chargeRange = 400
@@ -510,7 +562,7 @@ extends Actor(locX_, locY_,
 	override def draw(ctx: dom.CanvasRenderingContext2D) =
 	{
 		ctx.fillStyle = s"rgb(100, 150, 100)"
-		ctx.fillRect(locX, locY, sizeX, sizeY)
+		ctx.fillRect(loc.x, loc.y, size.x, size.y)
 	}
 
 	override def aiMove(g : Game) =
@@ -523,17 +575,17 @@ extends Actor(locX_, locY_,
 		if(state == "moving")
 		{
 			//Knockback
-			val changeX = momentum._1 * 2 / 4
-			val changeY = momentum._2 * 2 / 4
+			val changeX = momentum.x * 2 / 4
+			val changeY = momentum.y * 2 / 4
 			moveLoc(changeX, changeY, g)
-			momentum = (changeX, changeY)
+			momentum = new Pt(changeX, changeY)
 
 
 			//Get closest in-LOS enemy
 			val closestAct = getClosestEnemyInLOS(g)
 			if(closestAct != null) //possible charge
 			{
-				chargeLine = SimpleLine((locX, locY), (closestAct.locX, closestAct.locY), "black")
+				chargeLine = SimpleLine(loc.cloone, closestAct.loc.cloone, "black")
 			}
 
 
@@ -569,13 +621,13 @@ extends Actor(locX_, locY_,
 		}
 		else if(state == "charging")
 		{
-			if(distanceTo(Pt(chargeLine.start._1, chargeLine.start._2)) > chargeRange)
+			if(distanceTo(chargeLine.start) > chargeRange)
 			{
 				//we've gone too far, stop charging
 				state = "moving"
 				//dom.console.log("Charging->Moving, too far from start")
 				chargeLine = null
-				chargeError = PtD(0.0, 0.0)
+				chargeError = new Pt(0.0, 0.0)
 			}
 			else
 			{
@@ -584,15 +636,16 @@ extends Actor(locX_, locY_,
 					if(state == "charging") //if we hit someone we don't want to keep taking steps
 					{
 						//take a step along the line
-						val (dx, dy) = chargeLine.unitStep
-						chargeError = PtD(chargeError.x + dx, chargeError.y + dy)
+						//val (dx, dy) = chargeLine.unitStep
+						val d = chargeLine.unitStep
+						chargeError = new Pt(chargeError.x + d.x, chargeError.y + d.y)
 
 						val adx = round(chargeError.x).toInt
 						val ady = round(chargeError.y).toInt
 
 						//dom.console.log("ad: " + (adx, ady))
 
-						chargeError = PtD(chargeError.x - adx, chargeError.y - ady)
+						chargeError = new Pt(chargeError.x - adx, chargeError.y - ady)
 
 						//try to move in that direction
 						moveLoc(adx, ady, g)
@@ -600,12 +653,12 @@ extends Actor(locX_, locY_,
 						//did we crash into an actor?
 						for(a <- g.acts)
 						{
-							if(a != this && a.collides(locX + adx, locY + ady, sizeX, sizeY))
+							if(a != this && a.collides(new Pt(loc.x + adx, loc.y + ady), size))
 							{
 								//we did!
 								//knock 'em up
-								a.takeDamage(this, 10, g)
-								a.push(this, 40, g)
+								a.takeDamage(this, 10, 4, g)
+								//a.push(this, 40, g)
 								state = "moving" //we hit someone
 								//dom.console.log("Charging->Moving, hit someone")
 							}
@@ -617,9 +670,157 @@ extends Actor(locX_, locY_,
 	}
 }
 
-class ZombieSpawner(locX_ : Int, locY_ : Int, 
-			spawnRate_ : Int)
-extends Actor(locX_, locY_, GV.NORMUNITSIZE, GV.NORMUNITSIZE, -1, 1, "NA", 0, "zombie spawner")
+class Spitter(loc_ : Pt)
+extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE),
+	70, 1, 
+	"zombie", 5, "spitter")
+{
+	var direction = (0, 0)
+	val chanceToChangeDirection = 400
+
+	var spitTimer = 0
+	val spitRate = 500
+	val spitRadius = 40
+	val spitReduceRate = 4
+
+	override def draw(ctx: dom.CanvasRenderingContext2D) =
+	{
+		ctx.fillStyle = s"rgb(0, 255, 0)"
+		ctx.fillRect(loc.x, loc.y, size.x, size.y)
+	}
+
+	override def aiMove(g : Game) =
+	{
+		//we don't do knockback while charging
+
+		//tick charge timer
+		spitTimer = max(0, spitTimer - 1)
+
+		
+		//Knockback
+		val changeX = momentum.x * 3 / 4
+		val changeY = momentum.y * 3 / 4
+		moveLoc(changeX, changeY, g)
+		momentum = new Pt(changeX, changeY)
+
+
+		//Get closest in-LOS enemy
+		if(spitTimer <= 0)
+		{
+			val closestAct = getClosestEnemyInLOS(g)
+			if(closestAct != null) //possible charge
+			{
+				//spit at them!
+
+				//draw a line
+				val spitLine = SimpleLine(loc.cloone, closestAct.loc.cloone, "black")
+				//g.linesToDraw += spitLine
+
+				//make a spit
+				val spit = new CausticAcid(closestAct.loc.cloone, spitRadius, spitReduceRate)
+				//g.addActor(spit)
+
+				val proj = new ProjectileActor(spit, spitLine, 6)
+				g.addActor(proj)
+
+				//we spit!
+				spitTimer = spitRate
+			}
+		}
+
+
+		//we're not charging, proceed as normal
+		if((0, 0) == direction)
+		{
+			//we're stuck, wander in a different direction
+			direction = (g.r.nextInt(3) - 1, g.r.nextInt(3) - 1)
+		}		
+
+		//try to move there, see if it works
+		if(! moveLoc(direction._1, direction._2, g))
+		{
+			direction = (0, 0)
+		}
+		else
+		{
+			//even if it worked, we sometimes wanna quit
+			if(g.r.nextInt(chanceToChangeDirection) == 0)
+			{
+				direction = (0, 0)
+			}
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+class CausticAcid(loc_ : Pt, radius_ : Int, reduceRate_ : Int)
+extends Actor(new Pt(loc_.x - radius_, loc_.y - radius_), new Pt(radius_ * 2, radius_ * 2),
+				-1, 0, "NA", 0, "acid splat")
+{
+	var radius = radius_
+
+	var reduceRate = reduceRate_
+	var reduceTimer = reduceRate
+
+	val minRadius = GV.NORMUNITSIZE
+
+	blocksMovement = false
+	lowPriority = true
+
+	override def draw(ctx: dom.CanvasRenderingContext2D) = //TODO: switch this to take in game rather than ctx
+	{
+		ctx.fillStyle = s"rgb(0, 255, 0)"
+		ctx.fillRect(loc.x, loc.y, size.x, size.y)
+	}
+
+	override def aiMove(g : Game) =
+	{
+		//first, check if anyone gets damaged
+		for(a <- g.acts)
+		{
+			if(a.faction != "NA" && collides(a)) //if it's a real actor and we collide with it
+			{
+				a.takeDamage(this, 1, 0, g)
+			}
+		}
+
+		//Now, shrink a bit if necessary
+		if(reduceTimer == 0)
+		{
+			//are we at 0?
+			if(radius <= minRadius)
+			{
+				//delete ourselves
+				g.removeActor(this)
+			}
+			else
+			{
+				reduceTimer = reduceRate
+				radius -= 1
+				changeLoc(new Pt(loc.x + 1, loc.y + 1))
+				size.x -= 2
+				size.y -= 2
+			}
+		}
+		else if(reduceTimer > 0) //if we're a timed puddle, then count down the timer
+		{
+			reduceTimer -= 1
+		}
+	}
+}
+
+
+
+class ZombieSpawner(loc_ : Pt, spawnRate_ : Int)
+extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE), -1, 1, "NA", 0, "zombie spawner")
 {
 	val spawnRate = spawnRate_
 	var timeToNextSpawn = spawnRate
@@ -630,7 +831,7 @@ extends Actor(locX_, locY_, GV.NORMUNITSIZE, GV.NORMUNITSIZE, -1, 1, "NA", 0, "z
 	{
 		//Don't draw anything, this is a proxy for zombies coming in off the edge of the map
 		//ctx.fillStyle = s"rgb(30, 150, 30)"
-		//ctx.fillRect(locX, locY, sizeX, sizeY)
+		//ctx.fillRect(loc.x, loc.y, size.x, size.y)
 	}
 
 	override def aiMove(g : Game) =
@@ -639,11 +840,11 @@ extends Actor(locX_, locY_, GV.NORMUNITSIZE, GV.NORMUNITSIZE, -1, 1, "NA", 0, "z
 		if(timeToNextSpawn == 0)
 		{
 			//Spawn a zombie if there's room:
-			val newZed = new Zombie(-100, -100)
-			if(newZed.canMoveTo(locX, locY, g)) //there's room!
+			val newZed = new Zombie(new Pt(-100, -100))
+			if(newZed.canMoveTo(loc, g)) //there's room!
 			{
 				g.addActor(newZed)
-				newZed.changeLoc(locX, locY)
+				newZed.changeLoc(loc) //loc.x, loc.y)
 			}
 
 			timeToNextSpawn = spawnRate
@@ -656,7 +857,7 @@ extends Actor(locX_, locY_, GV.NORMUNITSIZE, GV.NORMUNITSIZE, -1, 1, "NA", 0, "z
 }
 
 class DelayedActor(act_ : Actor, delayTime_ : Int)
-extends Actor(-1, -1, 0, 0, -1, act_.speed, "none", 0, "delayed " + act_.name)
+extends Actor(new Pt(-1, -1), new Pt(0, 0), -1, act_.speed, "NA", 0, "delayed " + act_.name)
 {
 	val act = act_
 	var time = delayTime_
@@ -690,34 +891,120 @@ extends Actor(-1, -1, 0, 0, -1, act_.speed, "none", 0, "delayed " + act_.name)
 	}
 }
 
+class ProjectileActor(act_ : Actor, line_ : SimpleLine, rate_ : Int)
+extends Actor(line_.start.cloone, new Pt(0, 0), -1, 0, "NA", 0, "projectile " + act_.name)
+{
+	var line = line_
+	var act = act_
+	var rate = rate_
+
+	blocksMovement = false
+
+	override def draw(ctx: dom.CanvasRenderingContext2D)
+	{
+		//draw handled in movement
+	}
+
+	override def aiMove(g : Game)
+	{
+		dom.console.log("Spit: " + loc)
+		val step = line.unitStep
+		dom.console.log("  Step: " + step)
+
+		var done = false
+
+		val start = loc.cloone
+
+
+		for(i <- 1 to rate)
+		{
+			if(! done)
+			{
+				//are we there yet?
+				if(abs(loc.x - line.end.x) < 1 && abs(loc.y - line.end.y) < 1)
+				{
+					//we're there
+					g.addActor(act)
+					g.removeActor(this)
+					done = true
+				}
+				else
+				{
+					//move
+					changeLocRel(step.x, step.y)
+				}
+				
+			}
+		}
+
+		val lineToDraw = SimpleLine(start, loc, line.color)
+		g.linesToDraw += lineToDraw
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //Terrain stuff
-class Wall(locX_ : Int, locY_ : Int, sizeX_ : Int, sizeY_ : Int) extends Obj(locX_, locY_, sizeX_, sizeY_)
+class Wall(loc_ : Pt, size_ : Pt) extends Obj(loc_, size_)
 {
+	blocksLos = true
+	alwaysVisible = true
 	override def draw(ctx : dom.CanvasRenderingContext2D) =
 	{
 		ctx.fillStyle = "blue"
-		ctx.fillRect(locX, locY, sizeX, sizeY)
+		ctx.fillRect(loc.x, loc.y, size.x, size.y)
 	}
 
 	def splitWithDoorAt(i : Int, doorSize : Int) : (Wall, Wall) = 
 	{
 		//horizontal
-		if(sizeX >= sizeY)
+		if(size.x >= size.y)
 		{
-			val w1 = new Wall(locX, locY, i, sizeY)
-			val w2 = new Wall(locX + i + doorSize, locY, sizeX - i - doorSize, sizeY)
+			val w1 = new Wall(loc, new Pt(i, size.y))
+			val w2 = new Wall(new Pt(loc.x + i + doorSize, loc.y), new Pt(size.x - i - doorSize, size.y))
 			return (w1, w2)
 		}
 		else //vertical
 		{
-			val w1 = new Wall(locX, locY, sizeX, i)
-			val w2 = new Wall(locX, locY + i + doorSize, sizeX, sizeY - i - doorSize)
+			val w1 = new Wall(loc, new Pt(size.x, i))
+			val w2 = new Wall(new Pt(loc.x, loc.y + i + doorSize), new Pt(size.x, size.y - i - doorSize))
 			return (w1, w2)
 		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -744,7 +1031,7 @@ class Game(mSizeX : Int, mSizeY : Int)
 	val delayedActs = scala.collection.mutable.Set[DelayedActor]()
 
 	//make the player
-	val player = new BaseHuman(GV.GAMEX / 2, GV.GAMEY/2, 100)
+	val player = new BaseHuman(new Pt(GV.GAMEX / 2, GV.GAMEY/2), 100)
 	player.name = "Tim Jones"
 	addActor(player)
 
@@ -797,30 +1084,86 @@ class Game(mSizeX : Int, mSizeY : Int)
 
 	def drawAll(ctx : dom.CanvasRenderingContext2D) =
 	{
+		//draw floor LOS by color.... :(
+		val losArr = ofDim[Boolean](GV.GAMEX, GV.GAMEY)
+		//now, for each wall, shoot rays in the usual way
+		val dumb = new Obj(new Pt(0, 0), new Pt(1, 1))
+		//bottom wall
+		for(x<- 0 to GV.GAMEX - 1)
+		{
+			//walk outwards from player
+			val l = SimpleLine(player.loc.cloone, new Pt(x, GV.GAMEY), "black")
+
+			val c = l.start.cloone
+			val step = l.unitStep
+
+			var visible = true
+			while(visible && (abs(c.x - l.end.x) >= 1 || abs(c.y - l.end.y) >= 1))
+			{
+				c.x += step.x
+				c.y += step.y
+
+				//now mark it visible
+				losArr(c.x.toInt)(c.y.toInt) = true
+
+				//now check if it blocks
+				for(o <- objs)
+				{
+					if(o.blocksLos && o.inside(c.x, c.y))
+					{
+						visible = false
+					}
+				}
+			}
+		}
+		for(x <- 0 to GV.GAMEX - 1)
+		{
+			for(y <- 0 to GV.GAMEY - 1)
+			{
+				if(! losArr(x)(y))
+				{
+					//draw it dark grey
+					ctx.fillStyle = s"rgb(100, 100, 100)"
+					ctx.fillRect(x, y, 1, 1)
+				}
+			}
+		}
+		//draw all low-priority
+		objs map(o => if(o.lowPriority) o.draw(ctx))
+
 		//draw lines
 		while(! linesToDraw.isEmpty)
 		{
 			val line = linesToDraw.remove(0)
 
-			val (sx, sy) = line.start
-			val (ex, ey) = line.end
+			val s = line.start //(sx, sy) = line.start
+			val e = line.end //(ex, ey) = line.end
 
 			//now draw it
 			ctx.beginPath()
-			ctx.moveTo(sx, sy)
+			ctx.moveTo(s.x, s.y)
 			ctx.fillStyle = line.color
-			ctx.lineTo(ex, ey)
+			ctx.lineTo(e.x, e.y)
 			ctx.stroke
 		}
 
+
 		//Draw all the objects
-		objs map(_.draw(ctx))
+		for(o <- objs)
+		{
+			if(! o.lowPriority && (o.alwaysVisible ||
+								   player.hasLosTo(o, this)))
+			{
+
+				o.draw(ctx)
+			}
+		}
 	}
 
-	def genFarms2() =
+	/*def genFarms2() =
 	{
 		//make a starter room
-		val starter = new Wall(100, 100, 100, 100)
+		val starter = new Wall(new Pt(100, 100), 100, 100)
 
 		objs += starter
 
@@ -829,16 +1172,16 @@ class Game(mSizeX : Int, mSizeY : Int)
 			//pick which wall we're going to add it to
 			//val newRoom = new Wall(0, 0, )
 		}
-	}
+	}*/
 
-	def genFarms() =
+	/*def genFarms() =
 	{
 		def moveRoom(walls : scala.collection.mutable.Set[Wall], x : Int, y : Int) =
 		{
 			for(w <- walls)
 			{
-				w.locX += x
-				w.locY += y
+				w.loc.x += x
+				w.loc.y += y
 			}
 		}
 
@@ -853,8 +1196,8 @@ class Game(mSizeX : Int, mSizeY : Int)
 		//make a new room
 		val leftOWall = new Wall(100, 100, 5, houseHeight)
 		val topOWall = new Wall(100, 100, houseWidth, 5)
-		val rightOWall = new Wall(100 + houseWidth, 100, 5, leftOWall.sizeY + 5)
-		val botOWall = new Wall(100, 100 + houseHeight, topOWall.sizeX, 5)
+		val rightOWall = new Wall(100 + houseWidth, 100, 5, leftOWall.size.y + 5)
+		val botOWall = new Wall(100, 100 + houseHeight, topOWall.size.x, 5)
 
 		val house = scala.collection.mutable.Set[Obj](leftOWall, topOWall, rightOWall, botOWall)
 
@@ -868,8 +1211,8 @@ class Game(mSizeX : Int, mSizeY : Int)
 			
 			val topWall = new Wall(0, 0, r.nextInt(maxRoomSize - minRoomSize) + minRoomSize, 5)
 
-			val rightWall = new Wall(topWall.sizeX, 0, 5, leftWall.sizeY + 5)
-			val botWall = new Wall(0, leftWall.sizeY, topWall.sizeX, 5)
+			val rightWall = new Wall(topWall.size.x, 0, 5, leftWall.size.y + 5)
+			val botWall = new Wall(0, leftWall.size.y, topWall.size.x, 5)
 
 			val roomWalls = scala.collection.mutable.Set[Wall](leftWall, topWall, rightWall, botWall)
 
@@ -887,15 +1230,15 @@ class Game(mSizeX : Int, mSizeY : Int)
 			var x = 0
 			var y = 0
 			var valid = true
-			if(matchWall.sizeX == 5) //vertical
+			if(matchWall.size.x == 5) //vertical
 			{
-				if(leftWall.sizeY >= matchWall.sizeY)
+				if(leftWall.size.y >= matchWall.size.y)
 				{
 					valid = false
 				}
 				else
 				{
-					y = matchWall.locY + r.nextInt(matchWall.sizeY)// - leftWall.sizeY)
+					y = matchWall.loc.y + r.nextInt(matchWall.size.y)// - leftWall.size.y)
 					if(r.nextInt(2) == 0) //match left wall
 					{
 						//if we're matching our left wall with 
@@ -907,7 +1250,7 @@ class Game(mSizeX : Int, mSizeY : Int)
 
 						roomWalls remove leftWall
 						moveRoom(roomWalls, 5, 0)
-						x = matchWall.locX
+						x = matchWall.loc.x
 					}
 					else //match right wall
 					{
@@ -917,19 +1260,19 @@ class Game(mSizeX : Int, mSizeY : Int)
 							valid = false
 						}
 
-						x = matchWall.locX - topWall.sizeX
+						x = matchWall.loc.x - topWall.size.x
 					}
 				}
 			}
 			else //horizontal
 			{
-				if(topWall.sizeX >= matchWall.sizeX)
+				if(topWall.size.x >= matchWall.size.x)
 				{
 					valid = false
 				}
 				else
 				{
-					x = matchWall.locX + r.nextInt(matchWall.sizeX)// - topWall.sizeX)
+					x = matchWall.loc.x + r.nextInt(matchWall.size.x)// - topWall.size.x)
 					if(r.nextInt(2) == 0) //match top wall
 					{
 						//our top with the house's bottom
@@ -941,7 +1284,7 @@ class Game(mSizeX : Int, mSizeY : Int)
 
 						roomWalls remove topWall
 						moveRoom(roomWalls, 0, 5)
-						y = matchWall.locY
+						y = matchWall.loc.y
 					}
 					else //match bottom wall
 					{
@@ -951,14 +1294,14 @@ class Game(mSizeX : Int, mSizeY : Int)
 						}
 
 
-						y = matchWall.locY - leftWall.sizeY
+						y = matchWall.loc.y - leftWall.size.y
 					}
 				}
 			}
 
 			//final checks: if any wall is outside the house
-			if(rightWall.locX >  rightOWall.locX ||
-				botWall.locY > botOWall.locY)
+			if(rightWall.loc.x >  rightOWall.loc.x ||
+				botWall.loc.y > botOWall.loc.y)
 			{
 				valid = false
 			}
@@ -979,7 +1322,7 @@ class Game(mSizeX : Int, mSizeY : Int)
 		}
 
 		//objs ++= house
-	}
+	}*/
 
 	def genMap() =
 	{
@@ -988,16 +1331,16 @@ class Game(mSizeX : Int, mSizeY : Int)
 	
 		acts.clear()
 
-		if(difficulty != 0) player.changeLoc(player.locX, GV.GAMEY - 50)
+		if(difficulty != 0) player.changeLoc(new Pt(player.loc.x, GV.GAMEY - 50))
 		addActor(player)
 
 		//Bounding walls
-		val topWallLeft = new Wall(0, 0, GV.GAMEX/2 - 50, 5)
-		val topWallRight = new Wall(GV.GAMEX/2 + 50, 0, GV.GAMEX/2 - 50, 5)
-		val leftWall = new Wall(0, 0, 5, GV.GAMEY)
-		val rightWall = new Wall(GV.GAMEX - 5, 0, 5, GV.GAMEY)
-		val botWallLeft = new Wall(0, GV.GAMEY - 5, GV.GAMEX / 2 - 50, 5)
-		val botWallRight = new Wall(GV.GAMEX/2 + 50, GV.GAMEY - 5, GV.GAMEX/2 - 50, 5)
+		val topWallLeft = new Wall(new Pt(0, 0), new Pt(GV.GAMEX/2 - 50, 5))
+		val topWallRight = new Wall(new Pt(GV.GAMEX/2 + 50, 0), new Pt(GV.GAMEX/2 - 50, 5))
+		val leftWall = new Wall(new Pt(0, 0), new Pt(5, GV.GAMEY))
+		val rightWall = new Wall(new Pt(GV.GAMEX - 5, 0), new Pt(5, GV.GAMEY))
+		val botWallLeft = new Wall(new Pt(0, GV.GAMEY - 5), new Pt(GV.GAMEX / 2 - 50, 5))
+		val botWallRight = new Wall(new Pt(GV.GAMEX/2 + 50, GV.GAMEY - 5), new Pt(GV.GAMEX/2 - 50, 5))
 
 		addObj(topWallLeft)
 		addObj(topWallRight)
@@ -1006,13 +1349,13 @@ class Game(mSizeX : Int, mSizeY : Int)
 		addObj(botWallLeft)
 		addObj(botWallRight)
 
-		val topTopBound = new Wall(GV.GAMEX / 2 - 50, -20, 100, 5)
-		val topLeftBound = new Wall(GV.GAMEX / 2 - 55, -20, 5, 20)
-		val topRightBound = new Wall(GV.GAMEX / 2 + 50, -20, 5, 20)
+		val topTopBound = new Wall(new Pt(GV.GAMEX / 2 - 50, -20), new Pt(100, 5))
+		val topLeftBound = new Wall(new Pt(GV.GAMEX / 2 - 55, -20), new Pt(5, 20))
+		val topRightBound = new Wall(new Pt(GV.GAMEX / 2 + 50, -20), new Pt(5, 20))
 
-		val botBotBound = new Wall(GV.GAMEX / 2 - 50, GV.GAMEY + 20, 100, 5)
-		val botLeftBound = new Wall(GV.GAMEX / 2 - 55, GV.GAMEY, 5, 20)
-		val botRightBound = new Wall(GV.GAMEX / 2 + 50, GV.GAMEY, 5, 20)
+		val botBotBound = new Wall(new Pt(GV.GAMEX / 2 - 50, GV.GAMEY + 20), new Pt(100, 5))
+		val botLeftBound = new Wall(new Pt(GV.GAMEX / 2 - 55, GV.GAMEY), new Pt(5, 20))
+		val botRightBound = new Wall(new Pt(GV.GAMEX / 2 + 50, GV.GAMEY), new Pt(5, 20))
 
 		addObj(topTopBound)
 		addObj(topLeftBound)
@@ -1036,7 +1379,7 @@ class Game(mSizeX : Int, mSizeY : Int)
 			val x = r.nextInt(GV.GAMEX - width)
 			val y = r.nextInt(GV.GAMEY - height - GV.GAMEY / 5)
 			//Random wall
-			val randWall = new Wall(x, y, width, height)
+			val randWall = new Wall(new Pt(x, y), new Pt(width, height))
 			addObj(randWall)
 		}
 
@@ -1046,7 +1389,7 @@ class Game(mSizeX : Int, mSizeY : Int)
 			val x = r.nextInt(GV.GAMEX - GV.NORMUNITSIZE)
 			val y = r.nextInt(GV.GAMEY - GV.NORMUNITSIZE - GV.GAMEY/4)
 			//Random wall
-			val randDude = new Zombie(x, y)
+			val randDude = new Zombie(new Pt(x, y))
 			if(! collision(randDude))
 			{
 				addActor(randDude)
@@ -1056,17 +1399,21 @@ class Game(mSizeX : Int, mSizeY : Int)
 		//add random specials
 		for(i <- 1 to difficulty)
 		{
-			val t = r.nextInt(1)
+			val t = r.nextInt(2)
 			val x = r.nextInt(GV.GAMEX - GV.NORMUNITSIZE)
 			val y = r.nextInt(GV.GAMEY - GV.NORMUNITSIZE - GV.GAMEY/4)
 
+			var randDude : Actor = null
+
 			if(t == 0) //charger
+				randDude = new Charger(new Pt(x, y))
+			if(t == 1) //spitter
+				randDude = new Spitter(new Pt(x, y))
+
+
+			if(! collision(randDude))
 			{
-				val randDude = new Charger(x, y)
-				if(! collision(randDude))
-				{
-					addActor(randDude)
-				}
+				addActor(randDude)
 			}
 		}
 

@@ -39,18 +39,21 @@ object ScalaJSExample
 
 		//MAKEA THA ZOMBIE
 		//val zed = new Zombie(GV.GAMEX / 2 - 10, GV.GAMEY - 50, 20, g.player)
-		val zed = new Charger(GV.GAMEX / 2 - 10, GV.GAMEY - 50)
-		//g.addActor(zed)
+		val zed = new Spitter(new Pt(GV.GAMEX / 2 - 10, GV.GAMEY - 50))
+		g.addActor(zed)
+
+		val puddle = new CausticAcid(new Pt(100, 100), 70, 5)
+		//g.addActor(puddle)
 
 		//make a hooman
-		val hooman = new Human(g.player.locX + 50, g.player.locY, 50)
+		val hooman = new Human(new Pt(g.player.loc.x + 50, g.player.loc.y), 50)
 		g.addActor(hooman)
 
 		//make a wall
-		val wall = new Wall(200, 400, 200, 10)
+		val wall = new Wall(new Pt(200, 400), new Pt(200, 10))
 		g.addObj(wall)
 
-		val zedSpawner = new ZombieSpawner(GV.GAMEX / 2 - 10, GV.GAMEY - 50, 20)
+		val zedSpawner = new ZombieSpawner(new Pt(GV.GAMEX / 2 - 10, GV.GAMEY - 50), 20)
 		g.addActor(zedSpawner)
 
 
@@ -77,7 +80,7 @@ object ScalaJSExample
 			{
 				//dom.console.log("py: " + g.player.locY)
 				//Check if the player has moved to the next map
-				if(g.player.locY < 0)
+				if(g.player.loc.y < 0)
 				{
 					//score boost!
 					g.score += g.difficulty * 10
@@ -103,12 +106,12 @@ object ScalaJSExample
 					{
 						if(a != g.player)
 						{
-							val time = a.locY / a.speed
+							val time : Int = (a.loc.y / a.speed).toInt
 
 							//Move them to valid spots
-							a.locY = GV.GAMEY //all the way down
-							a.locX = max(a.locX, GV.GAMEX / 2 - 50) //minimum right they can be
-							a.locX = min(a.locX, GV.GAMEX/2 + 50 - a.sizeX)
+							a.loc.y = GV.GAMEY //all the way down
+							a.loc.x = max(a.loc.x, GV.GAMEX / 2 - 50) //minimum right they can be
+							a.loc.x = min(a.loc.x, GV.GAMEX/2 + 50 - a.size.x)
 
 							a.moveToNewMap(g)
 
