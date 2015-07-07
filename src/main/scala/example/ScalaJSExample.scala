@@ -4,6 +4,9 @@ import org.scalajs.dom
 import org.scalajs.dom.html
 
 import objects._
+import game._
+import globalvars._
+import enemies._
 import scala.math.{min, max}
 
 
@@ -73,7 +76,7 @@ object ScalaJSExample
 			{
 				//it's over
 				ctx.font = "75px sans-serif"
-				ctx.fillStyle = "white"
+				ctx.fillStyle = "black"
 				ctx.fillText("It's over!", GV.GAMEX/2, GV.GAMEY/2)
 			}
 			else
@@ -104,24 +107,27 @@ object ScalaJSExample
 					//Add all the actors as delays
 					for(a <- oldActs)
 					{
-						if(a != g.player)
+						a match
 						{
-							val time : Int = (a.loc.y / a.speed).toInt
+							case proj : ProjectileActor => //Nothing, don't add them
+							case _ =>
+								if(a != g.player)
+								{
+									val time : Int = (a.loc.y / a.speed).toInt
 
-							//Move them to valid spots
-							a.loc.y = GV.GAMEY //all the way down
-							a.loc.x = max(a.loc.x, GV.GAMEX / 2 - 50) //minimum right they can be
-							a.loc.x = min(a.loc.x, GV.GAMEX/2 + 50 - a.size.x)
+									//Move them to valid spots
+									a.loc.y = GV.GAMEY //all the way down
+									//a.loc.x = max(a.loc.x, GV.GAMEX / 2 - 50) //minimum right they can be
+									//a.loc.x = min(a.loc.x, GV.GAMEX/2 + 50 - a.size.x)
 
-							a.moveToNewMap(g)
+									a.moveToNewMap(g)
 
-							val delayedAct = new DelayedActor(a, time)
+									val delayedAct = new DelayedActor(a, time)
 
-							g.addDelayed(delayedAct)
+									g.addDelayed(delayedAct)
+								}
 						}
 					}
-
-					
 				}
 				//handle player movement
 				handlePlayerMovement(g.player, keysDown, g)
@@ -132,7 +138,13 @@ object ScalaJSExample
 				//Clear the screen
 				clear()
 
+				//Draw the map
+				g.drawAll(ctx)
+
 				//Draw health bars and such
+				//clear the background of the sidebar
+				ctx.fillStyle = s"rgb(200, 200, 200)"
+				ctx.fillRect(GV.GAMEX, 0, GV.FULLX - GV.GAMEX, GV.FULLY)
 
 				//health
 				ctx.fillStyle = s"rgb(200, 0, 0)"
@@ -147,10 +159,6 @@ object ScalaJSExample
 				ctx.fillText("score", GV.GAMEX, 90)
 				ctx.font = "50px sans-serif"
 				ctx.fillText(g.score.toString, GV.GAMEX, 130)
-				
-
-				//Draw the map
-				g.drawAll(ctx)
 			}
 		}
 
@@ -169,6 +177,6 @@ object ScalaJSExample
 	    }
 
 
-		dom.setInterval(() => run, 20)
+		dom.setInterval(() => run, 25)
 	}
 }
