@@ -29,13 +29,15 @@ object ScalaJSExample
 		val keysDown = collection.mutable.Set[Int]()
 		val ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
 
+
 	
 		//Make the game
-		val g = new Game(GV.GAMEX, GV.GAMEY)
+		val g = new Game(GV.GAMEX, GV.GAMEY, ctx)
 
 		//Make the player
 		//val player = 
 		//g.addActor(player)
+		//g.addHeadText(g.player, "hi there", 200)
 
 		//Make the map
 		g.genMap()
@@ -43,20 +45,28 @@ object ScalaJSExample
 		//MAKEA THA ZOMBIE
 		//val zed = new Zombie(GV.GAMEX / 2 - 10, GV.GAMEY - 50, 20, g.player)
 		val zed = new Spitter(new Pt(GV.GAMEX / 2 - 10, GV.GAMEY - 50))
-		g.addActor(zed)
+		//g.addActor(zed)
 
-		val puddle = new CausticAcid(new Pt(100, 100), 70, 5)
+		//val puddle = new CausticAcid(new Pt(100, 100), 70, 5)
+		//g.addActor(puddle)
+
+		val puddle = new AmmoPack(new Pt(100, 100), 50)
 		//g.addActor(puddle)
 
 		//make a hooman
-		val hooman = new Human(new Pt(g.player.loc.x + 50, g.player.loc.y), 50)
-		g.addActor(hooman)
+		val hooman = new Human(new Pt(g.player.loc.x + 50, g.player.loc.y))
+		//g.addActor(hooman)
+
+		//stick a gun on the ground
+		val thegun = new Gun(GV.AK47_FIRETIME, GV.AK47_DAMAGE, GV.AK47_RANGE, GV.AK47_APS, null)
+		val grounded = new GroundGun(new Pt(g.player.loc.x + 50, g.player.loc.y), thegun, "ak47")
+		g.addActor(grounded)
 
 		//make a wall
 		val wall = new Wall(new Pt(200, 400), new Pt(200, 10))
-		g.addObj(wall)
+		//g.addObj(wall)
 
-		val zedSpawner = new ZombieSpawner(new Pt(GV.GAMEX / 2 - 10, GV.GAMEY - 50), 20)
+		val zedSpawner = new ZombieSpawner(new Pt(GV.GAMEX / 2 - GV.NORMUNITSIZE/2, GV.GAMEY), 200)
 		g.addActor(zedSpawner)
 
 
@@ -102,6 +112,11 @@ object ScalaJSExample
 					for(delAct <- g.delayedActs)
 					{
 						delAct.time += GV.GAMEY / delAct.speed
+
+						if(delAct.time > GV.OFFMAPCUTOFF)
+						{
+							g.removeDelayed(delAct)
+						}
 					}
 
 					//Add all the actors as delays
@@ -139,26 +154,40 @@ object ScalaJSExample
 				clear()
 
 				//Draw the map
-				g.drawAll(ctx)
+				g.drawAll()
 
 				//Draw health bars and such
 				//clear the background of the sidebar
 				ctx.fillStyle = s"rgb(200, 200, 200)"
 				ctx.fillRect(GV.GAMEX, 0, GV.FULLX - GV.GAMEX, GV.FULLY)
 
+				var barY = 0
+
 				//health
 				ctx.fillStyle = s"rgb(200, 0, 0)"
-				ctx.fillRect(GV.GAMEX, 0, max((GV.FULLX - GV.GAMEX) * g.player.hp * 1.0/g.player.maxHp, 0), 80)
+				ctx.fillRect(GV.GAMEX, barY, max((GV.FULLX - GV.GAMEX) * g.player.hp * 1.0/g.player.maxHp, 0), 80)
 				ctx.fillStyle = "black"
 				ctx.font = "12px sans-serif"
-				ctx.fillText("health", GV.GAMEX, 10)
+				ctx.fillText("health", GV.GAMEX, barY + 10)
+				barY += 80
+
+				//ammo
+				ctx.fillStyle = s"rgb(0, 0, 200)"
+				ctx.fillRect(GV.GAMEX, barY, min(g.player.gun.ammo/10, GV.FULLX - GV.GAMEX), 80)
+				ctx.fillStyle = "black"
+				ctx.font = "12px sans-serif"
+				ctx.fillText("ammo", GV.GAMEX, barY + 10)
+				barY += 80
 
 				//score!
 				ctx.fillStyle = "black"
 				ctx.font = "12px sans-serif"
-				ctx.fillText("score", GV.GAMEX, 90)
+				ctx.fillText("score", GV.GAMEX, barY + 10)
 				ctx.font = "50px sans-serif"
-				ctx.fillText(g.score.toString, GV.GAMEX, 130)
+				ctx.fillText(g.score.toString, GV.GAMEX, barY + 50)
+				barY += 80
+
+				//ctx.drawImage(testimage, 0, 0)
 			}
 		}
 

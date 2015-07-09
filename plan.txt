@@ -9,9 +9,14 @@ Actual pathfinding
 
 highscores 
 
+Make the farm house doors not always leftmost/uppermost on the wall they're on
 
 
-
+Bugs:
+chargers getting stuck in corners
+spitter spit being able to go through walls and also be invisible sometimes
+zombies sometimes not hitting you when they're next to you
+zombies splooping back and forth because doubles
 
 SNIPPETS
 
@@ -34,7 +39,7 @@ extends Actor(loc_, new Pt(GV.BIGUNITSIZE, GV.BIGUNITSIZE),
 
 	val chargeSpeed = GV.CHARGER_CHARGESPEED
 
-	override def draw(ctx: dom.CanvasRenderingContext2D) =
+	override def draw(g : Game) =
 	{
 		ctx.fillStyle = s"rgb(100, 150, 100)"
 		ctx.fillRect(loc.x, loc.y, size.x, size.y)

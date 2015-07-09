@@ -132,23 +132,27 @@ class Obj(loc_ : Pt, size_ : Pt)
 
 	def hasLosTo(o : Obj, g : Game) : Boolean =
 	{
-		return hasCenterLosTo(o.center, o, g) ||
-			   hasCenterLosTo(o.upperLeft, o, g) ||
-			   hasCenterLosTo(o.upperRight, o, g) ||
-			   hasCenterLosTo(o.lowerLeft, o, g) ||
-			   hasCenterLosTo(o.lowerRight, o, g)
+		// return hasCenterLosTo(o.center, o, g) ||
+		// 	   hasCenterLosTo(o.upperLeft, o, g) ||
+		// 	   hasCenterLosTo(o.upperRight, o, g) ||
+		// 	   hasCenterLosTo(o.lowerLeft, o, g) ||
+		// 	   hasCenterLosTo(o.lowerRight, o, g)
+
+		return hasCenterLosTo(o.center, o, g)
 	}
 
 	def hasClearLosTo(o : Obj, g : Game) : Boolean =
 	{
-		return hasClearCenterLosTo(o.center, o, g) ||
-			   hasClearCenterLosTo(o.upperLeft, o, g) ||
-			   hasClearCenterLosTo(o.upperRight, o, g) ||
-			   hasClearCenterLosTo(o.lowerLeft, o, g) ||
-			   hasClearCenterLosTo(o.lowerRight, o, g)
+		// return hasClearCenterLosTo(o.center, o, g) ||
+		// 	   hasClearCenterLosTo(o.upperLeft, o, g) ||
+		// 	   hasClearCenterLosTo(o.upperRight, o, g) ||
+		// 	   hasClearCenterLosTo(o.lowerLeft, o, g) ||
+		// 	   hasClearCenterLosTo(o.lowerRight, o, g)
+
+		return hasClearCenterLosTo(o.center, o, g)
 	}
 
-	def draw(ctx : dom.CanvasRenderingContext2D) =
+	def draw(g : Game) =
 	{
 	}
 
@@ -238,10 +242,10 @@ extends Obj(loc_, size_)
 		return moved
 	}
 
-	override def draw(ctx : dom.CanvasRenderingContext2D) =
+	override def draw(g : Game) =
 	{
-		ctx.fillStyle = "red"
-		ctx.fillRect(loc.x, loc.y, size.x, size.y)
+		g.ctx.fillStyle = "red"
+		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)
 	}
 
 	//Has the unit's ai pick a move and then does the move
@@ -271,7 +275,7 @@ extends Obj(loc_, size_)
 		momentum = new Pt(changeX, changeY)
 	}
 
-	def takeDamage(source : Actor, damage : Int, pushFactor : Int, g : Game) =
+	def takeDamage(source : Actor, damage : Int, pushFactor : Double, g : Game) =
 	{
 		dom.console.log(source.name + " does " + damage + " damage to " + name)
 		hp -= damage
@@ -281,14 +285,16 @@ extends Obj(loc_, size_)
 		//Are we dead?
 		if(hp <= 0) //we're dead
 		{
-			g.acts remove this
-			g.objs remove this
+			g.removeActor(this)
+
+			//if we have anything to do when we die then do it
+			onDeath(g)
 
 			g.score += points
 		}
 	}
 
-	def push(source : Actor, amount : Int, g : Game) =
+	def push(source : Actor, amount : Double, g : Game) =
 	{
 		//Now compute knockback
 		val dx = -1 * signum(source.loc.x - loc.x)
@@ -318,13 +324,123 @@ extends Obj(loc_, size_)
 		return closestAct
 	}
 
-	def moveToNewMap(g : Game)
+	def moveToNewMap(g : Game) =
 	{
 		//meh
+	}
+
+	def canTakeItem(item : Actor) : Boolean=
+	{
+		false
+	}
+
+	def onDeath(g : Game) =
+	{
+		//nothing
 	}
 }
 
 
+
+class AmmoPack(loc_ : Pt, amt_ : Int)
+extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE), -1, 0, "NA", 0, "ammo pack")
+{
+	val amount = amt_
+
+	blocksMovement = false
+
+	override def draw(g : Game) =
+	{
+		g.ctx.fillStyle = s"rgb(100, 100, 100)"
+		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)
+		g.ctx.fillStyle = s"rgb(0, 200, 255)"
+		g.ctx.fillRect(loc.x + 2, loc.y + 2, size.x - 4, size.y - 4)
+	}
+
+	override def aiMove(g : Game) =
+	{
+		//check if the anyone valid collides with us
+		for(a <- g.acts)
+		{
+			if(collides(a) && a.canTakeItem(this))
+			{
+				a match {
+					case h : BaseHuman => 
+						h.gun.ammo += amount
+					case _ => //nothing
+				}
+
+				//and remove us
+				g.removeActor(this)
+			}
+		}
+	}
+}
+
+class HealthPack(loc_ : Pt, amt_ : Int)
+extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE), -1, 0, "NA", 0, "ammo pack")
+{
+	val amount = amt_
+
+	blocksMovement = false
+
+	override def draw(g : Game) =
+	{
+		g.ctx.fillStyle = s"rgb(100, 100, 100)"
+		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)
+		g.ctx.fillStyle = s"rgb(255, 200, 0)"
+		g.ctx.fillRect(loc.x + 2, loc.y + 2, size.x - 4, size.y - 4)
+	}
+
+	override def aiMove(g : Game) =
+	{
+		//check if the anyone valid collides with us
+		for(a <- g.acts)
+		{
+			if(collides(a) && a.canTakeItem(this))
+			{
+				//the player gets some ammo!
+				a.hp = min(g.player.hp + amount, g.player.maxHp)
+
+				//and remove us
+				g.removeActor(this)
+			}
+		}
+	}
+}
+
+class GroundGun(loc_ : Pt, gun_ : Gun, displayName_ : String)
+extends Actor(loc_, new Pt(20, 20), -1, 0, "NA", 0, "ground gun")
+{
+	val gun = gun_
+	val displayName = displayName_
+
+	blocksMovement = false
+
+	override def draw(g : Game) =
+	{
+		//draw from the game thing
+		val img = g.images(displayName)
+		g.ctx.drawImage(img, loc.x, loc.y)
+	}
+
+	override def aiMove(g : Game) =
+	{
+		//check if the anyone valid collides with us
+		for(a <- g.acts)
+		{
+			if(collides(a) && a.canTakeItem(this))
+			{
+				//the player picks up the gun!
+				gun.owner = g.player
+				g.player.gun = gun
+
+				//and remove us
+				g.removeActor(this)
+			}
+		}
+	}
+}
 
 
 
@@ -343,10 +459,10 @@ extends Actor(new Pt(loc_.x - radius_, loc_.y - radius_), new Pt(radius_ * 2, ra
 	blocksMovement = false
 	lowPriority = true
 
-	override def draw(ctx: dom.CanvasRenderingContext2D) = //TODO: switch this to take in game rather than ctx
+	override def draw(g : Game) = //TODO: switch this to take in game rather than ctx
 	{
-		ctx.fillStyle = s"rgb(0, 255, 0)"
-		ctx.fillRect(loc.x, loc.y, size.x, size.y)
+		g.ctx.fillStyle = s"rgb(0, 255, 0)"
+		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)
 	}
 
 	override def aiMove(g : Game) =
@@ -395,7 +511,7 @@ extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE), -1, 1, "NA", 0, "z
 	blocksMovement = false
 	important = true
 
-	override def draw(ctx: dom.CanvasRenderingContext2D) =
+	override def draw(g : Game) =
 	{
 		//Don't draw anything, this is a proxy for zombies coming in off the edge of the map
 		//ctx.fillStyle = s"rgb(30, 150, 30)"
@@ -416,6 +532,8 @@ extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE), -1, 1, "NA", 0, "z
 			}
 
 			timeToNextSpawn = spawnRate
+
+			dom.console.log("Spawning: " + g.acts.size + " total actors")
 		}
 		else
 		{
@@ -430,7 +548,9 @@ extends Actor(new Pt(-1, -1), new Pt(0, 0), -1, act_.speed, "NA", 0, "delayed " 
 	val act = act_
 	var time = delayTime_
 
-	override def draw(ctx: dom.CanvasRenderingContext2D) =
+	blocksMovement = false
+
+	override def draw(g : Game) =
 	{
 		//nothin'
 	}
@@ -448,6 +568,8 @@ extends Actor(new Pt(-1, -1), new Pt(0, 0), -1, act_.speed, "NA", 0, "delayed " 
 			}
 			else
 			{
+				//unable to spawn, bump our timer so we don't spam it
+				time += g.r.nextInt(1000)
 				//dom.console.log(act.name + " unable to spawn!")
 			}
 		}
@@ -455,6 +577,11 @@ extends Actor(new Pt(-1, -1), new Pt(0, 0), -1, act_.speed, "NA", 0, "delayed " 
 		{
 			time -= 1
 		}
+
+	}
+
+	override def moveToNewMap(g : Game) =
+	{
 
 	}
 }
@@ -468,7 +595,7 @@ extends Actor(line_.start.cloone, new Pt(0, 0), -1, 0, "NA", 0, "projectile " + 
 
 	blocksMovement = false
 
-	override def draw(ctx: dom.CanvasRenderingContext2D)
+	override def draw(g : Game)
 	{
 		//draw handled in movement
 	}
@@ -529,10 +656,10 @@ class Wall(loc_ : Pt, size_ : Pt) extends Obj(loc_, size_)
 {
 	blocksLos = true
 	alwaysVisible = true
-	override def draw(ctx : dom.CanvasRenderingContext2D) =
+	override def draw(g : Game) =
 	{
-		ctx.fillStyle = "blue"
-		ctx.fillRect(loc.x, loc.y, size.x, size.y)
+		g.ctx.fillStyle = "blue"
+		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)
 	}
 
 	def splitWithDoorAt(i : Int, doorSize : Int) : (Wall, Wall) = 
@@ -552,27 +679,3 @@ class Wall(loc_ : Pt, size_ : Pt) extends Obj(loc_, size_)
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
