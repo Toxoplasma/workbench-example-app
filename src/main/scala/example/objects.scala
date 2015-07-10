@@ -181,7 +181,7 @@ class Obj(loc_ : Pt, size_ : Pt)
 
 
 class Actor(loc_ : Pt, size_ : Pt,
-			hp_ : Int, speed_ : Int,
+			hp_ : Double, speed_ : Int,
 			faction_ : String, points_ : Int, name_ : String)
 extends Obj(loc_, size_)
 {
@@ -197,6 +197,10 @@ extends Obj(loc_, size_)
 	var momentumFactor = GV.NORMMOMENTUMFACTOR
 
 	var important = false
+
+	var lastLoc = new Pt(-1, -1)
+
+	var effects = scala.collection.mutable.Set[String]()
 
 	def changeLoc(newLoc : Pt) = //newX : Int, newY : Int) =
 	{
@@ -226,6 +230,9 @@ extends Obj(loc_, size_)
 	def moveLoc(dx : Double, dy : Double, g : Game) : Boolean =
 	{
 		var moved = false
+
+		val tempLoc = loc.cloone
+
 		//Check collisions
 		if(dx != 0 && canMoveTo(new Pt(loc.x + dx, loc.y), g)) //check x movement
 		{
@@ -238,6 +245,8 @@ extends Obj(loc_, size_)
 			loc.y += dy
 			moved = true
 		}
+
+		if(moved) lastLoc = tempLoc
 		
 		return moved
 	}
@@ -275,7 +284,7 @@ extends Obj(loc_, size_)
 		momentum = new Pt(changeX, changeY)
 	}
 
-	def takeDamage(source : Actor, damage : Int, pushFactor : Double, g : Game) =
+	def takeDamage(source : Actor, damage : Double, pushFactor : Double, g : Game) =
 	{
 		dom.console.log(source.name + " does " + damage + " damage to " + name)
 		hp -= damage
@@ -338,106 +347,342 @@ extends Obj(loc_, size_)
 	{
 		//nothing
 	}
+
+	def isDead() =
+	{
+		hp <= 0
+	}
 }
 
+
+class Item(loc_ : Pt)
+extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE), -1, 0, "NA", 0, "item")
+{
+	blocksMovement = false
+
+	def pickup(owner : Actor)
+	{
+		//yeah
+	}
+
+	override def aiMove(g : Game) =
+	{
+		//check if the anyone valid collides with us
+		for(a <- g.acts)
+		{
+			if(collides(a) && a.canTakeItem(this))
+			{
+				pickup(a)
+
+				//and remove us
+				g.removeActor(this)
+			}
+		}
+	}
+}
 
 
 class AmmoPack(loc_ : Pt, amt_ : Int)
-extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE), -1, 0, "NA", 0, "ammo pack")
+extends Item(loc_)
 {
 	val amount = amt_
 
-	blocksMovement = false
-
 	override def draw(g : Game) =
 	{
-		g.ctx.fillStyle = s"rgb(100, 100, 100)"
-		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)
-		g.ctx.fillStyle = s"rgb(0, 200, 255)"
-		g.ctx.fillRect(loc.x + 2, loc.y + 2, size.x - 4, size.y - 4)
+		val img = g.images("item_ammobox")
+		g.ctx.drawImage(img, loc.x, loc.y, GV.NORMUNITSIZE, GV.NORMUNITSIZE)
 	}
 
-	override def aiMove(g : Game) =
+	override def pickup(owner: Actor)
 	{
-		//check if the anyone valid collides with us
-		for(a <- g.acts)
+		//if it's a human give 'em some ammo
+		owner match 
 		{
-			if(collides(a) && a.canTakeItem(this))
-			{
-				a match {
-					case h : BaseHuman => 
-						h.gun.ammo += amount
-					case _ => //nothing
-				}
-
-				//and remove us
-				g.removeActor(this)
-			}
+			case h : BaseHuman => 
+				h.gun.ammo += amount
+			case _ => //nothing
 		}
 	}
 }
+
+class MediumAmmoPack(loc_ : Pt)
+extends AmmoPack(loc_, GV.AMMOPACK_AMOUNT)
 
 class HealthPack(loc_ : Pt, amt_ : Int)
-extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE), -1, 0, "NA", 0, "ammo pack")
+extends Item(loc_)
 {
 	val amount = amt_
 
-	blocksMovement = false
-
 	override def draw(g : Game) =
 	{
-		g.ctx.fillStyle = s"rgb(100, 100, 100)"
-		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)
-		g.ctx.fillStyle = s"rgb(255, 200, 0)"
-		g.ctx.fillRect(loc.x + 2, loc.y + 2, size.x - 4, size.y - 4)
+		val img = g.images("item_healthkit")
+		g.ctx.drawImage(img, loc.x, loc.y, GV.NORMUNITSIZE, GV.NORMUNITSIZE)
 	}
 
-	override def aiMove(g : Game) =
+	override def pickup(owner : Actor) =
 	{
-		//check if the anyone valid collides with us
-		for(a <- g.acts)
-		{
-			if(collides(a) && a.canTakeItem(this))
-			{
-				//the player gets some ammo!
-				a.hp = min(g.player.hp + amount, g.player.maxHp)
-
-				//and remove us
-				g.removeActor(this)
-			}
-		}
+		//the player gets some health!
+		owner.hp = min(owner.hp + amount, owner.maxHp)
 	}
 }
 
+class MediumHealthPack(loc_ : Pt)
+extends HealthPack(loc_, GV.HEALTHPACK_AMOUNT)
+
+
+
 class GroundGun(loc_ : Pt, gun_ : Gun, displayName_ : String)
-extends Actor(loc_, new Pt(20, 20), -1, 0, "NA", 0, "ground gun")
+extends Item(loc_)
 {
 	val gun = gun_
 	val displayName = displayName_
-
-	blocksMovement = false
 
 	override def draw(g : Game) =
 	{
 		//draw from the game thing
 		val img = g.images(displayName)
-		g.ctx.drawImage(img, loc.x, loc.y)
+
+		//draw the location scaled to the normal size
+		g.ctx.drawImage(img, loc.x, loc.y, GV.NORMUNITSIZE*2, GV.NORMUNITSIZE*2)
+	}
+
+	override def pickup(owner : Actor)
+	{
+		gun.owner = owner
+		owner match 
+		{
+			case h : BaseHuman => 
+				h.gun = gun
+			case _ => //nothing
+		}
+	}
+}
+
+
+class UsableItem(owner_ : Actor, name_ : String, displayName_ : String)
+{
+	var owner = owner_
+	val name = name_
+	val displayName = displayName_
+
+	def use(g : Game) = {}
+}
+
+class GroundUsableItem(loc_ : Pt, item_ : UsableItem, displayName_ : String)
+extends Item(loc_)
+{
+	val item = item_
+
+	override def draw(g : Game) =
+	{
+		//draw from the game thing
+		val img = g.images(item.displayName)
+		g.ctx.drawImage(img, loc.x, loc.y, GV.NORMUNITSIZE, GV.NORMUNITSIZE)
+	}
+
+	override def pickup(owner : Actor)
+	{
+		owner match {
+			case p : Player => 
+				item.owner = p
+				p.addUsableItem(item)
+			case _ => //no one else can use items 
+		}
+	}
+}
+
+class ThrowableItem(owner_ : Actor, name_ : String, picture_ : String)
+extends UsableItem(owner_, name_, picture_)
+{
+	val dist = GV.PLAYER_THROWDISTANCE
+	val speed = GV.PLAYER_THROWSPEED
+
+	def getThrowPosition() : Pt =
+	{
+		//compute where it should land
+		val d = owner.loc - owner.lastLoc
+		val diff = d * dist
+
+		return owner.loc + diff
+	}
+}
+
+
+class UsableLandMine(owner_ : Actor)
+extends UsableItem(owner_, "land mine", "item_landmine")
+{
+	override def use(g : Game) =
+	{
+		//drop a land mine at the owner's location
+		val mine = new LandMine(owner.loc.cloone)
+
+		g.addActor(mine)
+	}
+}
+
+class UsableGrenade(owner_ : Actor)
+extends ThrowableItem(owner_, "grenade", "item_pipebomb")
+{
+	override def use(g : Game)
+	{
+		val dest = getThrowPosition
+
+		//make a spitter spit there
+		val spit = new SimpleBomb(dest, GV.GRENADE_RADIUS, GV.GRENADE_DAMAGE)
+		val spitLine = SimpleLine(owner.loc.cloone, dest, "black")
+		
+		val proj = new ProjectileActor(spit, spitLine, speed)
+		g.addActor(proj)
+	}
+}
+
+class UsablePipeBomb(owner_ : Actor)
+//extends UsableItem(owner_, "pipe bomb", "item_pipebomb")
+extends ThrowableItem(owner_, "pipe bomb", "item_pipebomb")
+{
+	override def use(g : Game) =
+	{
+		val dest = getThrowPosition
+
+		//make a spitter spit there
+		val spit = new PipeBomb(dest)
+		val spitLine = SimpleLine(owner.loc.cloone, dest, "black")
+		
+		val proj = new ProjectileActor(spit, spitLine, speed)
+		g.addActor(proj)
+	}
+}
+
+class UsableSpitterAcid(owner_ : Actor)
+extends ThrowableItem(owner_, "spitter acid", "item_acid")
+{
+	override def use(g : Game) =
+	{
+		//compute where it should land
+		val dest = getThrowPosition
+
+		//make a spitter spit there
+		val spit = new CausticAcid(dest, GV.SPITTER_SPITRADIUS, GV.SPITTER_SPITREDUCERATE)
+		val spitLine = SimpleLine(owner.loc.cloone, dest, "black")
+		
+		val proj = new ProjectileActor(spit, spitLine, speed)
+		g.addActor(proj)
+	}
+}
+
+class PipeBomb(loc_ : Pt)
+extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE),
+				100000, 0, "human", 0, "pipe bomb")
+{
+	var timer = GV.PIPEBOMB_TIME
+
+	momentumFactor = 0
+
+	override def draw(g : Game) =
+	{
+		//draw from the game thing
+		val img = g.images("item_pipebomb")
+		g.ctx.drawImage(img, loc.x, loc.y, GV.NORMUNITSIZE, GV.NORMUNITSIZE)
 	}
 
 	override def aiMove(g : Game) =
 	{
-		//check if the anyone valid collides with us
+		//tick down, when ticked down, spawn a simple bomb and explode
+		//TODO: HERE
+		if(timer <= 0)
+		{
+			//explode
+			g.removeActor(this)
+			val bomb = new SimpleBomb(loc, GV.PIPEBOMB_RADIUS, GV.PIPEBOMB_DAMAGE)
+			g.addActor(bomb)
+		}
+		else
+		{
+			timer -= 1
+		}
+	}
+}
+
+//all it does is explode
+class SimpleBomb(loc_ : Pt, radius_ : Int, damage_ : Int)
+extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE),
+				-1, 0, "NA", 0, "bomb")
+{
+	val radius = radius_
+	val damage = damage_
+	//should never be drawn
+
+
+	override def aiMove(g : Game) = 
+	{
+		//we explode!
 		for(a <- g.acts)
 		{
-			if(collides(a) && a.canTakeItem(this))
+			if(a.faction != "NA" && distanceTo(a) < radius) //they take damage
 			{
-				//the player picks up the gun!
-				gun.owner = g.player
-				g.player.gun = gun
-
-				//and remove us
-				g.removeActor(this)
+				a.takeDamage(this, damage, 1, g)
 			}
+		}
+
+		g.removeActor(this)
+	}
+}
+
+//TODO: make this just spawn a bomb so that we don't have copy-pasted explode code
+class LandMine(loc_ : Pt)
+extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE),
+				-1, 0, "NA", 0, "land mine")
+{
+	val radius = GV.LANDMINE_RADIUS
+	val damage = GV.LANDMINE_DAMAGE
+
+	var enabledTimer = GV.LANDMINE_DELAY
+
+	blocksMovement = false
+	lowPriority = true
+
+	override def draw(g : Game) =
+	{
+		if(enabledTimer <= 0)
+		{
+			g.ctx.fillStyle = s"rgb(50, 50, 50)"
+			g.ctx.fillRect(loc.x, loc.y, size.x, size.y)
+			g.ctx.fillStyle = s"rgb(200, 50, 50)"
+			g.ctx.fillRect(loc.x + 2, loc.y + 2, size.x - 4, size.y - 4)
+		}
+		else
+		{
+			g.ctx.fillStyle = s"rgb(50, 50, 50)"
+			g.ctx.fillRect(loc.x, loc.y, size.x, size.y)
+			g.ctx.fillStyle = s"rgb(50, 50, 50)"
+			g.ctx.fillRect(loc.x + 2, loc.y + 2, size.x - 4, size.y - 4)
+		}
+	}
+
+	override def aiMove(g : Game) = 
+	{
+		if(enabledTimer <= 0)
+		{
+			for(a <- g.acts)
+			{
+				if(a.faction != "NA" && collides(a)) //if it's a real actor and we collide with it
+				{
+					//we explode!
+					for(a <- g.acts)
+					{
+						if(distanceTo(a) < radius) //they take damage
+						{
+							a.takeDamage(this, damage, 1, g)
+						}
+					}
+
+					g.removeActor(this)
+				}
+			}
+		}
+		else
+		{
+			enabledTimer -= 1
 		}
 	}
 }
@@ -447,7 +692,7 @@ extends Actor(loc_, new Pt(20, 20), -1, 0, "NA", 0, "ground gun")
 
 class CausticAcid(loc_ : Pt, radius_ : Int, reduceRate_ : Int)
 extends Actor(new Pt(loc_.x - radius_, loc_.y - radius_), new Pt(radius_ * 2, radius_ * 2),
-				-1, 0, "NA", 0, "acid splat")
+				-1, 0, "NA", 0, "caustic acid")
 {
 	var radius = radius_
 
@@ -459,7 +704,7 @@ extends Actor(new Pt(loc_.x - radius_, loc_.y - radius_), new Pt(radius_ * 2, ra
 	blocksMovement = false
 	lowPriority = true
 
-	override def draw(g : Game) = //TODO: switch this to take in game rather than ctx
+	override def draw(g : Game) =
 	{
 		g.ctx.fillStyle = s"rgb(0, 255, 0)"
 		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)
@@ -470,7 +715,7 @@ extends Actor(new Pt(loc_.x - radius_, loc_.y - radius_), new Pt(radius_ * 2, ra
 		//first, check if anyone gets damaged
 		for(a <- g.acts)
 		{
-			if(a.faction != "NA" && collides(a)) //if it's a real actor and we collide with it
+			if(a.faction != "NA" && collides(a) && hasLosTo(a, g)) //if it's a real actor and we collide with it
 			{
 				a.takeDamage(this, 1, 0, g)
 			}
@@ -497,6 +742,64 @@ extends Actor(new Pt(loc_.x - radius_, loc_.y - radius_), new Pt(radius_ * 2, ra
 		else if(reduceTimer > 0) //if we're a timed puddle, then count down the timer
 		{
 			reduceTimer -= 1
+		}
+	}
+}
+
+class FirePatch(loc_ : Pt, radius_ : Int, timer_ : Int)
+extends Actor(new Pt(loc_.x - radius_, loc_.y - radius_), new Pt(radius_ * 2, radius_ * 2),
+				-1, 0, "NA", 0, "fire")
+{
+	var radius = radius_
+
+	var timer = timer_
+
+	val actsOnFire = scala.collection.mutable.Set[Actor]()
+
+	blocksMovement = false
+	lowPriority = true
+
+	override def draw(g : Game) =
+	{
+		g.ctx.fillStyle = s"rgb(200, 50, 50)"
+		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)
+
+		//draw fire on all the dudes on fire
+
+	}
+
+	override def aiMove(g : Game) =
+	{
+		//first, check if anyone gets set on fire
+		for(a <- g.acts)
+		{
+			if(a.faction != "NA" && collides(a) && hasLosTo(a, g)) //if it's a real actor and we collide with it
+			{
+				actsOnFire += a
+			}
+		}
+
+		//now process fire
+		for(a <- actsOnFire)
+		{
+			a.takeDamage(this, GV.FIRE_DAMAGE, 0, g)
+
+			//are they dead?
+			if(a.isDead)
+			{
+				actsOnFire remove a
+			}
+		}
+
+		if(timer <= 0)
+		{
+			//remove ourselves, we're done
+			actsOnFire.clear
+			g.removeActor(this)
+		}
+		else
+		{
+			timer -= 1
 		}
 	}
 }
@@ -636,7 +939,8 @@ extends Actor(line_.start.cloone, new Pt(0, 0), -1, 0, "NA", 0, "projectile " + 
 }
 
 
-
+class DummyItem(loc_ : Pt)
+extends Actor(loc_, new Pt(0, 0), -1, 0, "NA", 0, "dummy")
 
 
 
@@ -678,4 +982,13 @@ class Wall(loc_ : Pt, size_ : Pt) extends Obj(loc_, size_)
 			return (w1, w2)
 		}
 	}
+}
+
+
+
+
+class Effect(effect_ : Actor => Any, draw_ : Game => Any)
+{
+	val effect = effect_
+	val draw = draw_
 }

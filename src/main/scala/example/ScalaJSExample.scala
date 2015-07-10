@@ -14,12 +14,23 @@ import scala.math.{min, max}
 @JSExport
 object ScalaJSExample 
 {
-	def handlePlayerMovement(player : Actor, keys : collection.mutable.Set[Int], g : Game) =
+	def handlePlayerMovement(player : Player, keys : collection.mutable.Set[Int], g : Game) =
 	{
-		if (keys(38)) player.moveLoc(0, -2, g)
-	    if (keys(37)) player.moveLoc(-2, 0, g)
-	    if (keys(39)) player.moveLoc(2, 0, g)
-	    if (keys(40)) player.moveLoc(0, 2, g)
+		var dx = 0
+		var dy = 0
+
+		if (keys(38)) dy -= 2
+	    if (keys(37)) dx -= 2
+	    if (keys(39)) dx += 2
+	    if (keys(40)) dy += 2
+
+	    player.moveLoc(dx, dy, g)
+
+	    if (keys(32)) 
+	    {
+	    	player.useItem(g)
+	    	keys.remove(32) //we don't want to use another item until they release space and repress it
+	    }
 	}
 
 	@JSExport
@@ -38,6 +49,7 @@ object ScalaJSExample
 		//val player = 
 		//g.addActor(player)
 		//g.addHeadText(g.player, "hi there", 200)
+		//g.player.usable = new UsableLandMine(g.player)
 
 		//Make the map
 		g.genMap()
@@ -47,18 +59,19 @@ object ScalaJSExample
 		val zed = new Spitter(new Pt(GV.GAMEX / 2 - 10, GV.GAMEY - 50))
 		//g.addActor(zed)
 
-		//val puddle = new CausticAcid(new Pt(100, 100), 70, 5)
-		//g.addActor(puddle)
+		//val item = new LandMine(new Pt(100, 100))
+		//g.addActor(item)
 
-		val puddle = new AmmoPack(new Pt(100, 100), 50)
-		//g.addActor(puddle)
+		val puddle = new FirePatch(new Pt(100, 100), 100, 5000)
+		g.addActor(puddle)
 
 		//make a hooman
 		val hooman = new Human(new Pt(g.player.loc.x + 50, g.player.loc.y))
 		//g.addActor(hooman)
 
 		//stick a gun on the ground
-		val thegun = new Gun(GV.AK47_FIRETIME, GV.AK47_DAMAGE, GV.AK47_RANGE, GV.AK47_APS, null)
+		//val thegun = new Gun(GV.AK47_FIRETIME, GV.AK47_DAMAGE, GV.AK47_RANGE, GV.AK47_APS, null)
+		val thegun = new Gun(GV.SNIPER_FIRETIME, GV.SNIPER_DAMAGE, GV.SNIPER_RANGE, GV.SNIPER_APS, null)
 		val grounded = new GroundGun(new Pt(g.player.loc.x + 50, g.player.loc.y), thegun, "ak47")
 		g.addActor(grounded)
 
@@ -188,6 +201,22 @@ object ScalaJSExample
 				barY += 80
 
 				//ctx.drawImage(testimage, 0, 0)
+				//Display the player's items
+				ctx.font = "12px sans-serif"
+				for(item <- g.player.usableItems)
+				{
+					//draw the item
+					val img = g.images(item.displayName)
+					g.ctx.drawImage(img, GV.GAMEX + 5, barY, GV.NORMUNITSIZE*2, GV.NORMUNITSIZE*2)
+
+					//write its name
+					ctx.fillText(item.name, GV.GAMEX + 30, barY + 12)
+
+					//bump the counter
+					barY += GV.NORMUNITSIZE*2 + 5
+
+
+				}
 			}
 		}
 

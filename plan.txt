@@ -3,157 +3,72 @@
 
 Major stuff:
 
-Limited ammo / ammo boxes / health kits
 
 Actual pathfinding
+Should be able to go backwards to previous maps
 
-highscores 
 
+Minor stuff:
 Make the farm house doors not always leftmost/uppermost on the wall they're on
-
+highscores 
+Make you drop a gun when you pick up a new one
+Have better and correctly sized pictures for stuff... auto sizing looks kinda bad
+put a cap on the number of items the player can have
 
 Bugs:
-chargers getting stuck in corners
 spitter spit being able to go through walls and also be invisible sometimes
 zombies sometimes not hitting you when they're next to you
 zombies splooping back and forth because doubles
 
+
+Arts needed:
+	Grenade
+	Human
+	Zombie
+	Explosion?
+	Explosion scuffs
+
+Ideas:
+
+Items
+	Zed guts - disguise yoursefl + maybe allies as zombies for a bit
+	Human guts / boomer bile - paint a zed as human
+	Zombie mind control - take over x closest zombies within a range
+	auto turret - drop it and shoots stuff
+	molotov - yeah
+	fire landmine
+	grav grenade - sucks dudes in
+	grav mine
+	TANK LASSO
+	blink scroll
+
+spitter spit should destroy walls
+
+
+Specials
+	Hook zombie
+		Shoots out a thing, if it hits you you're hooked and can't move away from it
+		But can still act, have to kill it before you can move on
+
+Areas
+	Science lab
+		Teleporters
+		Lasers
+		Turrets
+		Rescue the scientists game?
+		Freaky mutant zombies
+		grav grenades (suck everyone in)
+	
+	Wizard tower
+		Necromancers (summons zombies around them)
+
+	Graveyard
+		Necromancers
+		Zombies appear when you get close to them
+
+	Skyscraper
+		Fight your way upwards to escape
+
+
 SNIPPETS
 
-
-class Charger(loc_ : Pt)
-extends Actor(loc_, new Pt(GV.BIGUNITSIZE, GV.BIGUNITSIZE),
-	200, 1, 
-	"zombie", 5, "charger")
-{
-	var direction = (0, 0)
-
-	val chanceToChangeDirection = 400
-
-	var state = "moving"
-	var chargeLine : SimpleLine = null
-	var chargeError = new Pt(0.0, 0.0)
-	var chargeCooldown = GV.CHARGER_CHARGECOOLDOWN
-	var chargeTimer = 0
-	var chargeRange = GV.CHARGER_CHARGERANGE
-
-	val chargeSpeed = GV.CHARGER_CHARGESPEED
-
-	override def draw(g : Game) =
-	{
-		ctx.fillStyle = s"rgb(100, 150, 100)"
-		ctx.fillRect(loc.x, loc.y, size.x, size.y)
-	}
-
-	override def aiMove(g : Game) =
-	{
-		//we don't do knockback while charging
-
-		//tick charge timer
-		chargeTimer = max(0, chargeTimer - 1)
-
-		if(state == "moving")
-		{
-			//Knockback
-			val changeX = momentum.x * 2 / 4
-			val changeY = momentum.y * 2 / 4
-			moveLoc(changeX, changeY, g)
-			momentum = new Pt(changeX, changeY)
-
-
-			//Get closest in-LOS enemy
-			val closestAct = getClosestEnemyInLOS(g)
-			if(closestAct != null) //possible charge
-			{
-				chargeLine = SimpleLine(loc.cloone, closestAct.loc.cloone, "black")
-			}
-
-
-			if(chargeLine != null && chargeLine.length <= chargeRange && chargeTimer <= 0) //CHARGE!
-			{
-				state = "charging"
-				dom.console.log("Charging")
-				chargeTimer = chargeCooldown
-			}
-			else
-			{
-				//we're not charging, proceed as normal
-				if((0, 0) == direction)
-				{
-					//we're stuck, wander in a different direction
-					direction = (g.r.nextInt(3) - 1, g.r.nextInt(3) - 1)
-				}		
-
-				//try to move there, see if it works
-				if(! moveLoc(direction._1, direction._2, g))
-				{
-					direction = (0, 0)
-				}
-				else
-				{
-					//even if it worked, we sometimes wanna quit
-					if(g.r.nextInt(chanceToChangeDirection) == 0)
-					{
-						direction = (0, 0)
-					}
-				}
-			}
-		}
-		else if(state == "charging")
-		{
-			if(distanceTo(chargeLine.start) > chargeRange)
-			{
-				//we've gone too far, stop charging
-				state = "moving"
-				//dom.console.log("Charging->Moving, too far from start")
-				chargeLine = null
-				chargeError = new Pt(0.0, 0.0)
-			}
-			else
-			{
-				for(i <- 1 to chargeSpeed)
-				{
-					if(state == "charging") //if we hit someone we don't want to keep taking steps
-					{
-						//take a step along the line
-						//val (dx, dy) = chargeLine.unitStep
-						val d = chargeLine.unitStep
-						chargeError = new Pt(chargeError.x + d.x, chargeError.y + d.y)
-
-						val adx = round(chargeError.x).toInt
-						val ady = round(chargeError.y).toInt
-
-						//dom.console.log("ad: " + (adx, ady))
-
-						chargeError = new Pt(chargeError.x - adx, chargeError.y - ady)
-
-						//try to move in that direction
-						moveLoc(adx, ady, g)
-						
-						//did we crash into an actor?
-						for(a <- g.acts)
-						{
-							if(a != this &&  a.faction != "NA" &&
-								a.collides(new Pt(loc.x + adx, loc.y + ady), size))
-							{
-								//we did!
-								//knock 'em up
-								a.takeDamage(this, 10, 4, g)
-								//a.push(this, 40, g)
-								state = "moving" //we hit someone
-								//dom.console.log("Charging->Moving, hit someone")
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	override def moveToNewMap(g: Game)
-	{
-		//tick our timer down a bunch
-		//how long it will take us to get there is loc.y/speed
-		chargeTimer  = max(0, chargeTimer - (loc.y / speed).toInt)
-	}
-}
