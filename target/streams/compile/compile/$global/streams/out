@@ -1,36 +1,329 @@
 [0m[[0mdebug[0m] [0m[0m
 [0m[[0mdebug[0m] [0mInitial source changes: [0m
-[0m[[0mdebug[0m] [0m	removed:Set(/Users/ravi/Documents/prog/dogedots/src/main/scala/example/objects.scala, /Users/ravi/Documents/prog/dogedots/src/main/scala/example/ScalaJSExample.scala)[0m
+[0m[[0mdebug[0m] [0m	removed:Set(/Users/ravi/Documents/prog/dogedots/src/main/scala/example/ScalaJSExample.scala, /Users/ravi/Documents/prog/dogedots/src/main/scala/example/objects.scala)[0m
 [0m[[0mdebug[0m] [0m	added: Set()[0m
 [0m[[0mdebug[0m] [0m	modified: Set()[0m
-[0m[[0mdebug[0m] [0mRemoved products: Set(/Users/ravi/Documents/prog/dogedots/target/scala-2.11/classes/objects/Game.class, /Users/ravi/Documents/prog/dogedots/target/scala-2.11/classes/objects/Human.class, /Users/ravi/Documents/prog/dogedots/target/scala-2.11/classes/objects/Actor.class, /Users/ravi/Documents/prog/dogedots/target/scala-2.11/classes/example/ScalaJSExample$$anonfun$main$2.class, /Users/ravi/Documents/prog/dogedots/target/scala-2.11/classes/objects/Game$$anonfun$collision$1.class, /Users/ravi/Documents/prog/dogedots/target/scala-2.11/classes/objects/ZombieSpawner.class, /Users/ravi/Documents/prog/dogedots/target/scala-2.11/classes/objects/Zombie.class, /Users/ravi/Documents/prog/dogedots/target/scala-2.11/classes/objects/SimpleLine$.class, /Users/ravi/Documents/prog/dogedots/target/scala-2.11/classes/example/ScalaJSExample$$anonfun$main$3.class, /Users/ravi/Documents/prog/dogedots/target/scala-2.11/classes/example/ScalaJSExample.class, /Users/ravi/Documents/prog/dogedots/target/scala-2.11/classes/objects/Obj.class, /Users/ravi/Documents/prog/dogedots/target/scala-2.11/classes/example/ScalaJSExample$$anonfun$example$ScalaJSExample$$run$1$1.class, /Users/ravi/Documents/prog/dogedots/target/scala-2.11/classes/objects/Game$$anonfun$genMap$1.class, /Users/ravi/Documents/prog/dogedots/target/scala-2.11/classes/objects/Obj$$anonfun$1.class, /Users/ravi/Documents/prog/dogedots/target/scala-2.11/classes/example/ScalaJSExample$$anonfun$main$1.class, /Users/ravi/Documents/prog/dogedots/target/scala-2.11/classes/objects/Obj$$anonfun$hasLosTo$1.class, /Users/ravi/Documents/prog/dogedots/target/scala-2.11/classes/objects/SimpleLine.class, /Users/ravi/Documents/prog/dogedots/target/scala-2.11/classes/objects/Game$$anonfun$runAllAIs$1.class, /Users/ravi/Documents/prog/dogedots/target/scala-2.11/classes/objects/Game$$anonfun$drawAll$1.class, /Users/ravi/Documents/prog/dogedots/target/scala-2.11/classes/example/ScalaJSExample$.class, /Users/ravi/Documents/prog/dogedots/target/scala-2.11/classes/objects/Wall.class, /Users/ravi/Documents/prog/dogedots/target/scala-2.11/classes/objects/Actor$$anonfun$canMoveTo$1.class, /Users/ravi/Documents/prog/dogedots/target/scala-2.11/classes/objects/DelayedActor.class, /Users/ravi/Documents/prog/dogedots/target/scala-2.11/classes/objects/Game$$anonfun$genMap$2.class)[0m
+[0m[[0mdebug[0m] [0mRemoved products: Set()[0m
 [0m[[0mdebug[0m] [0mExternal API changes: API Changes: Set()[0m
 [0m[[0mdebug[0m] [0mModified binary dependencies: Set()[0m
-[0m[[0mdebug[0m] [0mInitial directly invalidated sources: Set(/Users/ravi/Documents/prog/dogedots/src/main/scala/example/objects.scala, /Users/ravi/Documents/prog/dogedots/src/main/scala/example/ScalaJSExample.scala)[0m
+[0m[[0mdebug[0m] [0mInitial directly invalidated sources: Set(/Users/ravi/Documents/prog/dogedots/src/main/scala/example/ScalaJSExample.scala, /Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala, /Users/ravi/Documents/prog/dogedots/src/main/scala/example/objects.scala, /Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala)[0m
 [0m[[0mdebug[0m] [0m[0m
 [0m[[0mdebug[0m] [0mSources indirectly invalidated by:[0m
-[0m[[0mdebug[0m] [0m	product: Set(/Users/ravi/Documents/prog/dogedots/src/main/scala/example/objects.scala, /Users/ravi/Documents/prog/dogedots/src/main/scala/example/ScalaJSExample.scala)[0m
+[0m[[0mdebug[0m] [0m	product: Set()[0m
 [0m[[0mdebug[0m] [0m	binary dep: Set()[0m
 [0m[[0mdebug[0m] [0m	external source: Set()[0m
-[0m[[0mdebug[0m] [0mAll initially invalidated sources: Set(/Users/ravi/Documents/prog/dogedots/src/main/scala/example/objects.scala, /Users/ravi/Documents/prog/dogedots/src/main/scala/example/ScalaJSExample.scala)[0m
-[0m[[0mdebug[0m] [0mRecompiling all 0 sources: invalidated sources (2) exceeded 50.0% of all sources[0m
-[0m[[0mdebug[0m] [0mInvalidating /Users/ravi/Documents/prog/dogedots/src/main/scala/example/objects.scala...[0m
-[0m[[0mdebug[0m] [0mInvalidating (transitively) by inheritance from /Users/ravi/Documents/prog/dogedots/src/main/scala/example/objects.scala...[0m
-[0m[[0mdebug[0m] [0mInitial set of included nodes: Set(/Users/ravi/Documents/prog/dogedots/src/main/scala/example/objects.scala)[0m
-[0m[[0mdebug[0m] [0mInvalidated by transitive inheritance dependency: Set(/Users/ravi/Documents/prog/dogedots/src/main/scala/example/objects.scala)[0m
-[0m[[0mdebug[0m] [0mThe /Users/ravi/Documents/prog/dogedots/src/main/scala/example/objects.scala source file has the following regular definitions changed:[0m
-[0m[[0mdebug[0m] [0m	Gun, notify, addObj, shoot, dest, NORMUNITSIZE, name, collides, wait, copy$default$2, $asInstanceOf, drawAll, difficulty, addActor, Wall, FULLX, productArity, removeActor, equals, sizeX, collision, center, takeDamage, timeToNextShot, asInstanceOf, DelayedActor, sizeY, shotCooldown, chanceToChangeDirection, maxHp, synchronized, score, mapSizeX, firingSpeed, $isInstanceOf, momentum, Zombie, GAMEY, direction, hasLosTo, canEqual, ZombieSpawner, color, damage, aiMove, changeLoc, productPrefix, tick, collidesLine, notifyAll, BaseHuman, isInstanceOf, canShoot, blocksMovement, draw, <init>, points, Game, Actor, gun, SimpleLine, player, objs, mapSizeY, GAMEX, faction, ==, range, distanceTo, clone, Human, canMoveTo, Obj, copy$default$3, acts, copy, end, moveLoc, shotCountdown, toString, target, getClosestEnemyInLOS, length, !=, owner, moveToNewMap, time, getClass, genMap, runAllAIs, copy$default$1, hp, r, start, locX, act, timeToNextSpawn, GV, linesToDraw, ne, spawnRate, FULLY, inside, eq, productIterator, pointSetCollides, ##, speed, finalize, productElement, hashCode, locY.[0m
-[0m[[0mdebug[0m] [0mAll member reference dependencies will be considered within this context.[0m
-[0m[[0mdebug[0m] [0mInvalidating /Users/ravi/Documents/prog/dogedots/src/main/scala/example/ScalaJSExample.scala...[0m
-[0m[[0mdebug[0m] [0mInvalidating (transitively) by inheritance from /Users/ravi/Documents/prog/dogedots/src/main/scala/example/ScalaJSExample.scala...[0m
-[0m[[0mdebug[0m] [0mInitial set of included nodes: Set(/Users/ravi/Documents/prog/dogedots/src/main/scala/example/ScalaJSExample.scala)[0m
-[0m[[0mdebug[0m] [0mInvalidated by transitive inheritance dependency: Set(/Users/ravi/Documents/prog/dogedots/src/main/scala/example/ScalaJSExample.scala)[0m
-[0m[[0mdebug[0m] [0mThe /Users/ravi/Documents/prog/dogedots/src/main/scala/example/ScalaJSExample.scala source file has the following regular definitions changed:[0m
-[0m[[0mdebug[0m] [0m	notify, wait, $asInstanceOf, handlePlayerMovement, equals, ScalaJSExample, asInstanceOf, synchronized, $isInstanceOf, main, notifyAll, isInstanceOf, ==, clone, toString, !=, getClass, ne, eq, $js$exported$meth$main, ##, finalize, hashCode.[0m
-[0m[[0mdebug[0m] [0mAll member reference dependencies will be considered within this context.[0m
-[0m[[0mdebug[0m] [0mNew invalidations:[0m
-[0m[[0mdebug[0m] [0m	Set()[0m
-[0m[[0mdebug[0m] [0mInitial set of included nodes: Set()[0m
-[0m[[0mdebug[0m] [0mPreviously invalidated, but (transitively) depend on new invalidations:[0m
-[0m[[0mdebug[0m] [0m	Set()[0m
-[0m[[0mdebug[0m] [0mAll newly invalidated sources after taking into account (previously) recompiled sources:Set()[0m
+[0m[[0mdebug[0m] [0mAll initially invalidated sources: Set(/Users/ravi/Documents/prog/dogedots/src/main/scala/example/ScalaJSExample.scala, /Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala, /Users/ravi/Documents/prog/dogedots/src/main/scala/example/objects.scala, /Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala)[0m
+[0m[[0mdebug[0m] [0mRecompiling all 3 sources: invalidated sources (4) exceeded 50.0% of all sources[0m
+[0m[[0minfo[0m] [0mCompiling 3 Scala sources to /Users/ravi/Documents/prog/dogedots/target/scala-2.11/classes...[0m
+[0m[[0mdebug[0m] [0mGetting compiler-interface from component compiler for Scala 2.11.5[0m
+[0m[[0mdebug[0m] [0mGetting compiler-interface from component compiler for Scala 2.11.5[0m
+[0m[[0mdebug[0m] [0mRunning cached compiler 257320c0, interfacing (CompilerInterface) with Scala compiler version 2.11.5[0m
+[0m[[0mdebug[0m] [0mCalling Scala compiler with arguments  (CompilerInterface):[0m
+[0m[[0mdebug[0m] [0m	-Xplugin:/Users/ravi/.ivy2/cache/org.scala-js/scalajs-compiler_2.11.5/jars/scalajs-compiler_2.11.5-0.6.1.jar[0m
+[0m[[0mdebug[0m] [0m	-bootclasspath[0m
+[0m[[0mdebug[0m] [0m	/Library/Java/JavaVirtualMachines/jdk1.7.0_51.jdk/Contents/Home/jre/lib/resources.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_51.jdk/Contents/Home/jre/lib/rt.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_51.jdk/Contents/Home/jre/lib/sunrsasign.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_51.jdk/Contents/Home/jre/lib/jsse.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_51.jdk/Contents/Home/jre/lib/jce.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_51.jdk/Contents/Home/jre/lib/charsets.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_51.jdk/Contents/Home/jre/lib/jfr.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_51.jdk/Contents/Home/jre/classes:/Users/ravi/.ivy2/cache/org.scala-lang/scala-library/jars/scala-library-2.11.5.jar[0m
+[0m[[0mdebug[0m] [0m	-classpath[0m
+[0m[[0mdebug[0m] [0m	/Users/ravi/Documents/prog/dogedots/target/scala-2.11/classes:/Users/ravi/.ivy2/cache/org.scala-js/scalajs-library_2.11/jars/scalajs-library_2.11-0.6.1.jar:/Users/ravi/.ivy2/cache/org.scala-js/scalajs-dom_sjs0.6_2.11/jars/scalajs-dom_sjs0.6_2.11-0.8.0.jar[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:58: not found: type Actor[0m
+[0m[[31merror[0m] [0mextends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE), hp_, 2, "human", 0, "human")[0m
+[0m[[31merror[0m] [0m        ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:16: not found: type UsableItem[0m
+[0m[[31merror[0m] [0m	var usableItems = new scala.collection.mutable.Stack[UsableItem]()[0m
+[0m[[31merror[0m] [0m	                                                     ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:18: not found: type Actor[0m
+[0m[[31merror[0m] [0m	override def canTakeItem(item : Actor) : Boolean =[0m
+[0m[[31merror[0m] [0m	                                ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:27: not found: value loc[0m
+[0m[[31merror[0m] [0m		g.ctx.drawImage(img, loc.x, loc.y, GV.NORMUNITSIZE, GV.NORMUNITSIZE)[0m
+[0m[[31merror[0m] [0m		                     ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:27: not found: value loc[0m
+[0m[[31merror[0m] [0m		g.ctx.drawImage(img, loc.x, loc.y, GV.NORMUNITSIZE, GV.NORMUNITSIZE)[0m
+[0m[[31merror[0m] [0m		                            ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:233: not found: type Actor[0m
+[0m[[31merror[0m] [0mclass Gun(firingSpeed_ : Int, damage_ : Int, range_ : Int, ammoPerShot_ : Int, owner_ : Actor)[0m
+[0m[[31merror[0m] [0m                                                                                        ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:72: not found: value getClosestEnemyInLOS[0m
+[0m[[31merror[0m] [0m			val closestAct = getClosestEnemyInLOS(g)[0m
+[0m[[31merror[0m] [0m			                 ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:75: not found: value distanceTo[0m
+[0m[[31merror[0m] [0m				val distance =  distanceTo(closestAct)[0m
+[0m[[31merror[0m] [0m				                ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:251: not found: type Actor[0m
+[0m[[31merror[0m] [0m	def shoot(target : Actor, g : Game)[0m
+[0m[[31merror[0m] [0m	                   ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:48: not found: type UsableItem[0m
+[0m[[31merror[0m] [0m	def addUsableItem(item : UsableItem)[0m
+[0m[[31merror[0m] [0m	                         ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala:43: not found: type Obj[0m
+[0m[[31merror[0m] [0m	def addHeadText(o : Obj, text : String, time : Int)[0m
+[0m[[31merror[0m] [0m	                    ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:154: not found: type AmmoPack[0m
+[0m[[31merror[0m] [0m			val pack = new AmmoPack(loc, gun.ammo)[0m
+[0m[[31merror[0m] [0m			               ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:154: not found: value loc[0m
+[0m[[31merror[0m] [0m			val pack = new AmmoPack(loc, gun.ammo)[0m
+[0m[[31merror[0m] [0m			                        ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala:30: not found: type Actor[0m
+[0m[[31merror[0m] [0m	val acts = scala.collection.mutable.Set[Actor]()[0m
+[0m[[31merror[0m] [0m	                                        ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala:27: not found: type Obj[0m
+[0m[[31merror[0m] [0m	val objs = scala.collection.mutable.Set[Obj]()[0m
+[0m[[31merror[0m] [0m	                                        ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala:81: not found: type Actor[0m
+[0m[[31merror[0m] [0m	def addActor(newAct : Actor) = [0m
+[0m[[31merror[0m] [0m	                      ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:159: not found: type Actor[0m
+[0m[[31merror[0m] [0m	override def canTakeItem(item : Actor) : Boolean =[0m
+[0m[[31merror[0m] [0m	                                ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:163: not found: type AmmoPack[0m
+[0m[[31merror[0m] [0m			case ammo : AmmoPack =>[0m
+[0m[[31merror[0m] [0m			            ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:169: not found: type HealthPack[0m
+[0m[[31merror[0m] [0m			case health : HealthPack =>[0m
+[0m[[31merror[0m] [0m			              ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:185: not found: value loc[0m
+[0m[[31merror[0m] [0m		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)[0m
+[0m[[31merror[0m] [0m		               ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:185: not found: value loc[0m
+[0m[[31merror[0m] [0m		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)[0m
+[0m[[31merror[0m] [0m		                      ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:185: not found: value size[0m
+[0m[[31merror[0m] [0m		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)[0m
+[0m[[31merror[0m] [0m		                             ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:185: not found: value size[0m
+[0m[[31merror[0m] [0m		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)[0m
+[0m[[31merror[0m] [0m		                                     ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:194: not found: value hasLosTo[0m
+[0m[[31merror[0m] [0m		if(! hasSeenPlayer && hasLosTo(g.player, g))[0m
+[0m[[31merror[0m] [0m		                      ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:200: not found: value hp[0m
+[0m[[31merror[0m] [0m		if(! isLowHealth && hp <= 20)[0m
+[0m[[31merror[0m] [0m		                    ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:208: value loc is not a member of enemies.Player[0m
+[0m[[31merror[0m] [0m			val destX = g.player.loc.x + g.r.nextInt(GV.NORMUNITSIZE * 10) - GV.NORMUNITSIZE*5[0m
+[0m[[31merror[0m] [0m			                     ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:209: value loc is not a member of enemies.Player[0m
+[0m[[31merror[0m] [0m			val destY = g.player.loc.y + g.r.nextInt(GV.NORMUNITSIZE * 10) - GV.NORMUNITSIZE*5[0m
+[0m[[31merror[0m] [0m			                     ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:214: not found: value loc[0m
+[0m[[31merror[0m] [0m		var dx = min(dest.x - loc.x, 2)[0m
+[0m[[31merror[0m] [0m		                      ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:217: not found: value loc[0m
+[0m[[31merror[0m] [0m		var dy = min(dest.y - loc.y, 2)[0m
+[0m[[31merror[0m] [0m		                      ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:220: not found: value moveLoc[0m
+[0m[[31merror[0m] [0m		if(! moveLoc(dx, dy, g))[0m
+[0m[[31merror[0m] [0m		     ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:281: not found: type Actor[0m
+[0m[[31merror[0m] [0mextends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE),[0m
+[0m[[31merror[0m] [0m        ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:285: not found: type Actor[0m
+[0m[[31merror[0m] [0m	var target : Actor = null[0m
+[0m[[31merror[0m] [0m	             ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:294: not found: value loc[0m
+[0m[[31merror[0m] [0m		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)[0m
+[0m[[31merror[0m] [0m		               ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:294: not found: value loc[0m
+[0m[[31merror[0m] [0m		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)[0m
+[0m[[31merror[0m] [0m		                      ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:294: not found: value size[0m
+[0m[[31merror[0m] [0m		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)[0m
+[0m[[31merror[0m] [0m		                             ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:294: not found: value size[0m
+[0m[[31merror[0m] [0m		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)[0m
+[0m[[31merror[0m] [0m		                                     ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:304: not found: value getClosestEnemyInLOS[0m
+[0m[[31merror[0m] [0m		target = getClosestEnemyInLOS(g)[0m
+[0m[[31merror[0m] [0m		         ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:329: not found: value moveLoc[0m
+[0m[[31merror[0m] [0m		if(! moveLoc(direction.x, direction.y, g))[0m
+[0m[[31merror[0m] [0m		     ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:348: not found: type Actor[0m
+[0m[[31merror[0m] [0mextends Actor(loc_, new Pt(GV.HUGEUNITSIZE, GV.HUGEUNITSIZE),[0m
+[0m[[31merror[0m] [0m        ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:352: not found: type Actor[0m
+[0m[[31merror[0m] [0m	var target : Actor = null[0m
+[0m[[31merror[0m] [0m	             ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:358: not found: value momentumFactor[0m
+[0m[[31merror[0m] [0m	momentumFactor = GV.HUGEMOMENTUMFACTOR[0m
+[0m[[31merror[0m] [0m	^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:363: not found: value loc[0m
+[0m[[31merror[0m] [0m		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)[0m
+[0m[[31merror[0m] [0m		               ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:363: not found: value loc[0m
+[0m[[31merror[0m] [0m		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)[0m
+[0m[[31merror[0m] [0m		                      ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:363: not found: value size[0m
+[0m[[31merror[0m] [0m		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)[0m
+[0m[[31merror[0m] [0m		                             ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:363: not found: value size[0m
+[0m[[31merror[0m] [0m		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)[0m
+[0m[[31merror[0m] [0m		                                     ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:373: not found: value getClosestEnemyInLOS[0m
+[0m[[31merror[0m] [0m		target = getClosestEnemyInLOS(g)[0m
+[0m[[31merror[0m] [0m		         ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:390: not found: value moveLoc[0m
+[0m[[31merror[0m] [0m		if(! moveLoc(direction.x, direction.y, g))[0m
+[0m[[31merror[0m] [0m		     ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:415: not found: type Actor[0m
+[0m[[31merror[0m] [0mextends Actor(loc_, new Pt(GV.BIGUNITSIZE, GV.BIGUNITSIZE),[0m
+[0m[[31merror[0m] [0m        ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:431: not found: value momentumFactor[0m
+[0m[[31merror[0m] [0m	momentumFactor = GV.BIGMOMENTUMFACTOR[0m
+[0m[[31merror[0m] [0m	^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:436: not found: value loc[0m
+[0m[[31merror[0m] [0m		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)[0m
+[0m[[31merror[0m] [0m		               ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:436: not found: value loc[0m
+[0m[[31merror[0m] [0m		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)[0m
+[0m[[31merror[0m] [0m		                      ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:436: not found: value size[0m
+[0m[[31merror[0m] [0m		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)[0m
+[0m[[31merror[0m] [0m		                             ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:436: not found: value size[0m
+[0m[[31merror[0m] [0m		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)[0m
+[0m[[31merror[0m] [0m		                                     ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:446: not found: value momentumFactor[0m
+[0m[[31merror[0m] [0m		momentumFactor = GV.CHARGER_CHARGINGMOMENTUMFACTOR[0m
+[0m[[31merror[0m] [0m		^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:455: not found: value momentumFactor[0m
+[0m[[31merror[0m] [0m		momentumFactor = GV.BIGMOMENTUMFACTOR[0m
+[0m[[31merror[0m] [0m		^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:468: not found: value getClosestEnemyInLOS[0m
+[0m[[31merror[0m] [0m			val closestAct = getClosestEnemyInLOS(g)[0m
+[0m[[31merror[0m] [0m			                 ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:471: not found: value loc[0m
+[0m[[31merror[0m] [0m				chargeLine = SimpleLine(loc.cloone, closestAct.loc.cloone, "black")[0m
+[0m[[31merror[0m] [0m				                        ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:489: not found: value moveLoc[0m
+[0m[[31merror[0m] [0m				if(! moveLoc(direction._1, direction._2, g))[0m
+[0m[[31merror[0m] [0m				     ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:505: not found: value distanceTo[0m
+[0m[[31merror[0m] [0m			if(distanceTo(chargeLine.start) > chargeRange)[0m
+[0m[[31merror[0m] [0m			   ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:520: not found: value moveLoc[0m
+[0m[[31merror[0m] [0m						val moveSuccess = moveLoc(d.x, d.y, g)[0m
+[0m[[31merror[0m] [0m						                  ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:549: not found: value loc[0m
+[0m[[31merror[0m] [0m		chargeTimer  = max(0, chargeTimer - (loc.y / speed).toInt)[0m
+[0m[[31merror[0m] [0m		                                     ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:549: not found: value speed[0m
+[0m[[31merror[0m] [0m		chargeTimer  = max(0, chargeTimer - (loc.y / speed).toInt)[0m
+[0m[[31merror[0m] [0m		                                             ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:560: not found: type Actor[0m
+[0m[[31merror[0m] [0mextends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE),[0m
+[0m[[31merror[0m] [0m        ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:575: not found: value loc[0m
+[0m[[31merror[0m] [0m		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)[0m
+[0m[[31merror[0m] [0m		               ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:575: not found: value loc[0m
+[0m[[31merror[0m] [0m		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)[0m
+[0m[[31merror[0m] [0m		                      ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:575: not found: value size[0m
+[0m[[31merror[0m] [0m		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)[0m
+[0m[[31merror[0m] [0m		                             ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:575: not found: value size[0m
+[0m[[31merror[0m] [0m		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)[0m
+[0m[[31merror[0m] [0m		                                     ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:589: not found: value getClosestEnemyInLOS[0m
+[0m[[31merror[0m] [0m			val target = getClosestEnemyInLOS(g)[0m
+[0m[[31merror[0m] [0m			             ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:595: not found: value loc[0m
+[0m[[31merror[0m] [0m				val spitLine = SimpleLine(loc.cloone, target.loc.cloone, "black")[0m
+[0m[[31merror[0m] [0m				                          ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:599: not found: type CausticAcid[0m
+[0m[[31merror[0m] [0m				val spit = new CausticAcid(target.loc.cloone, spitRadius, spitReduceRate)[0m
+[0m[[31merror[0m] [0m				               ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:602: not found: type ProjectileActor[0m
+[0m[[31merror[0m] [0m				val proj = new ProjectileActor(spit, spitLine, 6)[0m
+[0m[[31merror[0m] [0m				               ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:619: not found: value moveLoc[0m
+[0m[[31merror[0m] [0m		if(! moveLoc(direction._1, direction._2, g))[0m
+[0m[[31merror[0m] [0m		     ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:637: not found: value loc[0m
+[0m[[31merror[0m] [0m		spitTimer  = max(0, spitTimer - (loc.y / speed).toInt) [0m
+[0m[[31merror[0m] [0m		                                 ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:637: not found: value speed[0m
+[0m[[31merror[0m] [0m		spitTimer  = max(0, spitTimer - (loc.y / speed).toInt) [0m
+[0m[[31merror[0m] [0m		                                         ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:643: not found: type CausticAcid[0m
+[0m[[31merror[0m] [0m		val spit = new CausticAcid(loc, spitRadius * 2/3, spitReduceRate)[0m
+[0m[[31merror[0m] [0m		               ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/enemies.scala:643: not found: value loc[0m
+[0m[[31merror[0m] [0m		val spit = new CausticAcid(loc, spitRadius * 2/3, spitReduceRate)[0m
+[0m[[31merror[0m] [0m		                           ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala:33: not found: type DelayedActor[0m
+[0m[[31merror[0m] [0m	val delayedActs = scala.collection.mutable.Set[DelayedActor]()[0m
+[0m[[31merror[0m] [0m	                                               ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala:36: not found: type Obj[0m
+[0m[[31merror[0m] [0m	val headTexts = scala.collection.mutable.HashMap[Obj, HeadText]()[0m
+[0m[[31merror[0m] [0m	                                                 ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala:40: value name is not a member of enemies.Player[0m
+[0m[[31merror[0m] [0m	player.name = "Tim Jones"[0m
+[0m[[31merror[0m] [0m	       ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala:49: not found: type Obj[0m
+[0m[[31merror[0m] [0m	def collision(ob : Obj) : Boolean =[0m
+[0m[[31merror[0m] [0m	                   ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala:76: not found: type Obj[0m
+[0m[[31merror[0m] [0m	def addObj(newObj : Obj) =[0m
+[0m[[31merror[0m] [0m	                    ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala:87: not found: type DelayedActor[0m
+[0m[[31merror[0m] [0m	def addDelayed(newDel : DelayedActor) =[0m
+[0m[[31merror[0m] [0m	                        ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala:91: not found: type DelayedActor[0m
+[0m[[31merror[0m] [0m	def removeDelayed(del : DelayedActor) =[0m
+[0m[[31merror[0m] [0m	                        ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala:96: not found: type Actor[0m
+[0m[[31merror[0m] [0m	def removeActor(act : Actor) =[0m
+[0m[[31merror[0m] [0m	                      ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala:196: not found: type Obj[0m
+[0m[[31merror[0m] [0m		val dum = new Obj(new Pt(0, 0), new Pt(GV.GAMEX, GV.GAMEY))[0m
+[0m[[31merror[0m] [0m		              ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala:219: value center is not a member of enemies.Player[0m
+[0m[[31merror[0m] [0m		val (extp1, extp2) = extendLinesOffMap(p1, p1 - player.center, p2, p2 - player.center)[0m
+[0m[[31merror[0m] [0m		                                                       ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala:219: value center is not a member of enemies.Player[0m
+[0m[[31merror[0m] [0m		val (extp1, extp2) = extendLinesOffMap(p1, p1 - player.center, p2, p2 - player.center)[0m
+[0m[[31merror[0m] [0m		                                                                               ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala:224: value x is not a member of Any[0m
+[0m[[31merror[0m] [0m		ctx.lineTo(extp1.x, extp1.y)[0m
+[0m[[31merror[0m] [0m		                 ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala:224: value y is not a member of Any[0m
+[0m[[31merror[0m] [0m		ctx.lineTo(extp1.x, extp1.y)[0m
+[0m[[31merror[0m] [0m		                          ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala:225: value x is not a member of Any[0m
+[0m[[31merror[0m] [0m		ctx.lineTo(extp2.x, extp2.y)[0m
+[0m[[31merror[0m] [0m		                 ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala:225: value y is not a member of Any[0m
+[0m[[31merror[0m] [0m		ctx.lineTo(extp2.x, extp2.y)[0m
+[0m[[31merror[0m] [0m		                          ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala:313: not found: type Obj[0m
+[0m[[31merror[0m] [0m	def drawAllCond(cond : (Obj) => Boolean) =[0m
+[0m[[31merror[0m] [0m	                        ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala:359: not found: type Wall[0m
+[0m[[31merror[0m] [0m		val wally = new Wall(new Pt(0, 0), new Pt(0, 0))[0m
+[0m[[31merror[0m] [0m		                ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala:382: not found: type Wall[0m
+[0m[[31merror[0m] [0m		val starter = new Wall(new Pt(r.nextInt(GV.GAMEX - sWidth), r.nextInt(GV.GAMEY - sHeight)), [0m
+[0m[[31merror[0m] [0m		                  ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala:397: not found: type Wall[0m
+[0m[[31merror[0m] [0m				var newRoom : Wall = null[0m
+[0m[[31merror[0m] [0m				              ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala:405: not found: type Wall[0m
+[0m[[31merror[0m] [0m					newRoom = new Wall(new Pt(last.loc.x + last.size.x - overlap, last.loc.y),[0m
+[0m[[31merror[0m] [0m					              ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala:411: not found: type Wall[0m
+[0m[[31merror[0m] [0m					newRoom = new Wall(new Pt(last.loc.x, last.loc.y + last.size.y - overlap),[0m
+[0m[[31merror[0m] [0m					              ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala:417: not found: type Wall[0m
+[0m[[31merror[0m] [0m					newRoom = new Wall(new Pt(last.loc.x - width + overlap, last.loc.y),[0m
+[0m[[31merror[0m] [0m					              ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala:423: not found: type Wall[0m
+[0m[[31merror[0m] [0m					newRoom = new Wall(new Pt(last.loc.x, last.loc.y - height + overlap),[0m
+[0m[[31merror[0m] [0m					              ^[0m
+[0m[[31merror[0m] [0m/Users/ravi/Documents/prog/dogedots/src/main/scala/example/game.scala:471: value size is not a member of Any[0m
+[0m[[31merror[0m] [0m				val x = r.nextInt(room.size.x.toInt - 2*overlap - GV.NORMUNITSIZE) + overlap + room.loc.x[0m
+[0m[[31merror[0m] [0m				                       ^[0m
+[0m[[31merror[0m] [0m147 errors found[0m
+[0m[[0mdebug[0m] [0mCompilation failed (CompilerInterface)[0m
+[0m[[31merror[0m] [0m(compile:[31mcompile[0m) Compilation failed[0m
