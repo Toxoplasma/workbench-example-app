@@ -1,14 +1,14 @@
 package globalvars
 
-import scala.math.{sqrt, pow}
+import scala.math.{sqrt, pow, Pi}
 
 object GV
 {
 	val GAMEX = 600
 	val GAMEY = 600
 
-	val FULLX = 800
-	val FULLY = 800
+	val FULLX = 900
+	val FULLY = 600
 
 	val OFFMAPCUTOFF = 600
 
@@ -18,26 +18,32 @@ object GV
 
 	val NORMMOMENTUMFACTOR = 0.6
 	val BIGMOMENTUMFACTOR = 0.4
-	val HUGEMOMENTUMFACTOR = 0
+	val HUGEMOMENTUMFACTOR = 0.1
+
+	val MAX_FOV = 80 * Pi/180
 
 
 	val PLAYER_HEALTH = 100
 	val PLAYER_THROWDISTANCE = 50
 	val PLAYER_THROWSPEED = 6
 
+	val JANE_MOLOTOVRATE = 300
+
 	val HUMAN_HEALTH = 50
 	val HUMAN_AMMO = 500
 
-	val BASE_AMMO = 1000
+	val BASE_AMMO = 1000 //player's starting ammo. 100 pistol shots
 
-	val ITEM_CHANCE = 1
+	val ITEM_CHANCE = 2 //1 in this
 
-	val AMMO_CHANCE = 14
-	val HEALTH_CHANCE = 6
+	val AMMO_CHANCE = 5
+	val HEALTH_CHANCE = 5
 	val LANDMINE_CHANCE = 5
 	val SPITTERACID_CHANCE = 5
 	val PIPEBOMB_CHANCE = 5
 	val GRENADE_CHANCE = 5
+	val MOLOTOV_CHANCE = 5
+	val TURRET_CHANCE = 5
 
 
 	val PISTOL_DAMAGE = 10
@@ -62,7 +68,7 @@ object GV
 
 	val LANDMINE_RADIUS = 50
 	val LANDMINE_DAMAGE = 70
-	val LANDMINE_DELAY = 100
+	val LANDMINE_DELAY = 30
 
 	val PIPEBOMB_TIME = 200
 	val PIPEBOMB_DAMAGE = 50
@@ -72,9 +78,20 @@ object GV
 	val GRENADE_RADIUS = 50
 
 	val MOLOTOV_RADIUS = 40
+	val MOLOTOV_DURATION = 5
+
+
+	val TURRET_FIRETIME = 6
+	val TURRET_DAMAGE = 4
+	val TURRET_RANGE = 150
+	val TURRET_APS = 4
+	val TURRET_HP = 100
+
 
 	val FIRE_DAMAGE = 0.5
 
+	val ZOMBIE_ATTACKCOOLDOWN = 10
+	val ZOMBIE_DAMAGE = 10
 
 	val CHARGER_CHANCE = 5
 	val SPITTER_CHANCE = 5
@@ -89,9 +106,11 @@ object GV
 	val SPITTER_SPITRADIUS = 40
 	val SPITTER_SPITREDUCERATE = 4 
 	val SPITTER_SPITRANGE = 300
+	val SPITTER_SPITDAMAGE = 0.7
 
 	val TANK_HEALTH = 400
 	val TANK_DAMAGE = 25
+	val TANK_HEALRATE = 5
 
 	//load some pictures
 
@@ -120,7 +139,7 @@ class Pt(x_ : Double, y_ : Double)
 		return new Pt(x, y)
 	}
 
-	def *(n : Int) : Pt =
+	def *(n : Double) : Pt =
 	{
 		return new Pt(x * n, y * n)
 	}

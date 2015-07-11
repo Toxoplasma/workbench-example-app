@@ -107,6 +107,9 @@ class Game(mSizeX : Int, mSizeY : Int, ctx_ : dom.CanvasRenderingContext2D)
 		//run momentum
 		acts map(_.handleMomentum(this))
 
+		//run effects
+		acts map(_.runEffects(this))
+
 		//run all ais
 		acts map(_.aiMove(this))
 
@@ -128,34 +131,111 @@ class Game(mSizeX : Int, mSizeY : Int, ctx_ : dom.CanvasRenderingContext2D)
 
 	def loadAllImages() =
 	{
-		var img = loadImage("ak47.png")
+		var img = loadImage("images/ak47.png")
 		images += ("ak47" -> img)
 
-		img = loadImage("item_landmine.png")
+		img = loadImage("images/item_landmine.png")
 		images += ("item_landmine" -> img)
 
-		img = loadImage("item health kit.png")
+		img = loadImage("images/item health kit.png")
 		images += ("item_healthkit" -> img)
 
-		img = loadImage("item ammo box.png")
+		img = loadImage("images/item ammo box.png")
 		images += ("item_ammobox" -> img)
 
-		img = loadImage("item molotov.png")
+		img = loadImage("images/item molotov.png")
 		images += ("item_molotov" -> img)
 
-		img = loadImage("item pipe bomb.png")
+		img = loadImage("images/item pipe bomb.png")
 		images += ("item_pipebomb" -> img)
 
-		img = loadImage("item acid.png")
+		img = loadImage("images/item acid.png")
 		images += ("item_acid" -> img)
+
+		img = loadImage("images/char 1 big.png")
+		images += ("item_gunturret" -> img)
 
 
 		//img = loadImage("/Users/ravi/Documents/prog/dogedots/target/scala-2.11/character 1.png")
-		img = loadImage("character 1.png")
-		images += ("char_human_1" -> img)
+		img = loadImage("images/char 1 0.png")
+		images += ("char_human_1 0" -> img)
+		img = loadImage("images/char 1 90.png")
+		images += ("char_human_1 90" -> img)
+		img = loadImage("images/char 1 180.png")
+		images += ("char_human_1 180" -> img)
+		img = loadImage("images/char 1 270.png")
+		images += ("char_human_1 270" -> img)
+		img = loadImage("images/char 1 45.png")
+		images += ("char_human_1 45" -> img)
+		img = loadImage("images/char 1 135.png")
+		images += ("char_human_1 135" -> img)
+		img = loadImage("images/char 1 225.png")
+		images += ("char_human_1 225" -> img)
+		img = loadImage("images/char 1 315.png")
+		images += ("char_human_1 315" -> img)
 
-		img = loadImage("character 1 big.png")
+		img = loadImage("images/char 1 big.png")
 		images += ("char_human_1_big" -> img)
+
+		img = loadImage("images/char 2 0.png")
+		images += ("char_human_2 0" -> img)
+		img = loadImage("images/char 2 90.png")
+		images += ("char_human_2 90" -> img)
+		img = loadImage("images/char 2 180.png")
+		images += ("char_human_2 180" -> img)
+		img = loadImage("images/char 2 270.png")
+		images += ("char_human_2 270" -> img)
+		img = loadImage("images/char 2 45.png")
+		images += ("char_human_2 45" -> img)
+		img = loadImage("images/char 2 135.png")
+		images += ("char_human_2 135" -> img)
+		img = loadImage("images/char 2 225.png")
+		images += ("char_human_2 225" -> img)
+		img = loadImage("images/char 2 315.png")
+		images += ("char_human_2 315" -> img)
+
+		img = loadImage("images/char 2 big.png")
+		images += ("char_human_2_big" -> img)
+
+		img = loadImage("images/char 3 0.png")
+		images += ("char_human_3 0" -> img)
+		img = loadImage("images/char 3 90.png")
+		images += ("char_human_3 90" -> img)
+		img = loadImage("images/char 3 180.png")
+		images += ("char_human_3 180" -> img)
+		img = loadImage("images/char 3 270.png")
+		images += ("char_human_3 270" -> img)
+		img = loadImage("images/char 3 45.png")
+		images += ("char_human_3 45" -> img)
+		img = loadImage("images/char 3 135.png")
+		images += ("char_human_3 135" -> img)
+		img = loadImage("images/char 3 225.png")
+		images += ("char_human_3 225" -> img)
+		img = loadImage("images/char 3 315.png")
+		images += ("char_human_3 315" -> img)
+
+		img = loadImage("images/char 3 big.png")
+		images += ("char_human_3_big" -> img)
+
+		img = loadImage("images/tank rider 0.png")
+		images += ("tank rider 0" -> img)
+		img = loadImage("images/tank rider 90.png")
+		images += ("tank rider 90" -> img)
+		img = loadImage("images/tank rider 180.png")
+		images += ("tank rider 180" -> img)
+		img = loadImage("images/tank rider 270.png")
+		images += ("tank rider 270" -> img)
+		img = loadImage("images/tank rider 45.png")
+		images += ("tank rider 45" -> img)
+		img = loadImage("images/tank rider 135.png")
+		images += ("tank rider 135" -> img)
+		img = loadImage("images/tank rider 225.png")
+		images += ("tank rider 225" -> img)
+		img = loadImage("images/tank rider 315.png")
+		images += ("tank rider 315" -> img)
+
+		img = loadImage("images/tank rider big.png")
+		images += ("tank rider big" -> img)
 
 	}
 
@@ -355,8 +435,10 @@ class Game(mSizeX : Int, mSizeY : Int, ctx_ : dom.CanvasRenderingContext2D)
 		}
 
 		//drawAllCond(o => ! o.lowPriority && ! o.alwaysVisible && player.hasLosTo(o, this))
-		drawAllCond(o => ! o.lowPriority && ! o.alwaysVisible)
+		drawAllCond(o => ! o.lowPriority && !o.highPriority && ! o.alwaysVisible)
 		drawAllCond(o => o.alwaysVisible)
+
+		drawAllCond(o => o.highPriority)
 
 		drawShadows()
 		
@@ -374,7 +456,7 @@ class Game(mSizeX : Int, mSizeY : Int, ctx_ : dom.CanvasRenderingContext2D)
 
 
 
-	def genFarmhouse() =
+	def genFarmhouse(iloc : Pt, isize : Pt) =
 	{
 		val overlap = 5
 		val minSize = 22
@@ -384,7 +466,8 @@ class Game(mSizeX : Int, mSizeY : Int, ctx_ : dom.CanvasRenderingContext2D)
 		val sWidth = r.nextInt(maxSize - minSize) + minSize
 		val sHeight = r.nextInt(maxSize - minSize) + minSize
 		//val starter = new Wall(new Pt(100, 100), new Pt(100, 100))
-		val starter = new Wall(new Pt(r.nextInt(GV.GAMEX - sWidth), r.nextInt(GV.GAMEY - sHeight)), 
+		val starter = new Wall(
+			new Pt(r.nextInt(isize.x.toInt - sWidth) + iloc.x, r.nextInt(isize.y.toInt - sHeight) + iloc.y), 
 			new Pt(sWidth, sHeight))
 
 		if(! collision(starter))
@@ -598,6 +681,8 @@ class Game(mSizeX : Int, mSizeY : Int, ctx_ : dom.CanvasRenderingContext2D)
 		val spit = new GroundUsableItem(d.loc, new UsableSpitterAcid(null), "item_acid")
 		val pipe = new GroundUsableItem(d.loc, new UsablePipeBomb(null), "item_pipebomb")
 		val grenade = new GroundUsableItem(d.loc, new UsableGrenade(null), "item_pipebomb")
+		val molotov = new GroundUsableItem(d.loc, new UsableMolotov(null), "item_molotov")
+		val turret = new GroundUsableItem(d.loc, new UsableGunTurret(null), "item_gunturret")
 
 		//now put them in a weighted list so to speak
 		val ammopackL = Seq.fill(GV.AMMO_CHANCE){ammopack}
@@ -606,8 +691,11 @@ class Game(mSizeX : Int, mSizeY : Int, ctx_ : dom.CanvasRenderingContext2D)
 		val spitL = Seq.fill(GV.SPITTERACID_CHANCE){spit}
 		val pipeL = Seq.fill(GV.PIPEBOMB_CHANCE){pipe}
 		val grenadeL = Seq.fill(GV.GRENADE_CHANCE){grenade}
+		val molotovL = Seq.fill(GV.MOLOTOV_CHANCE){molotov}
+		val turretL = Seq.fill(GV.TURRET_CHANCE){turret}
 
-		val choices = ammopackL ++ healthpackL ++ mineL ++ spitL ++ pipeL ++ grenadeL
+		val choices = ammopackL ++ healthpackL ++ mineL ++ spitL ++ pipeL ++ 
+			grenadeL ++ molotovL ++ turretL
 
 		val choice = choices(r.nextInt(choices.length))
 
@@ -716,10 +804,15 @@ class Game(mSizeX : Int, mSizeY : Int, ctx_ : dom.CanvasRenderingContext2D)
 
 		spawnMainWalls()
 
-		for(i <- 1 to 10)
-		{
-			genFarmhouse()
-		}
+		genFarmhouse(new Pt(0, 0), new Pt(GV.GAMEX/2, GV.GAMEY/2))
+		genFarmhouse(new Pt(GV.GAMEX/2, 0), new Pt(GV.GAMEX/2, GV.GAMEY/2))
+		genFarmhouse(new Pt(0, GV.GAMEY/2), new Pt(GV.GAMEX/2, GV.GAMEY/2))
+		genFarmhouse(new Pt(GV.GAMEX/2, GV.GAMEY/2), new Pt(GV.GAMEX/2, GV.GAMEY/2))
+
+		// for(i <- 1 to 10)
+		// {
+		// 	genFarmhouse()
+		// }
 
 		//convert all dummy items to actual items
 		spawnItemsFromDummies()

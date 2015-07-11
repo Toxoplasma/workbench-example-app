@@ -12,6 +12,7 @@ import objects._
 class Player(loc_ : Pt)
 extends BaseHuman(loc_, GV.PLAYER_HEALTH)
 {
+	bigDisplayname = "char_human_1_big"
 	//var usable : UsableItem = null
 	var usableItems = new scala.collection.mutable.Stack[UsableItem]()
 
@@ -22,8 +23,9 @@ extends BaseHuman(loc_, GV.PLAYER_HEALTH)
 
 	override def draw(g : Game) =
 	{
-		//draw from the game thing
-		val img = g.images("char_human_1")
+		val change = lastLoc - loc
+		var img = g.images("char_human_1 " + angleToSpriteAngle(change))
+
 		g.ctx.drawImage(img, loc.x, loc.y, GV.NORMUNITSIZE, GV.NORMUNITSIZE)
 
 		//g.ctx.fillStyle = "red"
@@ -60,6 +62,8 @@ extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE), hp_, 2, "human", 0
 	var timeToNextShot = 0
 	var shotCooldown = 20
 
+	var bigDisplayname = ""
+
 	var gun = new Gun(GV.PISTOL_FIRETIME, GV.PISTOL_DAMAGE, GV.PISTOL_RANGE, GV.PISTOL_APS, this)
 
 	override def aiMove(g : Game) =
@@ -69,12 +73,14 @@ extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE), hp_, 2, "human", 0
 		//Now, check if we can SHOOT STUFF
 		if(gun.canShoot)
 		{
-			val closestAct = getClosestEnemyInLOS(g)
+			//val closestAct = getClosestEnemyInLOS(g)
+			val closestAct = getClosestEnemyInView(g)
 			if(closestAct != null)
 			{
 				val distance =  distanceTo(closestAct)
 
-				if(distance <= gun.range)
+				//if(distance <= gun.range && inFov(closestAct))
+				if(distance <= gun.range && inFov(closestAct))
 				{
 					gun.shoot(closestAct, g)
 				}
@@ -91,6 +97,10 @@ extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE), hp_, 2, "human", 0
 class Human(loc_ : Pt)
 extends BaseHuman(loc_, GV.HUMAN_HEALTH)
 {
+	bigDisplayname = "char_human_3_big"
+
+	var displayName = "char_human_3"
+
 	var dest = new Pt(-1, -1)
 
 	var hasSeenPlayer = false
@@ -181,8 +191,10 @@ extends BaseHuman(loc_, GV.HUMAN_HEALTH)
 
 	override def draw(g : Game) =
 	{
-		g.ctx.fillStyle = "pink"
-		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)
+		val change = lastLoc - loc
+		var img = g.images(displayName + " " + angleToSpriteAngle(change))
+
+		g.ctx.drawImage(img, loc.x, loc.y, GV.NORMUNITSIZE, GV.NORMUNITSIZE)
 	}
 
 	override def aiMove(g : Game) =
@@ -288,6 +300,8 @@ extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE),
 
 	val chanceToChangeDirection = 400
 
+	var attackTimer = 0
+
 	override def draw(g : Game) =
 	{
 		g.ctx.fillStyle = s"rgb(30, 150, 30)"
@@ -318,11 +332,11 @@ extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE),
 		}		
 
 		//see if we bite the target or what
-		if(target != null && target.collides(new Pt(loc.x + direction.x, loc.y + direction.y), new Pt(size.x, size.y)))
+		if(attackTimer <= 0 && target != null && 
+			target.collides(new Pt(loc.x + direction.x, loc.y + direction.y), new Pt(size.x, size.y)))
 		{
-			//Hell yeah we are, bit him!
-			//g.player.hp -= 10 //ZOMBIEDAMAGE
-			target.takeDamage(this, 10, 1, g)
+			target.takeDamage(this, GV.ZOMBIE_DAMAGE, 1, g)
+			attackTimer = GV.ZOMBIE_ATTACKCOOLDOWN
 		}
 
 		//try to move there, see if it works
@@ -339,11 +353,18 @@ extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE),
 			}
 		}
 		
+		if(attackTimer > 0)
+		{
+			attackTimer -= 1
+		}
 		
 	}
 }
 
 
+
+//TODO: make them slowly heal like the tank rider
+//TODO: Make them have a punch cooldown like the zombie
 class Tank(loc_ : Pt)
 extends Actor(loc_, new Pt(GV.HUGEUNITSIZE, GV.HUGEUNITSIZE),
 	GV.TANK_HEALTH, 1, 
@@ -384,7 +405,14 @@ extends Actor(loc_, new Pt(GV.HUGEUNITSIZE, GV.HUGEUNITSIZE),
 		{
 			//we're stuck, wander in a different direction
 			direction = new Pt(g.r.nextInt(3) - 1, g.r.nextInt(3) - 1)
-		}		
+		}
+
+		if(target != null && target.collides(new Pt(loc.x + direction.x, loc.y + direction.y), new Pt(size.x, size.y)))
+		{
+			//Hell yeah we are, bit him!
+			//g.player.hp -= 10 //ZOMBIEDAMAGE
+			target.takeDamage(this, GV.TANK_DAMAGE, 1.5, g)
+		}
 
 		//try to move there, see if it works
 		if(! moveLoc(direction.x, direction.y, g))
@@ -400,12 +428,7 @@ extends Actor(loc_, new Pt(GV.HUGEUNITSIZE, GV.HUGEUNITSIZE),
 			}
 		}
 		
-		if(target != null && target.collides(new Pt(loc.x + direction.x, loc.y + direction.y), new Pt(size.x, size.y)))
-		{
-			//Hell yeah we are, bit him!
-			//g.player.hp -= 10 //ZOMBIEDAMAGE
-			target.takeDamage(this, GV.TANK_DAMAGE, 1.5, g)
-		}
+		
 	}
 }
 
@@ -472,7 +495,7 @@ extends Actor(loc_, new Pt(GV.BIGUNITSIZE, GV.BIGUNITSIZE),
 			}
 
 
-			if(chargeLine != null && chargeLine.length <= chargeRange && chargeTimer <= 0) //CHARGE!
+			if(chargeLine != null && chargeLine.length <= chargeRange*.75 && chargeTimer <= 0) //CHARGE!
 			{
 				stateCharging()
 			}
@@ -646,3 +669,391 @@ extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE),
 }
 
 
+
+
+
+class MolotovThrower(loc_ : Pt)
+extends BaseHuman(loc_, GV.PLAYER_HEALTH)
+{
+	bigDisplayname = "char_human_2_big"
+	name = "Scatterbrain Jane"
+
+	var dest = new Pt(-1, -1)
+
+	var hasSeenPlayer = false
+	var isLowAmmo = false
+	var isLowHealth = false
+
+	var molotovTimer = 0
+	val molotovTime = GV.JANE_MOLOTOVRATE
+
+	flammable = false
+
+	def onSeePlayer(g : Game) =
+	{
+		val phrases = List("Wassup!",
+							"We'll bang ok",
+							"Let's kill some dudes!",
+							"Awww yiss!",
+							"I'll bring the fire",
+							"I like to set things on fire",
+							"Watch, or you might get burned!",
+							"They don't stand a chance!")
+
+		//pick a random phrase and say it
+		val phrase = phrases(g.r.nextInt(phrases.length))
+		g.addHeadText(this, phrase, 100)
+
+		hasSeenPlayer = true
+	}
+
+	def onLowAmmo(g : Game) =
+	{
+		val phrases = List("I'm almost out of ammo!",
+							"I'm running low on bullets!",
+							"We'd better find more ammo soon!")
+
+		//pick a random phrase and say it
+		val phrase = phrases(g.r.nextInt(phrases.length))
+		g.addHeadText(this, phrase, 100)
+
+		isLowAmmo = true
+	}
+
+	def onLowHealth(g : Game) =
+	{
+		val phrases = List("I'm gonna die!",
+							"I'm dying bro!",
+							"I'm not gonna make it!",
+							"Go on without me!")
+
+		//pick a random phrase and say it
+		val phrase = phrases(g.r.nextInt(phrases.length))
+		g.addHeadText(this, phrase, 100)
+
+		isLowHealth = true
+	}
+
+	override def onDeath(g : Game) = 
+	{
+		//drop an ammo pack with remaining ammo
+		if(gun.ammo > 0)
+		{
+			val pack = new AmmoPack(loc, gun.ammo)
+			g.addActor(pack)
+		}
+	}
+
+	override def canTakeItem(item : Actor) : Boolean =
+	{
+		item match 
+		{
+			case ammo : AmmoPack =>
+				if(isLowAmmo)
+				{
+					isLowAmmo = false
+					return true
+				}
+			case health : HealthPack =>
+				if(isLowHealth)
+				{	
+					isLowHealth = false
+					return true
+				}
+			case _ =>
+				return false
+		}
+
+		return false
+	}
+
+	override def draw(g : Game) =
+	{
+		val change = lastLoc - loc
+		var img = g.images("char_human_2 " + angleToSpriteAngle(change))
+
+		g.ctx.drawImage(img, loc.x, loc.y, GV.NORMUNITSIZE, GV.NORMUNITSIZE)
+	}
+
+
+	def throwMolotov(g : Game) : Boolean =
+	{
+		val throwable = new UsableMolotov(this)
+		if(throwable.hasTarget(g))
+		{
+			throwable.use(g)
+			return true
+		}
+		else
+		{
+			return false
+		}
+	}
+
+	override def aiMove(g : Game) =
+	{
+		//Bot humans do everything player humans do except for movement
+		super.aiMove(g)
+
+		//handle text and related things
+		if(! hasSeenPlayer && hasLosTo(g.player, g))
+			onSeePlayer(g)
+
+		if(! isLowAmmo && gun.ammo <= 10)
+			onLowAmmo(g)
+
+		if(! isLowHealth && hp <= 20)
+			onLowHealth(g)
+
+
+		//Now decide where to go!
+		if(dest.is_neg_one)
+		{
+			//pick a new dest!
+			val destX = g.player.loc.x + g.r.nextInt(GV.NORMUNITSIZE * 10) - GV.NORMUNITSIZE*5
+			val destY = g.player.loc.y + g.r.nextInt(GV.NORMUNITSIZE * 10) - GV.NORMUNITSIZE*5
+			dest = new Pt(destX, destY)
+		}
+
+		//now, is our destination good?
+
+		//is it too far from the player?
+		if(g.player.distanceTo(dest) > 200)
+			dest = new Pt(-1, -1)
+
+		for(a <- g.acts)
+		{
+			//are we too close to an enemy?
+			if(a.faction == "NA")
+			{
+				a match 
+				{
+					case acid : CausticAcid => 
+						if(acid.collides(this)) //are we in acid right now?
+						{
+							dest = loc + (loc - acid.loc)
+						}
+						else if( acid.collides(loc + (dest - loc).unitStep, size)) //we're gonna step in acid
+						{
+							dest = new Pt(-1, -1) //pick a better destination
+						}
+					case _ => //don't care about it
+				}
+				
+			}
+			else if(a.faction != faction)
+			{
+				//are we too close?
+				if(distanceTo(a) < 30 && hasLosTo(a, g))
+				{
+					//run away
+					dest = loc + (loc - a.loc)
+				}
+			}
+			
+		}
+
+		//Now cheap pathfinding as usual
+		var dx = min(dest.x - loc.x, 2)
+		dx = max(dx, -2)
+		
+		var dy = min(dest.y - loc.y, 2)
+		dy = max(dy, -2)
+
+		if(! moveLoc(dx, dy, g))
+		{
+			dest = new Pt(-1, -1)
+		}
+
+		if(molotovTimer <= 0)
+		{
+			//throw a molotov
+			if(throwMolotov(g))
+			{
+				molotovTimer = molotovTime
+			}
+		}
+		else
+		{
+			molotovTimer -= 1
+		}
+	}
+
+	override def moveToNewMap(g : Game)
+	{
+		dest = new Pt(-1, -1)
+	}
+}
+
+
+class TankRider(loc_ : Pt)
+extends Actor(loc_, new Pt(GV.HUGEUNITSIZE, GV.HUGEUNITSIZE),
+	GV.TANK_HEALTH, 1, 
+	"human", 0, "The Colonel")
+{
+	var bigDisplayname = "tank rider big"
+	
+	var dest = new Pt(-1, -1)
+
+	var target : Actor = null
+
+	var hasSeenPlayer = false
+	var isLowAmmo = false
+	var isLowHealth = false
+
+	var direction = new Pt(0, 0)
+
+	val chanceToChangeDirection = 400
+
+	momentumFactor = GV.HUGEMOMENTUMFACTOR
+
+	var healTimer = 0
+
+	def onSeePlayer(g : Game) =
+	{
+		val phrases = List("Yeehaw!",
+							"We'll bang ok",
+							"Giddyup!",
+							"Whoa there Buckaroo!",
+							"Woooooaaaaa!",
+							"Yippee!",
+							"Yippekaya!",
+							"Ride 'em cowboy!")
+
+		//pick a random phrase and say it
+		val phrase = phrases(g.r.nextInt(phrases.length))
+		g.addHeadText(this, phrase, 100)
+
+		hasSeenPlayer = true
+	}
+
+	def onLowAmmo(g : Game) =
+	{
+		val phrases = List("I'm almost out of ammo!",
+							"I'm running low on bullets!",
+							"We'd better find more ammo soon!")
+
+		//pick a random phrase and say it
+		val phrase = phrases(g.r.nextInt(phrases.length))
+		g.addHeadText(this, phrase, 100)
+
+		isLowAmmo = true
+	}
+
+	def onLowHealth(g : Game) =
+	{
+		val phrases = List("Buckaroo's going down!",
+							"My little friend's hurtin'!",
+							"I'm not gonna make it!",
+							"Go on without me!")
+
+		//pick a random phrase and say it
+		val phrase = phrases(g.r.nextInt(phrases.length))
+		g.addHeadText(this, phrase, 100)
+
+		isLowHealth = true
+	}
+
+	override def canTakeItem(item : Actor) : Boolean =
+	{
+		item match 
+		{
+			case ammo : AmmoPack =>
+				if(isLowAmmo)
+				{
+					isLowAmmo = false
+					return true
+				}
+			case health : HealthPack =>
+				if(isLowHealth)
+				{	
+					isLowHealth = false
+					return true
+				}
+			case _ =>
+				return false
+		}
+
+		return false
+	}
+
+	override def draw(g : Game) =
+	{
+		val change = lastLoc - loc
+		var img = g.images("tank rider " + angleToSpriteAngle(change))
+
+		g.ctx.drawImage(img, loc.x, loc.y, GV.HUGEUNITSIZE, GV.HUGEUNITSIZE)
+	}
+
+	override def aiMove(g : Game) =
+	{
+		if(g.r.nextInt(400) == 0)
+			g.addHeadText(this, "Yeehaw!", 10)
+
+
+		//Get closest in-LOS enemy
+		target = getClosestEnemyInLOS(g)
+		if(target != null)
+		{
+			val dest = target.loc
+
+			val dx = signum(dest.x - loc.x)
+			val dy = signum(dest.y - loc.y)
+
+			direction = new Pt(dx, dy)
+		}
+		else if(direction.is_zero)
+		{
+			//we're stuck, wander in a different direction
+			direction = new Pt(g.r.nextInt(3) - 1, g.r.nextInt(3) - 1)
+		}
+
+		if(target != null && target.collides(new Pt(loc.x + direction.x, loc.y + direction.y), new Pt(size.x, size.y)))
+		{
+			//Hell yeah we are, bit him!
+			//g.player.hp -= 10 //ZOMBIEDAMAGE
+			target.takeDamage(this, GV.TANK_DAMAGE, 1.5, g)
+		}
+
+		//try to move there, see if it works
+		if(! moveLoc(direction.x, direction.y, g))
+		{
+			direction = new Pt(0, 0)
+		}
+		else
+		{
+			//even if it worked, we sometimes wanna quit
+			if(g.r.nextInt(chanceToChangeDirection) == 0)
+			{
+				direction = new Pt(0, 0)
+			}
+		}
+
+		//process healing
+		if(healTimer <= 0)
+		{
+			gainHealth(1)
+			healTimer = GV.TANK_HEALRATE
+		}
+		else
+		{
+			healTimer -= 1
+		}
+		
+		
+	}
+
+	override def moveToNewMap(g : Game)
+	{
+		dest = new Pt(-1, -1)
+	}
+
+	override def onDeath(g : Game) =
+	{
+		//he hops off the tank
+		val hooman = new Human(loc)
+		hooman.displayName = "char_human_2"
+		hooman.name = "The Colonel"
+		g.addActor(hooman)
+	}
+}

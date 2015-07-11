@@ -7,23 +7,31 @@ Major stuff:
 Actual pathfinding
 Should be able to go backwards to previous maps
 
+Switch to a priority system for drawing
+switch to a queue for movement?
+
+add a max/min range for throwing
 
 Minor stuff:
 Make the farm house doors not always leftmost/uppermost on the wall they're on
 highscores 
 Make you drop a gun when you pick up a new one
-Have better and correctly sized pictures for stuff... auto sizing looks kinda bad
 put a cap on the number of items the player can have
 
 Bugs:
 spitter spit being able to go through walls and also be invisible sometimes
-zombies sometimes not hitting you when they're next to you
 zombies splooping back and forth because doubles
+Fix the spitter acid icon @_@
+
+Eventual:
+Better human ai
+Humans with items
+Real image rotations (i.e. seeing the back of their head, side view, etc)
 
 
 Arts needed:
 	Grenade
-	Human
+	Humans
 	Zombie
 	Explosion?
 	Explosion scuffs
@@ -35,7 +43,6 @@ Items
 	Human guts / boomer bile - paint a zed as human
 	Zombie mind control - take over x closest zombies within a range
 	auto turret - drop it and shoots stuff
-	molotov - yeah
 	fire landmine
 	grav grenade - sucks dudes in
 	grav mine
@@ -49,6 +56,17 @@ Specials
 	Hook zombie
 		Shoots out a thing, if it hits you you're hooked and can't move away from it
 		But can still act, have to kill it before you can move on
+
+Characters
+	Fiddler - lays mines & throws grenades
+	Tank riding dude KFC dude The Kernel
+	molotov throwing dude- Scatterbrain Jane
+	Sniper that targets specials- 
+	Someone bad but immortal- 
+	A melee person- Abraham Lincoln ZOMBIE HUNTER
+	Panic bob - runs around screaming
+
+
 
 Areas
 	Science lab
