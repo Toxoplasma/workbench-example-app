@@ -66,12 +66,8 @@ object ScalaJSExample
 		//g.addActor(puddle)
 
 		//make a hooman
-		var hooman : Actor = null
-		if(g.r.nextInt(2) == 0)
-			hooman = new MolotovThrower(new Pt(g.player.loc.x + 50, g.player.loc.y))
-		else
-			hooman = new TankRider(new Pt(g.player.loc.x + 50, g.player.loc.y))
-		g.addActor(hooman)
+		//var hooman : Actor = null
+		
 
 		//stick a gun on the ground
 		//val thegun = new Gun(GV.AK47_FIRETIME, GV.AK47_DAMAGE, GV.AK47_RANGE, GV.AK47_APS, null)
@@ -83,7 +79,7 @@ object ScalaJSExample
 		val wall = new Wall(new Pt(200, 400), new Pt(200, 10))
 		//g.addObj(wall)
 
-		val zedSpawner = new ZombieSpawner(new Pt(GV.GAMEX / 2 - GV.NORMUNITSIZE/2, GV.GAMEY), 200)
+		val zedSpawner = new ZombieSpawner(GV.ZOMBIESPAWNER_SPAWNRATE)
 		g.addActor(zedSpawner)
 
 
@@ -199,55 +195,9 @@ object ScalaJSExample
 				//Check if the player has moved to the next map
 				if(g.player.loc.y < 0)
 				{
-					//score boost!
-					g.score += g.difficulty * 10
-
-					dom.console.log("Generating new map")
-
-					//save actors because genMap deletes them
-					val oldActs = g.acts.clone
-
-					//Load new map
-					g.genMap()
-
-					dom.console.log("Copying " + oldActs.size + " actors")
-
-					//Update the delays on all our delayed guys
-					for(delAct <- g.delayedActs)
-					{
-						delAct.time += GV.GAMEY / delAct.speed
-
-						if(delAct.time > GV.OFFMAPCUTOFF)
-						{
-							g.removeDelayed(delAct)
-						}
-					}
-
-					//Add all the actors as delays
-					for(a <- oldActs)
-					{
-						a match
-						{
-							case proj : ProjectileActor => //Nothing, don't add them
-							case _ =>
-								if(a != g.player)
-								{
-									val time : Int = (a.loc.y / a.speed).toInt
-
-									//Move them to valid spots
-									a.loc.y = GV.GAMEY //all the way down
-									//a.loc.x = max(a.loc.x, GV.GAMEX / 2 - 50) //minimum right they can be
-									//a.loc.x = min(a.loc.x, GV.GAMEX/2 + 50 - a.size.x)
-
-									a.moveToNewMap(g)
-
-									val delayedAct = new DelayedActor(a, time)
-
-									g.addDelayed(delayedAct)
-								}
-						}
-					}
+					g.loadNewMap()
 				}
+				
 				//handle player movement
 				handlePlayerMovement(g.player, keysDown, g)
 

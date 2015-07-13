@@ -40,6 +40,12 @@ class Game(mSizeX : Int, mSizeY : Int, ctx_ : dom.CanvasRenderingContext2D)
 	player.name = "Tim Jones"
 	addActor(player)
 
+	//quest junk
+	//saloon
+	//val saloon_level = r.nextInt(GV.SALOON_LEVEL_RANGE) + GV.SALOON_LEVEL_MIN
+	val saloon_level = 2 //r.nextInt(GV.SALOON_LEVEL_RANGE) + GV.SALOON_LEVEL_MIN
+	var saloon_hasPickedAlly = false
+
 	def addHeadText(o : Obj, text : String, time : Int)
 	{
 		val ht = new HeadText(text, time)
@@ -104,14 +110,14 @@ class Game(mSizeX : Int, mSizeY : Int, ctx_ : dom.CanvasRenderingContext2D)
 
 	def runAllAIs() =
 	{
+		//run all ais
+		acts map(_.aiMove(this))
+
 		//run momentum
 		acts map(_.handleMomentum(this))
 
 		//run effects
 		acts map(_.runEffects(this))
-
-		//run all ais
-		acts map(_.aiMove(this))
 
 		//tick all delayed dudes
 		delayedActs map(_.aiMove(this))
@@ -152,8 +158,36 @@ class Game(mSizeX : Int, mSizeY : Int, ctx_ : dom.CanvasRenderingContext2D)
 		img = loadImage("images/item acid.png")
 		images += ("item_acid" -> img)
 
-		img = loadImage("images/char 1 big.png")
+		img = loadImage("images/item grenade.png")
+		images += ("item_grenade" -> img)
+
+		img = loadImage("images/turret big.png")
 		images += ("item_gunturret" -> img)
+
+		img = loadImage("images/item zombie control.png")
+		images += ("item_zombiecontroller" -> img)
+
+
+
+		img = loadImage("images/turret 0.png")
+		images += ("turret 0" -> img)
+		img = loadImage("images/turret 90.png")
+		images += ("turret 90" -> img)
+		img = loadImage("images/turret 180.png")
+		images += ("turret 180" -> img)
+		img = loadImage("images/turret 270.png")
+		images += ("turret 270" -> img)
+		img = loadImage("images/turret 45.png")
+		images += ("turret 45" -> img)
+		img = loadImage("images/turret 135.png")
+		images += ("turret 135" -> img)
+		img = loadImage("images/turret 225.png")
+		images += ("turret 225" -> img)
+		img = loadImage("images/turret 315.png")
+		images += ("turret 315" -> img)
+
+		img = loadImage("images/turret big.png")
+		images += ("turret big" -> img)
 
 
 		//img = loadImage("/Users/ravi/Documents/prog/dogedots/target/scala-2.11/character 1.png")
@@ -683,6 +717,7 @@ class Game(mSizeX : Int, mSizeY : Int, ctx_ : dom.CanvasRenderingContext2D)
 		val grenade = new GroundUsableItem(d.loc, new UsableGrenade(null), "item_pipebomb")
 		val molotov = new GroundUsableItem(d.loc, new UsableMolotov(null), "item_molotov")
 		val turret = new GroundUsableItem(d.loc, new UsableGunTurret(null), "item_gunturret")
+		val controller = new GroundUsableItem(d.loc, new UsableZombieController(null), "item_zombiecontroller")
 
 		//now put them in a weighted list so to speak
 		val ammopackL = Seq.fill(GV.AMMO_CHANCE){ammopack}
@@ -693,9 +728,10 @@ class Game(mSizeX : Int, mSizeY : Int, ctx_ : dom.CanvasRenderingContext2D)
 		val grenadeL = Seq.fill(GV.GRENADE_CHANCE){grenade}
 		val molotovL = Seq.fill(GV.MOLOTOV_CHANCE){molotov}
 		val turretL = Seq.fill(GV.TURRET_CHANCE){turret}
+		val controllerL = Seq.fill(GV.CONTROLLER_CHANCE){controller}
 
 		val choices = ammopackL ++ healthpackL ++ mineL ++ spitL ++ pipeL ++ 
-			grenadeL ++ molotovL ++ turretL
+			grenadeL ++ molotovL ++ turretL ++ controllerL
 
 		val choice = choices(r.nextInt(choices.length))
 
@@ -750,13 +786,15 @@ class Game(mSizeX : Int, mSizeY : Int, ctx_ : dom.CanvasRenderingContext2D)
 		val charger = new Charger(new Pt(x, y))
 		val spitter = new Spitter(new Pt(x, y))
 		val tank = new Tank(new Pt(x, y))
+		val cannon = new CannonTank(new Pt(x, y))
 
 		//now put them in a weighted list so to speak
 		val chargerL = Seq.fill(GV.CHARGER_CHANCE){charger}
 		val spitterL = Seq.fill(GV.SPITTER_CHANCE){spitter}
 		val tankL = Seq.fill(GV.TANK_CHANCE){tank}
+		val cannonL = Seq.fill(GV.CANNON_CHANCE){cannon}
 
-		val choices = chargerL ++ spitterL ++ tankL
+		val choices = chargerL ++ spitterL ++ tankL ++ cannonL
 
 		val choice = choices(r.nextInt(choices.length))
 
@@ -791,7 +829,70 @@ class Game(mSizeX : Int, mSizeY : Int, ctx_ : dom.CanvasRenderingContext2D)
 		}
 	}
 
-	def genMap() =
+	def loadNewMap() : Boolean =
+	{
+		dom.console.log("Generating new map")
+
+		//score boost!
+		score += difficulty * 10
+
+		//clear head texts
+		headTexts.clear()
+
+		//save actors because genMap deletes them
+		val oldActs = acts.clone
+
+		//Load new map
+		genMap()
+
+		dom.console.log("Copying " + oldActs.size + " actors")
+
+		//Update the delays on all our delayed guys
+		for(delAct <- delayedActs)
+		{
+			delAct.time += (GV.GAMEY / delAct.speed).toInt
+
+			// if(delAct.time > GV.OFFMAPCUTOFF)
+			// {
+			// 	g.removeDelayed(delAct)
+			// }
+		}
+
+		//Add all the actors as delays
+		for(a <- oldActs)
+		{
+			a match
+			{
+				case proj : ProjectileActor => //Nothing, don't add them
+				case _ =>
+					if(a.important && a != player)
+					{
+						val timed = (a.loc.y / a.speed)
+						if(! timed.isInfinity)
+						{
+							val time : Int = timed.toInt
+							dom.console.log("Delaying " + a.name + " with time " + time)
+
+							a.moveToNewMap(time, this)
+
+							//Move them to valid spots
+							a.loc.y = GV.GAMEY //all the way down
+							//a.loc.x = max(a.loc.x, GV.GAMEX / 2 - 50) //minimum right they can be
+							//a.loc.x = min(a.loc.x, GV.GAMEX/2 + 50 - a.size.x)
+
+
+							val delayedAct = new DelayedActor(a, time)
+
+							addDelayed(delayedAct)
+						}
+					}
+			}
+		}
+
+		true
+	}
+
+	def genMap() : Boolean =
 	{
 		dom.console.log("Generating map with difficulty " + difficulty)
 		objs.clear()
@@ -803,6 +904,13 @@ class Game(mSizeX : Int, mSizeY : Int, ctx_ : dom.CanvasRenderingContext2D)
 		addActor(player)
 
 		spawnMainWalls()
+
+		if(difficulty == saloon_level)
+		{
+			genSaloon()
+			difficulty += 1
+			return true
+		}
 
 		genFarmhouse(new Pt(0, 0), new Pt(GV.GAMEX/2, GV.GAMEY/2))
 		genFarmhouse(new Pt(GV.GAMEX/2, 0), new Pt(GV.GAMEX/2, GV.GAMEY/2))
@@ -842,5 +950,101 @@ class Game(mSizeX : Int, mSizeY : Int, ctx_ : dom.CanvasRenderingContext2D)
 		// {
 		// 	dom.console.log("clas: " + a.getClass)
 		// }
+
+		return true
+	}
+
+
+
+
+
+
+	def genSaloon()
+	{
+		val border = 100
+		//some main walls
+		val top = new Wall(new Pt(border, border), new Pt(GV.GAMEX - border*2, 5))
+		val left = new Wall(new Pt(border, border), new Pt(5, GV.GAMEY - border*2))
+		val bot = new Wall(new Pt(border, GV.GAMEY - border), new Pt(GV.GAMEX - border*2 + 5, 5))
+		val right = new Wall(new Pt(GV.GAMEX - border, border), new Pt(5, GV.GAMEY - border*2))
+
+		val doorsize = 40
+		val (top1, top2) = top.splitWithDoorAt(GV.GAMEX / 2 - 20 - border, 40)
+		val (bot1, bot2) = bot.splitWithDoorAt(GV.GAMEX / 2 - 20 - border, 40)
+
+		addObj(top1)
+		addObj(top2)
+		addObj(bot1)
+		addObj(bot2)
+		addObj(left)
+		addObj(right)
+
+		//add the bar
+		val barRight = new Barrier(new Pt(border+50, border+5), new Pt(7, 300))
+		val barBot = new Barrier(new Pt(border+5, border+5+300), new Pt(50, 5))
+		addObj(barRight)
+		addObj(barBot)
+
+		val tender = new Bartender(new Pt(border+40, border +100))
+		addActor(tender)
+
+		//add the booths
+		val boothwidth = 50
+		val boothspace = 12
+		val tableheight = 30
+
+		val totalHeight = boothspace*2 + tableheight + 5
+
+		val seats = scala.collection.mutable.Buffer[Int]()
+
+		var curY = border + 5
+		var x = GV.GAMEX - border - boothwidth
+		for(i <- 1 to (GV.GAMEY - border*2)/totalHeight)
+		{
+			//make a booth
+			//top wall inherited from last table
+			//space for seat
+			seats += curY
+			curY += boothspace
+			//table
+			val table = new Barrier(new Pt(x, curY), new Pt(boothwidth, tableheight))
+			addObj(table)
+			curY += tableheight
+
+			//space for seat
+			seats += curY
+			curY += boothspace
+
+			//wall
+			val wall = new Wall(new Pt(x, curY), new Pt(boothwidth, 5))
+			addObj(wall)
+			curY += 5
+		}
+
+		//add the dudes
+		val jane = new MolotovThrower(new Pt(player.loc.x + 50, player.loc.y))
+		val tanky = new TankRider(new Pt(player.loc.x + 50, player.loc.y))
+		
+		//g.addActor(hooman)
+		val seat1 = seats(r.nextInt(seats.length))
+		seats -= seat1
+		val seat2 = seats(r.nextInt(seats.length))
+		seats -= seat2
+		val dude1 = new BarDude(new Pt(x + 10, seat1), GV.JANE_BAR_PHRASES, GV.JANE_SEE_PHRASES, "char_human_2", jane)
+		val dude2 = new BarDude(new Pt(x + 10, seat2), GV.TANK_RIDER_BAR_PHRASES, GV.TANK_RIDER_SEE_PHRASES, "tank rider", tanky)
+
+		addActor(dude1)
+		addActor(dude2)
+
+		//add some health and junk
+		val hp1 = new MediumHealthPack(new Pt(GV.GAMEX/2 - 60 - 15, border + 10))
+		val hp2 = new MediumHealthPack(new Pt(GV.GAMEX/2 - 45 - 15, border + 10))
+		val ammo1 = new MediumAmmoPack(new Pt(GV.GAMEX/2 - 30 - 15, border + 10))
+		val ammo2 = new MediumAmmoPack(new Pt(GV.GAMEX/2 - 15 - 15, border + 10))
+
+		addActor(hp1)
+		addActor(hp2)
+		addActor(ammo1)
+		addActor(ammo2)
 	}
 }

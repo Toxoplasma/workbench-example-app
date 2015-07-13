@@ -66,6 +66,8 @@ extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE), hp_, 2, "human", 0
 
 	var gun = new Gun(GV.PISTOL_FIRETIME, GV.PISTOL_DAMAGE, GV.PISTOL_RANGE, GV.PISTOL_APS, this)
 
+	canPutSelfOut = true
+
 	override def aiMove(g : Game) =
 	{
 		gun.tick()
@@ -168,25 +170,7 @@ extends BaseHuman(loc_, GV.HUMAN_HEALTH)
 
 	override def canTakeItem(item : Actor) : Boolean =
 	{
-		item match 
-		{
-			case ammo : AmmoPack =>
-				if(isLowAmmo)
-				{
-					isLowAmmo = false
-					return true
-				}
-			case health : HealthPack =>
-				if(isLowHealth)
-				{	
-					isLowHealth = false
-					return true
-				}
-			case _ =>
-				return false
-		}
-
-		return false
+		false
 	}
 
 	override def draw(g : Game) =
@@ -235,7 +219,7 @@ extends BaseHuman(loc_, GV.HUMAN_HEALTH)
 		}
 	}
 
-	override def moveToNewMap(g : Game)
+	override def moveToNewMap(time : Int, g : Game)
 	{
 		dest = new Pt(-1, -1)
 	}
@@ -302,9 +286,13 @@ extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE),
 
 	var attackTimer = 0
 
+	var color = s"rgb(30, 150, 30)"
+
+	important = false
+
 	override def draw(g : Game) =
 	{
-		g.ctx.fillStyle = s"rgb(30, 150, 30)"
+		g.ctx.fillStyle = color
 		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)
 	}
 
@@ -407,11 +395,11 @@ extends Actor(loc_, new Pt(GV.HUGEUNITSIZE, GV.HUGEUNITSIZE),
 			direction = new Pt(g.r.nextInt(3) - 1, g.r.nextInt(3) - 1)
 		}
 
-		if(target != null && target.collides(new Pt(loc.x + direction.x, loc.y + direction.y), new Pt(size.x, size.y)))
+		if(target != null && 
+			target.collides(new Pt(loc.x + direction.x, loc.y + direction.y), new Pt(size.x, size.y)))
 		{
 			//Hell yeah we are, bit him!
-			//g.player.hp -= 10 //ZOMBIEDAMAGE
-			target.takeDamage(this, GV.TANK_DAMAGE, 1.5, g)
+			target.takeDamage(this, GV.TANK_DAMAGE, GV.TANK_PUSH, g)
 		}
 
 		//try to move there, see if it works
@@ -540,7 +528,7 @@ extends Actor(loc_, new Pt(GV.BIGUNITSIZE, GV.BIGUNITSIZE),
 						val d = chargeLine.unitStep
 						
 						//try to move in that direction
-						val moveSuccess = moveLoc(d.x, d.y, g)
+						val moveSuccess = moveLocWithoutRound(d.x, d.y, g)
 
 						if(! moveSuccess) //we hit a wall
 						{
@@ -565,11 +553,11 @@ extends Actor(loc_, new Pt(GV.BIGUNITSIZE, GV.BIGUNITSIZE),
 		}
 	}
 
-	override def moveToNewMap(g: Game)
+	override def moveToNewMap(time : Int, g: Game)
 	{
 		//tick our timer down a bunch
 		//how long it will take us to get there is loc.y/speed
-		chargeTimer  = max(0, chargeTimer - (loc.y / speed).toInt)
+		chargeTimer  = max(0, chargeTimer - time)
 	}
 }
 
@@ -623,6 +611,7 @@ extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE),
 				//g.addActor(spit)
 
 				val proj = new ProjectileActor(spit, spitLine, 6)
+				proj.passThrough = true
 				g.addActor(proj)
 
 				//we spit!
@@ -653,11 +642,11 @@ extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE),
 		}
 	}
 
-	override def moveToNewMap(g: Game) =
+	override def moveToNewMap(time : Int, g: Game) =
 	{
 		//tick our timer down a bunch
 		//how long it will take us to get there is loc.y/speed
-		spitTimer  = max(0, spitTimer - (loc.y / speed).toInt) 
+		spitTimer  = max(0, spitTimer - time) 
 	}
 
 	override def onDeath(g : Game) = 
@@ -668,6 +657,89 @@ extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE),
 	}
 }
 
+
+
+//TODO: make them slowly heal like the tank rider
+class CannonTank(loc_ : Pt)
+extends Actor(loc_, new Pt(GV.HUGEUNITSIZE, GV.HUGEUNITSIZE),
+	GV.TANK_HEALTH, 1, 
+	"zombie", 50, "tank")
+{
+	var target : Actor = null
+
+	var direction = new Pt(0, 0)
+
+	val chanceToChangeDirection = 400
+
+	var spitTimer = 0
+	val spitRate = GV.CANNON_SPITRATE
+
+	momentumFactor = GV.HUGEMOMENTUMFACTOR
+
+	override def draw(g : Game) =
+	{
+		g.ctx.fillStyle = s"rgb(30, 150, 250)"
+		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)
+	}
+
+	override def aiMove(g : Game) =
+	{
+		//tick spit timer
+		spitTimer = max(0, spitTimer - 1)
+
+		//Get closest in-LOS enemy
+		if(spitTimer <= 0)
+		{
+			val target = getClosestEnemyInLOS(g)
+			if(target != null)
+			{
+				//spit at them!
+
+				val spitLoc = loc + (target.loc - loc)/2
+
+				for(i <- 1 to GV.CANNON_SPITNUM)
+				{
+					val targetLoc = spitLoc.cloone
+					targetLoc.x += g.r.nextInt(GV.NORMUNITSIZE*10) - GV.NORMUNITSIZE*5
+					targetLoc.y += g.r.nextInt(GV.NORMUNITSIZE*10) - GV.NORMUNITSIZE*5
+					//spit a zombie at a random point there
+					//draw a line
+					val spitLine = SimpleLine(loc.cloone, targetLoc, "black")
+					val zed = new Zombie(targetLoc)
+
+					val proj = new ProjectileActor(zed, spitLine, 6)
+					proj.forceSpawn = false
+
+					g.addActor(proj)
+				}
+
+				//we spit!
+				spitTimer = spitRate
+			}
+		}
+
+
+		if(direction.is_zero)
+		{
+			//we're stuck, wander in a different direction
+			direction = new Pt(g.r.nextInt(3) - 1, g.r.nextInt(3) - 1)
+		}		
+
+		//try to move there, see if it works
+		if(! moveLoc(direction.x, direction.y, g))
+		{
+			direction = new Pt(0, 0)
+		}
+		else
+		{
+			//even if it worked, we sometimes wanna quit
+			if(g.r.nextInt(chanceToChangeDirection) == 0)
+			{
+				direction = new Pt(0, 0)
+			}
+		}
+	}
+}
 
 
 
@@ -691,15 +763,7 @@ extends BaseHuman(loc_, GV.PLAYER_HEALTH)
 
 	def onSeePlayer(g : Game) =
 	{
-		val phrases = List("Wassup!",
-							"We'll bang ok",
-							"Let's kill some dudes!",
-							"Awww yiss!",
-							"I'll bring the fire",
-							"I like to set things on fire",
-							"Watch, or you might get burned!",
-							"They don't stand a chance!")
-
+		val phrases = GV.JANE_SEE_PHRASES 
 		//pick a random phrase and say it
 		val phrase = phrases(g.r.nextInt(phrases.length))
 		g.addHeadText(this, phrase, 100)
@@ -755,7 +819,7 @@ extends BaseHuman(loc_, GV.PLAYER_HEALTH)
 					return true
 				}
 			case health : HealthPack =>
-				if(isLowHealth)
+				if(hp < maxHp/2)
 				{	
 					isLowHealth = false
 					return true
@@ -839,7 +903,6 @@ extends BaseHuman(loc_, GV.PLAYER_HEALTH)
 						}
 					case _ => //don't care about it
 				}
-				
 			}
 			else if(a.faction != faction)
 			{
@@ -850,7 +913,6 @@ extends BaseHuman(loc_, GV.PLAYER_HEALTH)
 					dest = loc + (loc - a.loc)
 				}
 			}
-			
 		}
 
 		//Now cheap pathfinding as usual
@@ -860,7 +922,10 @@ extends BaseHuman(loc_, GV.PLAYER_HEALTH)
 		var dy = min(dest.y - loc.y, 2)
 		dy = max(dy, -2)
 
-		if(! moveLoc(dx, dy, g))
+		val moved = moveLoc(dx, dy, g)
+		
+		//are we there yet?
+		if(!moved || distanceTo(dest) <= 2)
 		{
 			dest = new Pt(-1, -1)
 		}
@@ -879,7 +944,7 @@ extends BaseHuman(loc_, GV.PLAYER_HEALTH)
 		}
 	}
 
-	override def moveToNewMap(g : Game)
+	override def moveToNewMap(time : Int, g : Game)
 	{
 		dest = new Pt(-1, -1)
 	}
@@ -888,7 +953,7 @@ extends BaseHuman(loc_, GV.PLAYER_HEALTH)
 
 class TankRider(loc_ : Pt)
 extends Actor(loc_, new Pt(GV.HUGEUNITSIZE, GV.HUGEUNITSIZE),
-	GV.TANK_HEALTH, 1, 
+	GV.TANK_RIDER_HP, 2, 
 	"human", 0, "The Colonel")
 {
 	var bigDisplayname = "tank rider big"
@@ -909,16 +974,11 @@ extends Actor(loc_, new Pt(GV.HUGEUNITSIZE, GV.HUGEUNITSIZE),
 
 	var healTimer = 0
 
+	canPutSelfOut = true
+
 	def onSeePlayer(g : Game) =
 	{
-		val phrases = List("Yeehaw!",
-							"We'll bang ok",
-							"Giddyup!",
-							"Whoa there Buckaroo!",
-							"Woooooaaaaa!",
-							"Yippee!",
-							"Yippekaya!",
-							"Ride 'em cowboy!")
+		val phrases = GV.TANK_RIDER_SEE_PHRASES
 
 		//pick a random phrase and say it
 		val phrase = phrases(g.r.nextInt(phrases.length))
@@ -987,36 +1047,48 @@ extends Actor(loc_, new Pt(GV.HUGEUNITSIZE, GV.HUGEUNITSIZE),
 
 	override def aiMove(g : Game) =
 	{
+		dom.console.log("" + dest)
+
 		if(g.r.nextInt(400) == 0)
 			g.addHeadText(this, "Yeehaw!", 10)
 
 
 		//Get closest in-LOS enemy
 		target = getClosestEnemyInLOS(g)
-		if(target != null)
+
+		//if it's really close to us or kinda close to the player, it's a valid target
+		if(target != null && (distanceTo(target) < 30 || g.player.distanceTo(target) < 150))
 		{
-			val dest = target.loc
-
-			val dx = signum(dest.x - loc.x)
-			val dy = signum(dest.y - loc.y)
-
-			direction = new Pt(dx, dy)
+			dest = target.loc
 		}
 		else if(direction.is_zero)
 		{
 			//we're stuck, wander in a different direction
-			direction = new Pt(g.r.nextInt(3) - 1, g.r.nextInt(3) - 1)
+			//direction = new Pt(g.r.nextInt(3) - 1, g.r.nextInt(3) - 1)
+			//pick a new dest near the player
+			val destX = g.player.loc.x + g.r.nextInt(GV.HUGEUNITSIZE * 10) - GV.HUGEUNITSIZE*5
+			val destY = g.player.loc.y + g.r.nextInt(GV.HUGEUNITSIZE * 10) - GV.HUGEUNITSIZE*5
+			dest = new Pt(destX, destY)
 		}
 
+		//compute where we're about to step
+		val dx = signum(dest.x - loc.x)
+		val dy = signum(dest.y - loc.y)
+
+		//direction = (dest - loc).unitStep
+		direction = new Pt(dx, dy)
+
+		//is there someone there to punch?
 		if(target != null && target.collides(new Pt(loc.x + direction.x, loc.y + direction.y), new Pt(size.x, size.y)))
 		{
 			//Hell yeah we are, bit him!
-			//g.player.hp -= 10 //ZOMBIEDAMAGE
-			target.takeDamage(this, GV.TANK_DAMAGE, 1.5, g)
+			target.takeDamage(this, GV.TANK_RIDER_DAMAGE, GV.TANK_PUSH, g)
 		}
 
+		val moved = moveLoc(direction.x, direction.y, g)
+
 		//try to move there, see if it works
-		if(! moveLoc(direction.x, direction.y, g))
+		if(! moved || distanceTo(dest) <= 2)
 		{
 			direction = new Pt(0, 0)
 		}
@@ -1043,7 +1115,7 @@ extends Actor(loc_, new Pt(GV.HUGEUNITSIZE, GV.HUGEUNITSIZE),
 		
 	}
 
-	override def moveToNewMap(g : Game)
+	override def moveToNewMap(time : Int, g : Game)
 	{
 		dest = new Pt(-1, -1)
 	}
@@ -1055,5 +1127,150 @@ extends Actor(loc_, new Pt(GV.HUGEUNITSIZE, GV.HUGEUNITSIZE),
 		hooman.displayName = "char_human_2"
 		hooman.name = "The Colonel"
 		g.addActor(hooman)
+	}
+}
+
+
+
+class BarDude(loc_ : Pt, seePhrases_ : List[String], joinPhrases_ : List[String], 
+	char_image_ : String, act_ : Actor)
+extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE), 50, 0, "human", 0, act_.name)
+{
+	var char_image = char_image_
+	var player_close = false
+
+	val seePhrases = seePhrases_
+	val joinPhrases = joinPhrases_
+	val act = act_
+
+	var state = "waiting"
+	var moveCounter = 100
+
+	override def draw(g : Game)
+	{
+
+		if(state == "waiting")
+		{
+			var img = g.images(char_image + " 0")
+			g.ctx.drawImage(img, loc.x, loc.y, GV.NORMUNITSIZE, GV.NORMUNITSIZE)
+		}
+		else if(state == "moving")
+		{
+			var img = g.images(char_image + " 90")
+			g.ctx.drawImage(img, loc.x, loc.y, GV.NORMUNITSIZE, GV.NORMUNITSIZE)
+		}
+
+	}
+
+	override def aiMove(g : Game)
+	{
+		//as long as they haven't picked anyone yet
+		if(state == "waiting" && ! g.saloon_hasPickedAlly)
+		{
+			//close enough to say hi
+			if(! player_close && distanceTo(g.player) < 100)
+			{
+				player_close = true
+				
+				//pick a random phrase and say it
+				val phrase = seePhrases(g.r.nextInt(seePhrases.length))
+				g.addHeadText(this, phrase, 150)
+			}
+
+			//so close they picked us!
+			if(distanceTo(g.player) < 30)
+			{
+				g.saloon_hasPickedAlly = true
+				state = "moving"
+			}
+		}
+		else if(state == "moving")
+		{
+			//move left a bit out of the booth
+			if(moveCounter > 0)
+			{
+				if(moveLoc(-1, 0, g))
+				{
+					moveCounter -= 1
+				}
+			}
+			else
+			{
+				act.changeLoc(loc)
+				g.removeActor(this)
+				g.addActor(act)
+
+				val phrase = joinPhrases(g.r.nextInt(joinPhrases.length))
+				g.addHeadText(act, phrase, 150)
+			}
+		}
+	}
+}
+
+
+
+
+
+
+//stupid dudes
+class Bartender(loc_ : Pt)
+extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE), 50, 0, "human", 0, "bartender")
+{
+	var hasSeenPlayer = false
+
+	var speechIndex = 0
+	var speechRate = 150
+	var speechTimer = 0
+
+	val phrases = List("Well hello there!",
+						"Come on in and have a drink.",
+						"I bet one of the regulars would help you out,",
+						"If you ask nicely, that is.")
+
+	override def draw(g : Game)
+	{
+		var img = g.images("char_human_2 270")
+
+		g.ctx.drawImage(img, loc.x, loc.y, GV.NORMUNITSIZE, GV.NORMUNITSIZE)
+	}
+
+	def onSeePlayer(g : Game) =
+	{
+		val phrases = List("Good to see you!",
+							"We'll bang ok",
+							"Help me!",
+							"Save me!",
+							"Take the lead!",
+							"I'll follow you!",
+							"Freakin' ZOMBIES man!",
+							"Let's get out of here!",
+							"Run for your life!")
+
+		//pick a random phrase and say it
+		val phrase = phrases(g.r.nextInt(phrases.length))
+		g.addHeadText(this, phrase, 100)
+
+		hasSeenPlayer = true
+	}
+
+	override def aiMove(g : Game)
+	{
+		//handle text and related things
+		if(! hasSeenPlayer && hasLosTo(g.player, g))
+			hasSeenPlayer = true
+
+		if(hasSeenPlayer && speechIndex < phrases.size)
+		{
+			if(speechTimer <= 0)
+			{
+				speechTimer = speechRate
+				g.addHeadText(this, phrases(speechIndex), speechRate)
+				speechIndex += 1
+			}
+			else
+			{
+				speechTimer -= 1
+			}
+		}
 	}
 }

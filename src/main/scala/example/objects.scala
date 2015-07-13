@@ -184,7 +184,7 @@ class Obj(loc_ : Pt, size_ : Pt)
 
 
 class Actor(loc_ : Pt, size_ : Pt,
-			hp_ : Double, speed_ : Int,
+			hp_ : Double, speed_ : Double,
 			faction_ : String, points_ : Int, name_ : String)
 extends Obj(loc_, size_)
 {
@@ -199,14 +199,16 @@ extends Obj(loc_, size_)
 	var momentum = new Pt(0, 0)
 	var momentumFactor = GV.NORMMOMENTUMFACTOR
 
-	var important = false
 
 	var lastLoc = new Pt(-1, -1)
 
 	var effects = scala.collection.mutable.Set[Effect]()
 
-	//stupid
+	//flags
+	var important = true
+
 	var flammable = true
+	var canPutSelfOut = false
 
 	def changeLoc(newLoc : Pt) = //newX : Int, newY : Int) =
 	{
@@ -233,7 +235,13 @@ extends Obj(loc_, size_)
 		return true
 	}
 
-	def moveLoc(dx : Double, dy : Double, g : Game) : Boolean =
+	def roundLoc() =
+	{
+		loc.x = round(loc.x)
+		loc.y = round(loc.y)
+	}
+
+	def moveLocWithoutRound(dx : Double, dy : Double, g : Game) : Boolean =
 	{
 		var moved = false
 
@@ -252,10 +260,28 @@ extends Obj(loc_, size_)
 			moved = true
 		}
 
-		if(moved) lastLoc = tempLoc
+		if(moved)
+		{
+			lastLoc = tempLoc
+		}
 		
 		return moved
 	}
+
+	def moveLoc(dx : Double, dy : Double, g : Game) : Boolean =
+	{
+		if(moveLocWithoutRound(dx, dy, g))
+		{
+			roundLoc()
+			true
+		}
+		else
+		{
+			false
+		}
+	}
+
+
 
 	override def draw(g : Game) =
 	{
@@ -284,6 +310,8 @@ extends Obj(loc_, size_)
 		{
 			val d = change.unitStep
 			moveLoc(d.x, d.y, g)
+
+			lastLoc += change //don't want to change the way you're facing
 		}
 
 		//moveLoc(changeX, changeY, g)
@@ -350,7 +378,7 @@ extends Obj(loc_, size_)
 		a.faction != faction
 	}
 
-	def moveToNewMap(g : Game) =
+	def moveToNewMap(time : Int, g : Game) =
 	{
 		//meh
 	}
@@ -413,7 +441,7 @@ extends Obj(loc_, size_)
 		val cosa = (facing.x * dir.x + facing.y * dir.y) / (facing.pythagLength * dir.pythagLength)
 
 		val a = acos(cosa)
-		dom.console.log(a)
+		//dom.console.log(a)
 
 		return abs(a) < GV.MAX_FOV
 	}
@@ -497,7 +525,8 @@ extends Item(loc_)
 	override def pickup(owner : Actor) =
 	{
 		//the player gets some health!
-		owner.hp = min(owner.hp + amount, owner.maxHp)
+		val n = owner.maxHp * amount / 100
+		owner.hp = min(owner.hp + n, owner.maxHp)
 	}
 }
 
@@ -548,6 +577,9 @@ extends Item(loc_)
 {
 	val item = item_
 
+	//flags
+	important = false
+
 	override def draw(g : Game) =
 	{
 		//draw from the game thing
@@ -566,12 +598,12 @@ extends Item(loc_)
 	}
 }
 
-//TODO: make this throw it at a zombie in front of you
-class ThrowableItem(owner_ : Actor, name_ : String, picture_ : String)
+class ThrowableItem(owner_ : Actor, minDist_ : Int, name_ : String, picture_ : String)
 extends UsableItem(owner_, name_, picture_)
 {
 	val dist = GV.PLAYER_THROWDISTANCE
 	val speed = GV.PLAYER_THROWSPEED
+	val minDist = minDist_
 
 	def hasTarget(g : Game) : Boolean =
 	{
@@ -583,13 +615,15 @@ extends UsableItem(owner_, name_, picture_)
 	{
 		val target = owner.getClosestEnemyInView(g)
 
-		if(target != null)
+		if(target != null && owner.distanceTo(target) > minDist)
 		{
+			dom.console.log("Target")
 			//throw it at the target
 			return target.loc
 		}
 		else
 		{
+			dom.console.log("straight")
 			return getUntargetedThrowPosition(g)
 		}
 	}
@@ -616,8 +650,20 @@ extends UsableItem(owner_, "land mine", "item_landmine")
 	}
 }
 
+class UsableZombieController(owner_ : Actor)
+extends UsableItem(owner_, "wifi router", "item_zombiecontroller")
+{
+	override def use(g : Game) =
+	{
+		//drop it at the owner's location
+		val mine = new ZombieController(owner.loc.cloone)
+
+		g.addActor(mine)
+	}
+}
+
 class UsableGrenade(owner_ : Actor)
-extends ThrowableItem(owner_, "grenade", "item_pipebomb")
+extends ThrowableItem(owner_, GV.GRENADE_RADIUS * 3/2, "grenade", "item_grenade")
 {
 	override def use(g : Game)
 	{
@@ -634,7 +680,7 @@ extends ThrowableItem(owner_, "grenade", "item_pipebomb")
 
 class UsablePipeBomb(owner_ : Actor)
 //extends UsableItem(owner_, "pipe bomb", "item_pipebomb")
-extends ThrowableItem(owner_, "pipe bomb", "item_pipebomb")
+extends ThrowableItem(owner_, 0, "pipe bomb", "item_pipebomb")
 {
 	override def use(g : Game) =
 	{
@@ -650,7 +696,7 @@ extends ThrowableItem(owner_, "pipe bomb", "item_pipebomb")
 }
 
 class UsableSpitterAcid(owner_ : Actor)
-extends ThrowableItem(owner_, "spitter acid", "item_acid")
+extends ThrowableItem(owner_, GV.SPITTER_SPITRADIUS, "spitter acid", "item_acid")
 {
 	override def use(g : Game) =
 	{
@@ -667,7 +713,7 @@ extends ThrowableItem(owner_, "spitter acid", "item_acid")
 }
 
 class UsableMolotov(owner_ : Actor)
-extends ThrowableItem(owner_, "molotov", "item_molotov")
+extends ThrowableItem(owner_, GV.MOLOTOV_RADIUS, "molotov", "item_molotov")
 {
 	override def use(g : Game) =
 	{
@@ -675,7 +721,7 @@ extends ThrowableItem(owner_, "molotov", "item_molotov")
 		val dest = getThrowPosition(g)
 
 		//make a spitter spit there
-		val spit = new FirePatch(dest, GV.SPITTER_SPITRADIUS, GV.MOLOTOV_DURATION)
+		val spit = new FirePatch(dest, GV.MOLOTOV_RADIUS, GV.MOLOTOV_DURATION)
 		val spitLine = SimpleLine(owner.loc.cloone, dest, "black")
 		
 		val proj = new ProjectileActor(spit, spitLine, speed)
@@ -684,7 +730,7 @@ extends ThrowableItem(owner_, "molotov", "item_molotov")
 }
 
 class UsableGunTurret(owner_ : Actor)
-extends ThrowableItem(owner_, "gun turret", "item_gunturret")
+extends ThrowableItem(owner_, 0, "turret", "turret big")
 {
 	override def use(g : Game)
 	{
@@ -760,6 +806,50 @@ extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE),
 	}
 }
 
+//TODO: make this return them to zombie team when it runs out of time
+class ZombieController(loc_ : Pt)
+extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE),
+				-1, 0, "NA", 0, "zombie controller")
+{
+	val radius = GV.ZOMBIE_CONTROLLER_RADIUS
+
+	var timer = GV.ZOMBIE_CONTROLLER_TIMER
+
+	blocksMovement = false
+	lowPriority = true
+
+	override def draw(g : Game) =
+	{
+		//draw from the game thing
+		val img = g.images("item_zombiecontroller")
+		g.ctx.drawImage(img, loc.x, loc.y, GV.NORMUNITSIZE, GV.NORMUNITSIZE)
+	}
+
+	override def aiMove(g : Game) =
+	{
+		for(a <- g.acts)
+		{
+			if(a.faction == "zombie" && distanceTo(a) < radius)
+			a match {
+				case z : Zombie => 
+					z.faction = "human" 
+					z.color = s"rgb(150, 30, 150)"
+				case _ =>
+			}	
+		}
+
+		if(timer <= 0)
+		{
+			//we're done
+			g.removeActor(this)
+		}
+		else
+		{
+		timer -= 1
+		}
+	}
+}
+
 //TODO: make this just wrap another actor (i.e. fire, or simple bomb) so it's multi-purpose
 class LandMine(loc_ : Pt, ignoreFaction_ : String)
 extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE),
@@ -823,10 +913,21 @@ extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE), hp_, 0, faction_, 
 	var gun = gun_
 	var ignoreFaction = ignoreFaction_
 
+	var lastTarget : Pt = new Pt(0, 0)
+
+	var displayName = "turret"
+
 	override def draw(g : Game) =
 	{
-		g.ctx.fillStyle = s"rgb(100, 100, 100)"
-		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)
+		val change = loc - lastTarget
+		var img = g.images("turret " + angleToSpriteAngle(change))
+
+		g.ctx.drawImage(img, loc.x, loc.y, GV.NORMUNITSIZE, GV.NORMUNITSIZE)
+
+
+
+		// g.ctx.fillStyle = s"rgb(100, 100, 100)"
+		// g.ctx.fillRect(loc.x, loc.y, size.x, size.y)
 	}
 
 	def targetIsValid(a : Actor) : Boolean =
@@ -848,6 +949,7 @@ extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE), hp_, 0, faction_, 
 
 				if(distance <= gun.range)
 				{
+					lastTarget = closestAct.loc
 					gun.shoot(closestAct, g)
 				}
 			}
@@ -920,7 +1022,7 @@ extends Actor(new Pt(loc_.x - radius_, loc_.y - radius_), new Pt(radius_ * 2, ra
 
 	var timer = timer_
 
-	val actsOnFire = scala.collection.mutable.Set[Actor]()
+	val actsOnFire = scala.collection.mutable.HashMap[Actor, Int]()
 
 	blocksMovement = false
 	highPriority = true
@@ -946,7 +1048,7 @@ extends Actor(new Pt(loc_.x - radius_, loc_.y - radius_), new Pt(radius_ * 2, ra
 		//g.ctx.fillRect(loc.x, loc.y, size.x, size.y)
 
 		//draw fire on all the dudes on fire
-		for(a <- actsOnFire)
+		for((a, t) <- actsOnFire)
 		{
 			drawFire(a.loc, a.size)
 		}
@@ -962,7 +1064,7 @@ extends Actor(new Pt(loc_.x - radius_, loc_.y - radius_), new Pt(radius_ * 2, ra
 				//if it's a real actor and we collide with it and it's flammable
 				if(a.faction != "NA" && collides(a) && hasLosTo(a, g) && a.flammable) 
 				{
-					actsOnFire += a
+					actsOnFire += (a -> 0)
 				}
 			}
 
@@ -970,10 +1072,27 @@ extends Actor(new Pt(loc_.x - radius_, loc_.y - radius_), new Pt(radius_ * 2, ra
 		}
 
 		//now process fire
-		for(a <- actsOnFire)
+		for((a, t) <- actsOnFire)
 		{
 			a.takeDamage(this, GV.FIRE_DAMAGE, 0, g)
 
+			
+
+		}
+
+		for((a, t) <- actsOnFire)
+		{
+			//did they put the fire out?
+			if(a.canPutSelfOut)
+			{
+				if(t >= GV.FIRE_EXTINGUISHTIME)
+				{
+					actsOnFire remove a
+				}
+				else
+					actsOnFire(a) += 1
+
+			}
 			//are they dead?
 			if(a.isDead)
 			{
@@ -991,14 +1110,14 @@ extends Actor(new Pt(loc_.x - radius_, loc_.y - radius_), new Pt(radius_ * 2, ra
 }
 
 
-
-class ZombieSpawner(loc_ : Pt, spawnRate_ : Int)
-extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE), -1, 1, "NA", 0, "zombie spawner")
+//TODO: make this take in a position and area so it could work sideways or whatever
+class ZombieSpawner(spawnRate_ : Int)
+extends Actor(new Pt(6, GV.GAMEY), new Pt(GV.GAMEX - 12, GV.NORMUNITSIZE), -1, GV.ZOMBIESPAWNER_SPEED, "NA", 0, "zombie spawner")
 {
 	val spawnRate = spawnRate_
 	var timeToNextSpawn = spawnRate
 	blocksMovement = false
-	important = true
+	//important = true
 
 	override def draw(g : Game) =
 	{
@@ -1012,12 +1131,14 @@ extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE), -1, 1, "NA", 0, "z
 		//if it's time:
 		if(timeToNextSpawn == 0)
 		{
+			val destx = g.r.nextInt(size.x.toInt)
+			val dest = new Pt(destx, loc.y)
 			//Spawn a zombie if there's room:
 			val newZed = new Zombie(new Pt(-100, -100))
-			if(newZed.canMoveTo(loc, g)) //there's room!
+			if(newZed.canMoveTo(dest, g)) //there's room!
 			{
 				g.addActor(newZed)
-				newZed.changeLoc(loc) //loc.x, loc.y)
+				newZed.changeLoc(dest) //loc.x, loc.y)
 			}
 
 			timeToNextSpawn = spawnRate
@@ -1069,7 +1190,7 @@ extends Actor(new Pt(-1, -1), new Pt(0, 0), -1, act_.speed, "NA", 0, "delayed " 
 
 	}
 
-	override def moveToNewMap(g : Game) =
+	override def moveToNewMap(time : Int, g : Game) =
 	{
 
 	}
@@ -1081,6 +1202,9 @@ extends Actor(line_.start.cloone, new Pt(0, 0), -1, 0, "NA", 0, "projectile " + 
 	var line = line_
 	var act = act_
 	var rate = rate_
+
+	var forceSpawn = true
+	var passThrough = false
 
 	blocksMovement = true
 
@@ -1097,29 +1221,73 @@ extends Actor(line_.start.cloone, new Pt(0, 0), -1, 0, "NA", 0, "projectile " + 
 
 		val start = loc.cloone
 
-
-		for(i <- 1 to rate)
+		var stepCount = 0
+		while(!done && stepCount < rate*2 && distanceTo(start) < rate)
 		{
-			if(! done)
+			if(passThrough) // it ignores collisions
+			{
+				changeLocRel(step.x, step.y)
+			}
+			else
 			{
 				//try to move. If it fails, we're done
-				done = ! moveLoc(step.x, step.y, g)
-
-				//are we there yet?
-				if((loc - line.start).pythagLength > line.length)
-					done = true
-
-				//if(abs(loc.x - line.end.x) < 1 && abs(loc.y - line.end.y) < 1)
-
-				if(done)
-				{
-					act.changeLoc(loc - (act.size*.5))
-					g.addActor(act)
-					g.removeActor(this)
-				}
-				
+				done = ! moveLocWithoutRound(step.x, step.y, g)
 			}
+
+			//are we there yet?
+			if((loc - line.start).pythagLength > line.length)
+				done = true
 		}
+
+		//if we're done, spawn the actor
+		if(done)
+		{
+			act.changeLoc(loc - (act.size*.5))
+
+			g.removeActor(this)
+
+			if(forceSpawn || ! g.collision(act))
+			{
+				g.addActor(act)
+			}
+			
+		}
+
+		// for(i <- 1 to rate)
+		// {
+		// 	if(! done)
+		// 	{
+		// 		if(passThrough) // it ignores collisions
+		// 		{
+		// 			changeLocRel(step.x, step.y)
+		// 		}
+		// 		else
+		// 		{
+		// 			//try to move. If it fails, we're done
+		// 			done = ! moveLocWithoutRound(step.x, step.y, g)
+		// 		}
+
+		// 		//are we there yet?
+		// 		if((loc - line.start).pythagLength > line.length)
+		// 			done = true
+
+		// 		//if(abs(loc.x - line.end.x) < 1 && abs(loc.y - line.end.y) < 1)
+
+		// 		if(done)
+		// 		{
+		// 			act.changeLoc(loc - (act.size*.5))
+
+		// 			g.removeActor(this)
+
+		// 			if(forceSpawn || ! g.collision(act))
+		// 			{
+		// 				g.addActor(act)
+		// 			}
+					
+		// 		}
+				
+		// 	}
+		//}
 
 		val lineToDraw = SimpleLine(start, loc, line.color)
 		g.linesToDraw += lineToDraw
@@ -1148,9 +1316,11 @@ class Wall(loc_ : Pt, size_ : Pt) extends Obj(loc_, size_)
 {
 	blocksLos = true
 	alwaysVisible = true
+
+	var color = "blue"
 	override def draw(g : Game) =
 	{
-		g.ctx.fillStyle = "blue"
+		g.ctx.fillStyle = color
 		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)
 	}
 
@@ -1170,6 +1340,14 @@ class Wall(loc_ : Pt, size_ : Pt) extends Obj(loc_, size_)
 			return (w1, w2)
 		}
 	}
+}
+
+class Barrier(loc_ : Pt, size_ : Pt) extends Wall(loc_, size_)
+{
+	blocksLos = false
+	alwaysVisible = true
+
+	color = "brown"
 }
 
 

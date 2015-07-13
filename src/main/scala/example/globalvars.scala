@@ -27,8 +27,6 @@ object GV
 	val PLAYER_THROWDISTANCE = 50
 	val PLAYER_THROWSPEED = 6
 
-	val JANE_MOLOTOVRATE = 300
-
 	val HUMAN_HEALTH = 50
 	val HUMAN_AMMO = 500
 
@@ -44,6 +42,7 @@ object GV
 	val GRENADE_CHANCE = 5
 	val MOLOTOV_CHANCE = 5
 	val TURRET_CHANCE = 5
+	val CONTROLLER_CHANCE = 5
 
 
 	val PISTOL_DAMAGE = 10
@@ -87,15 +86,23 @@ object GV
 	val TURRET_APS = 4
 	val TURRET_HP = 100
 
+	val ZOMBIE_CONTROLLER_RADIUS = 100
+	val ZOMBIE_CONTROLLER_TIMER = 200
+
 
 	val FIRE_DAMAGE = 0.5
+	val FIRE_EXTINGUISHTIME = 40
 
 	val ZOMBIE_ATTACKCOOLDOWN = 10
 	val ZOMBIE_DAMAGE = 10
+	
+	val ZOMBIESPAWNER_SPAWNRATE = 30
+	val ZOMBIESPAWNER_SPEED = .3
 
 	val CHARGER_CHANCE = 5
 	val SPITTER_CHANCE = 5
 	val TANK_CHANCE = 1
+	val CANNON_CHANCE = 1
 
 	val CHARGER_CHARGECOOLDOWN = 300
 	val CHARGER_CHARGERANGE = 200
@@ -111,9 +118,44 @@ object GV
 	val TANK_HEALTH = 400
 	val TANK_DAMAGE = 25
 	val TANK_HEALRATE = 5
+	val TANK_PUSH = 1.5
+
+	val CANNON_HEALTH = 500
+	val CANNON_DAMAGE = 10
+	val CANNON_HEALRATE = 5
+	val CANNON_SPITRATE = 200 //100 for challenging boss?
+	val CANNON_SPITNUM = 5 //20 for challenging boss?
 
 	//load some pictures
 
+	val JANE_MOLOTOVRATE = 150
+	val JANE_BAR_PHRASES = List("You need something burned?",
+								"I just wanna watch the world burn")
+	val JANE_SEE_PHRASES = List("Wassup!",
+							"We'll bang ok",
+							"Let's kill some dudes!",
+							"Awww yiss!",
+							"I'll bring the fire",
+							"I like to set things on fire",
+							"Watch, or you might get burned!",
+							"They don't stand a chance!")
+
+
+	val TANK_RIDER_HP = TANK_HEALTH * 5 / 4
+	val TANK_RIDER_DAMAGE = TANK_DAMAGE * 5 / 4
+	val TANK_RIDER_BAR_PHRASES = List("Me and Bessy will kick some butt!",
+								"Let's ride!")
+	val TANK_RIDER_SEE_PHRASES = List("Yeehaw!",
+							"We'll bang ok",
+							"Giddyup!",
+							"Whoa there Buckaroo!",
+							"Woooooaaaaa!",
+							"Yippee!",
+							"Yippekaya!",
+							"Ride 'em cowboy!")
+
+	val SALOON_LEVEL_MIN = 5
+	val SALOON_LEVEL_RANGE = 6
 }
 
 
@@ -142,6 +184,11 @@ class Pt(x_ : Double, y_ : Double)
 	def *(n : Double) : Pt =
 	{
 		return new Pt(x * n, y * n)
+	}
+
+	def /(n : Double) : Pt =
+	{
+		return new Pt(x / n, y / n)
 	}
 
 	def +(p : Pt) : Pt =
