@@ -961,22 +961,14 @@ ScalaJS.c.Lexample_ScalaJSExample$.prototype.main__Lorg_scalajs_dom_raw_HTMLCanv
   var keysDown = ScalaJS.as.scm_Set(ScalaJS.m.scm_Set$().apply__sc_Seq__sc_GenTraversable(ScalaJS.m.sci_Nil$()));
   var ctx = canvas["getContext"]("2d");
   var g = new ScalaJS.c.Lgame_Game().init___I__I__Lorg_scalajs_dom_raw_CanvasRenderingContext2D(ScalaJS.m.Lglobalvars_GV$().GAMEX$1, ScalaJS.m.Lglobalvars_GV$().GAMEY$1, ctx);
-  g.genMap__V();
+  g.genMap__Z();
   new ScalaJS.c.Lenemies_Spitter().init___Lglobalvars_Pt(new ScalaJS.c.Lglobalvars_Pt().init___D__D((((-10) + ((ScalaJS.m.Lglobalvars_GV$().GAMEX$1 / 2) | 0)) | 0), (((-50) + ScalaJS.m.Lglobalvars_GV$().GAMEY$1) | 0)));
   new ScalaJS.c.Lobjects_FirePatch().init___Lglobalvars_Pt__I__I(new ScalaJS.c.Lglobalvars_Pt().init___D__D(100.0, 100.0), 100, 5000);
-  var hooman = null;
-  var this$2 = g.r$1;
-  if ((this$2.self$1.nextInt__I__I(2) === 0)) {
-    hooman = new ScalaJS.c.Lenemies_MolotovThrower().init___Lglobalvars_Pt(new ScalaJS.c.Lglobalvars_Pt().init___D__D((50 + g.player$1.loc$1.x$1), g.player$1.loc$1.y$1))
-  } else {
-    hooman = new ScalaJS.c.Lenemies_TankRider().init___Lglobalvars_Pt(new ScalaJS.c.Lglobalvars_Pt().init___D__D((50 + g.player$1.loc$1.x$1), g.player$1.loc$1.y$1))
-  };
-  g.addActor__Lobjects_Actor__scm_Set(hooman);
   var thegun = new ScalaJS.c.Lenemies_Gun().init___I__I__I__I__Lobjects_Actor(ScalaJS.m.Lglobalvars_GV$().SNIPER$undFIRETIME$1, ScalaJS.m.Lglobalvars_GV$().SNIPER$undDAMAGE$1, ScalaJS.m.Lglobalvars_GV$().SNIPER$undRANGE$1, ScalaJS.m.Lglobalvars_GV$().SNIPER$undAPS$1, null);
   var grounded = new ScalaJS.c.Lobjects_GroundGun().init___Lglobalvars_Pt__Lenemies_Gun__T(new ScalaJS.c.Lglobalvars_Pt().init___D__D((50 + g.player$1.loc$1.x$1), g.player$1.loc$1.y$1), thegun, "ak47");
   g.addActor__Lobjects_Actor__scm_Set(grounded);
   new ScalaJS.c.Lobjects_Wall().init___Lglobalvars_Pt__Lglobalvars_Pt(new ScalaJS.c.Lglobalvars_Pt().init___D__D(200.0, 400.0), new ScalaJS.c.Lglobalvars_Pt().init___D__D(200.0, 10.0));
-  var zedSpawner = new ScalaJS.c.Lobjects_ZombieSpawner().init___Lglobalvars_Pt__I(new ScalaJS.c.Lglobalvars_Pt().init___D__D(((((ScalaJS.m.Lglobalvars_GV$().GAMEX$1 / 2) | 0) - ((ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1 / 2) | 0)) | 0), ScalaJS.m.Lglobalvars_GV$().GAMEY$1), 200);
+  var zedSpawner = new ScalaJS.c.Lobjects_ZombieSpawner().init___I(ScalaJS.m.Lglobalvars_GV$().ZOMBIESPAWNER$undSPAWNRATE$1);
   g.addActor__Lobjects_Actor__scm_Set(zedSpawner);
   this.clear$1__p1__Lorg_scalajs_dom_raw_CanvasRenderingContext2D__V(ctx);
   ScalaJS.g["onkeydown"] = (function(keysDown$1) {
@@ -1007,48 +999,7 @@ ScalaJS.c.Lexample_ScalaJSExample$.prototype.example$ScalaJSExample$$run$1__scm_
     ctx$1["fillText"]("It's over!", ((ScalaJS.m.Lglobalvars_GV$().GAMEX$1 / 2) | 0), ((ScalaJS.m.Lglobalvars_GV$().GAMEY$1 / 2) | 0))
   } else {
     if ((g$1.player$1.loc$1.y$1 < 0)) {
-      g$1.score$1 = ((g$1.score$1 + ScalaJS.imul(10, g$1.difficulty$1)) | 0);
-      ScalaJS.g["console"]["log"]("Generating new map");
-      var this$3 = g$1.acts$1;
-      var this$4 = new ScalaJS.c.scm_HashSet().init___();
-      var oldActs = ScalaJS.as.scm_HashSet(ScalaJS.s.scg_Growable$class__$$plus$plus$eq__scg_Growable__sc_TraversableOnce__scg_Growable(this$4, this$3));
-      g$1.genMap__V();
-      var jsx$1 = ScalaJS.g["console"];
-      var s = (("Copying " + oldActs.tableSize$5) + " actors");
-      jsx$1["log"](s);
-      g$1.delayedActs$1.foreach__F1__V(new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(g$1$1) {
-        return (function(delAct$2) {
-          var delAct = ScalaJS.as.Lobjects_DelayedActor(delAct$2);
-          delAct.time$3 = ((delAct.time$3 + ((ScalaJS.m.Lglobalvars_GV$().GAMEY$1 / delAct.speed$2) | 0)) | 0);
-          if ((delAct.time$3 > ScalaJS.m.Lglobalvars_GV$().OFFMAPCUTOFF$1)) {
-            var this$6 = g$1$1.delayedActs$1;
-            return ScalaJS.s.scm_FlatHashTable$class__removeElem__scm_FlatHashTable__O__Z(this$6, delAct)
-          } else {
-            return (void 0)
-          }
-        })
-      })(g$1)));
-      var i = 0;
-      var len = oldActs.table$5.u["length"];
-      while ((i < len)) {
-        var curEntry = oldActs.table$5.u[i];
-        if ((curEntry !== null)) {
-          var arg1 = ScalaJS.s.scm_FlatHashTable$HashUtils$class__entryToElem__scm_FlatHashTable$HashUtils__O__O(oldActs, curEntry);
-          var a = ScalaJS.as.Lobjects_Actor(arg1);
-          if ((!ScalaJS.is.Lobjects_ProjectileActor(a))) {
-            var x$2 = g$1.player$1;
-            if ((!(a === x$2))) {
-              var time = ((a.loc$1.y$1 / a.speed$2) | 0);
-              a.loc$1.y$1 = ScalaJS.m.Lglobalvars_GV$().GAMEY$1;
-              a.moveToNewMap__Lgame_Game__V(g$1);
-              var delayedAct = new ScalaJS.c.Lobjects_DelayedActor().init___Lobjects_Actor__I(a, time);
-              var this$7 = g$1.delayedActs$1;
-              this$7.$$plus$eq__O__scm_HashSet(delayedAct)
-            }
-          }
-        };
-        i = ((1 + i) | 0)
-      }
+      g$1.loadNewMap__Z()
     };
     this.handlePlayerMovement__Lenemies_Player__scm_Set__Lgame_Game__O(g$1.player$1, keysDown$1, g$1);
     g$1.runAllAIs__V();
@@ -1199,7 +1150,9 @@ ScalaJS.c.Lgame_Game = (function() {
   this.acts$1 = null;
   this.delayedActs$1 = null;
   this.headTexts$1 = null;
-  this.player$1 = null
+  this.player$1 = null;
+  this.saloon$undlevel$1 = 0;
+  this.saloon$undhasPickedAlly$1 = false
 });
 ScalaJS.c.Lgame_Game.prototype = new ScalaJS.h.O();
 ScalaJS.c.Lgame_Game.prototype.constructor = ScalaJS.c.Lgame_Game;
@@ -1217,6 +1170,7 @@ ScalaJS.c.Lgame_Game.prototype.spawnItemFromDummy__Lobjects_DummyItem__scm_Set =
   var grenade = new ScalaJS.c.Lobjects_GroundUsableItem().init___Lglobalvars_Pt__Lobjects_UsableItem__T(d.loc$1, new ScalaJS.c.Lobjects_UsableGrenade().init___Lobjects_Actor(null), "item_pipebomb");
   var molotov = new ScalaJS.c.Lobjects_GroundUsableItem().init___Lglobalvars_Pt__Lobjects_UsableItem__T(d.loc$1, new ScalaJS.c.Lobjects_UsableMolotov().init___Lobjects_Actor(null), "item_molotov");
   var turret = new ScalaJS.c.Lobjects_GroundUsableItem().init___Lglobalvars_Pt__Lobjects_UsableItem__T(d.loc$1, new ScalaJS.c.Lobjects_UsableGunTurret().init___Lobjects_Actor(null), "item_gunturret");
+  var controller = new ScalaJS.c.Lobjects_GroundUsableItem().init___Lglobalvars_Pt__Lobjects_UsableItem__T(d.loc$1, new ScalaJS.c.Lobjects_UsableZombieController().init___Lobjects_Actor(null), "item_zombiecontroller");
   ScalaJS.m.sc_Seq$();
   var n = ScalaJS.m.Lglobalvars_GV$().AMMO$undCHANCE$1;
   ScalaJS.m.sci_Seq$();
@@ -1297,23 +1251,35 @@ ScalaJS.c.Lgame_Game.prototype.spawnItemFromDummy__Lobjects_DummyItem__scm_Set =
     i$7 = ((1 + i$7) | 0)
   };
   var turretL = b$7.toList__sci_List();
-  var this$17 = ScalaJS.m.sc_Seq$();
-  var jsx$6 = ScalaJS.as.sc_TraversableLike(ammopackL.$$plus$plus__sc_GenTraversableOnce__scg_CanBuildFrom__O(healthpackL, this$17.ReusableCBFInstance$2));
-  var this$18 = ScalaJS.m.sc_Seq$();
-  var jsx$5 = ScalaJS.as.sc_TraversableLike(jsx$6.$$plus$plus__sc_GenTraversableOnce__scg_CanBuildFrom__O(mineL, this$18.ReusableCBFInstance$2));
+  ScalaJS.m.sc_Seq$();
+  var n$8 = ScalaJS.m.Lglobalvars_GV$().CONTROLLER$undCHANCE$1;
+  ScalaJS.m.sci_Seq$();
+  var b$8 = new ScalaJS.c.scm_ListBuffer().init___();
+  var i$8 = 0;
+  while ((i$8 < n$8)) {
+    b$8.$$plus$eq__O__scm_ListBuffer(controller);
+    i$8 = ((1 + i$8) | 0)
+  };
+  var controllerL = b$8.toList__sci_List();
   var this$19 = ScalaJS.m.sc_Seq$();
-  var jsx$4 = ScalaJS.as.sc_TraversableLike(jsx$5.$$plus$plus__sc_GenTraversableOnce__scg_CanBuildFrom__O(spitL, this$19.ReusableCBFInstance$2));
+  var jsx$7 = ScalaJS.as.sc_TraversableLike(ammopackL.$$plus$plus__sc_GenTraversableOnce__scg_CanBuildFrom__O(healthpackL, this$19.ReusableCBFInstance$2));
   var this$20 = ScalaJS.m.sc_Seq$();
-  var jsx$3 = ScalaJS.as.sc_TraversableLike(jsx$4.$$plus$plus__sc_GenTraversableOnce__scg_CanBuildFrom__O(pipeL, this$20.ReusableCBFInstance$2));
+  var jsx$6 = ScalaJS.as.sc_TraversableLike(jsx$7.$$plus$plus__sc_GenTraversableOnce__scg_CanBuildFrom__O(mineL, this$20.ReusableCBFInstance$2));
   var this$21 = ScalaJS.m.sc_Seq$();
-  var jsx$2 = ScalaJS.as.sc_TraversableLike(jsx$3.$$plus$plus__sc_GenTraversableOnce__scg_CanBuildFrom__O(grenadeL, this$21.ReusableCBFInstance$2));
+  var jsx$5 = ScalaJS.as.sc_TraversableLike(jsx$6.$$plus$plus__sc_GenTraversableOnce__scg_CanBuildFrom__O(spitL, this$21.ReusableCBFInstance$2));
   var this$22 = ScalaJS.m.sc_Seq$();
-  var jsx$1 = ScalaJS.as.sc_TraversableLike(jsx$2.$$plus$plus__sc_GenTraversableOnce__scg_CanBuildFrom__O(molotovL, this$22.ReusableCBFInstance$2));
+  var jsx$4 = ScalaJS.as.sc_TraversableLike(jsx$5.$$plus$plus__sc_GenTraversableOnce__scg_CanBuildFrom__O(pipeL, this$22.ReusableCBFInstance$2));
   var this$23 = ScalaJS.m.sc_Seq$();
-  var choices = ScalaJS.as.sc_Seq(jsx$1.$$plus$plus__sc_GenTraversableOnce__scg_CanBuildFrom__O(turretL, this$23.ReusableCBFInstance$2));
-  var this$24 = this.r$1;
-  var n$8 = choices.length__I();
-  var choice = ScalaJS.as.Lobjects_Item(choices.apply__I__O(this$24.self$1.nextInt__I__I(n$8)));
+  var jsx$3 = ScalaJS.as.sc_TraversableLike(jsx$4.$$plus$plus__sc_GenTraversableOnce__scg_CanBuildFrom__O(grenadeL, this$23.ReusableCBFInstance$2));
+  var this$24 = ScalaJS.m.sc_Seq$();
+  var jsx$2 = ScalaJS.as.sc_TraversableLike(jsx$3.$$plus$plus__sc_GenTraversableOnce__scg_CanBuildFrom__O(molotovL, this$24.ReusableCBFInstance$2));
+  var this$25 = ScalaJS.m.sc_Seq$();
+  var jsx$1 = ScalaJS.as.sc_TraversableLike(jsx$2.$$plus$plus__sc_GenTraversableOnce__scg_CanBuildFrom__O(turretL, this$25.ReusableCBFInstance$2));
+  var this$26 = ScalaJS.m.sc_Seq$();
+  var choices = ScalaJS.as.sc_Seq(jsx$1.$$plus$plus__sc_GenTraversableOnce__scg_CanBuildFrom__O(controllerL, this$26.ReusableCBFInstance$2));
+  var this$27 = this.r$1;
+  var n$9 = choices.length__I();
+  var choice = ScalaJS.as.Lobjects_Item(choices.apply__I__O(this$27.self$1.nextInt__I__I(n$9)));
   return this.addActor__Lobjects_Actor__scm_Set(choice)
 });
 ScalaJS.c.Lgame_Game.prototype.spawnMainWalls__scm_Set = (function() {
@@ -1392,266 +1358,343 @@ ScalaJS.c.Lgame_Game.prototype.loadAllImages__scm_HashMap = (function() {
   if ((e$6 !== null)) {
     e$6.value$1 = y$6
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 1 big.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/item grenade.png");
   var this$24 = this.images$1;
   var y$7 = img;
-  var e$7 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$24, "item_gunturret", y$7));
+  var e$7 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$24, "item_grenade", y$7));
   if ((e$7 !== null)) {
     e$7.value$1 = y$7
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 1 0.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/turret big.png");
   var this$27 = this.images$1;
   var y$8 = img;
-  var e$8 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$27, "char_human_1 0", y$8));
+  var e$8 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$27, "item_gunturret", y$8));
   if ((e$8 !== null)) {
     e$8.value$1 = y$8
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 1 90.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/item zombie control.png");
   var this$30 = this.images$1;
   var y$9 = img;
-  var e$9 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$30, "char_human_1 90", y$9));
+  var e$9 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$30, "item_zombiecontroller", y$9));
   if ((e$9 !== null)) {
     e$9.value$1 = y$9
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 1 180.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/turret 0.png");
   var this$33 = this.images$1;
   var y$10 = img;
-  var e$10 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$33, "char_human_1 180", y$10));
+  var e$10 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$33, "turret 0", y$10));
   if ((e$10 !== null)) {
     e$10.value$1 = y$10
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 1 270.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/turret 90.png");
   var this$36 = this.images$1;
   var y$11 = img;
-  var e$11 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$36, "char_human_1 270", y$11));
+  var e$11 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$36, "turret 90", y$11));
   if ((e$11 !== null)) {
     e$11.value$1 = y$11
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 1 45.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/turret 180.png");
   var this$39 = this.images$1;
   var y$12 = img;
-  var e$12 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$39, "char_human_1 45", y$12));
+  var e$12 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$39, "turret 180", y$12));
   if ((e$12 !== null)) {
     e$12.value$1 = y$12
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 1 135.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/turret 270.png");
   var this$42 = this.images$1;
   var y$13 = img;
-  var e$13 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$42, "char_human_1 135", y$13));
+  var e$13 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$42, "turret 270", y$13));
   if ((e$13 !== null)) {
     e$13.value$1 = y$13
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 1 225.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/turret 45.png");
   var this$45 = this.images$1;
   var y$14 = img;
-  var e$14 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$45, "char_human_1 225", y$14));
+  var e$14 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$45, "turret 45", y$14));
   if ((e$14 !== null)) {
     e$14.value$1 = y$14
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 1 315.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/turret 135.png");
   var this$48 = this.images$1;
   var y$15 = img;
-  var e$15 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$48, "char_human_1 315", y$15));
+  var e$15 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$48, "turret 135", y$15));
   if ((e$15 !== null)) {
     e$15.value$1 = y$15
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 1 big.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/turret 225.png");
   var this$51 = this.images$1;
   var y$16 = img;
-  var e$16 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$51, "char_human_1_big", y$16));
+  var e$16 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$51, "turret 225", y$16));
   if ((e$16 !== null)) {
     e$16.value$1 = y$16
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 2 0.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/turret 315.png");
   var this$54 = this.images$1;
   var y$17 = img;
-  var e$17 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$54, "char_human_2 0", y$17));
+  var e$17 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$54, "turret 315", y$17));
   if ((e$17 !== null)) {
     e$17.value$1 = y$17
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 2 90.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/turret big.png");
   var this$57 = this.images$1;
   var y$18 = img;
-  var e$18 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$57, "char_human_2 90", y$18));
+  var e$18 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$57, "turret big", y$18));
   if ((e$18 !== null)) {
     e$18.value$1 = y$18
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 2 180.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 1 0.png");
   var this$60 = this.images$1;
   var y$19 = img;
-  var e$19 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$60, "char_human_2 180", y$19));
+  var e$19 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$60, "char_human_1 0", y$19));
   if ((e$19 !== null)) {
     e$19.value$1 = y$19
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 2 270.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 1 90.png");
   var this$63 = this.images$1;
   var y$20 = img;
-  var e$20 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$63, "char_human_2 270", y$20));
+  var e$20 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$63, "char_human_1 90", y$20));
   if ((e$20 !== null)) {
     e$20.value$1 = y$20
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 2 45.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 1 180.png");
   var this$66 = this.images$1;
   var y$21 = img;
-  var e$21 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$66, "char_human_2 45", y$21));
+  var e$21 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$66, "char_human_1 180", y$21));
   if ((e$21 !== null)) {
     e$21.value$1 = y$21
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 2 135.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 1 270.png");
   var this$69 = this.images$1;
   var y$22 = img;
-  var e$22 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$69, "char_human_2 135", y$22));
+  var e$22 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$69, "char_human_1 270", y$22));
   if ((e$22 !== null)) {
     e$22.value$1 = y$22
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 2 225.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 1 45.png");
   var this$72 = this.images$1;
   var y$23 = img;
-  var e$23 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$72, "char_human_2 225", y$23));
+  var e$23 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$72, "char_human_1 45", y$23));
   if ((e$23 !== null)) {
     e$23.value$1 = y$23
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 2 315.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 1 135.png");
   var this$75 = this.images$1;
   var y$24 = img;
-  var e$24 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$75, "char_human_2 315", y$24));
+  var e$24 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$75, "char_human_1 135", y$24));
   if ((e$24 !== null)) {
     e$24.value$1 = y$24
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 2 big.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 1 225.png");
   var this$78 = this.images$1;
   var y$25 = img;
-  var e$25 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$78, "char_human_2_big", y$25));
+  var e$25 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$78, "char_human_1 225", y$25));
   if ((e$25 !== null)) {
     e$25.value$1 = y$25
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 3 0.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 1 315.png");
   var this$81 = this.images$1;
   var y$26 = img;
-  var e$26 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$81, "char_human_3 0", y$26));
+  var e$26 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$81, "char_human_1 315", y$26));
   if ((e$26 !== null)) {
     e$26.value$1 = y$26
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 3 90.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 1 big.png");
   var this$84 = this.images$1;
   var y$27 = img;
-  var e$27 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$84, "char_human_3 90", y$27));
+  var e$27 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$84, "char_human_1_big", y$27));
   if ((e$27 !== null)) {
     e$27.value$1 = y$27
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 3 180.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 2 0.png");
   var this$87 = this.images$1;
   var y$28 = img;
-  var e$28 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$87, "char_human_3 180", y$28));
+  var e$28 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$87, "char_human_2 0", y$28));
   if ((e$28 !== null)) {
     e$28.value$1 = y$28
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 3 270.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 2 90.png");
   var this$90 = this.images$1;
   var y$29 = img;
-  var e$29 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$90, "char_human_3 270", y$29));
+  var e$29 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$90, "char_human_2 90", y$29));
   if ((e$29 !== null)) {
     e$29.value$1 = y$29
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 3 45.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 2 180.png");
   var this$93 = this.images$1;
   var y$30 = img;
-  var e$30 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$93, "char_human_3 45", y$30));
+  var e$30 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$93, "char_human_2 180", y$30));
   if ((e$30 !== null)) {
     e$30.value$1 = y$30
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 3 135.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 2 270.png");
   var this$96 = this.images$1;
   var y$31 = img;
-  var e$31 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$96, "char_human_3 135", y$31));
+  var e$31 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$96, "char_human_2 270", y$31));
   if ((e$31 !== null)) {
     e$31.value$1 = y$31
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 3 225.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 2 45.png");
   var this$99 = this.images$1;
   var y$32 = img;
-  var e$32 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$99, "char_human_3 225", y$32));
+  var e$32 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$99, "char_human_2 45", y$32));
   if ((e$32 !== null)) {
     e$32.value$1 = y$32
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 3 315.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 2 135.png");
   var this$102 = this.images$1;
   var y$33 = img;
-  var e$33 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$102, "char_human_3 315", y$33));
+  var e$33 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$102, "char_human_2 135", y$33));
   if ((e$33 !== null)) {
     e$33.value$1 = y$33
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 3 big.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 2 225.png");
   var this$105 = this.images$1;
   var y$34 = img;
-  var e$34 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$105, "char_human_3_big", y$34));
+  var e$34 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$105, "char_human_2 225", y$34));
   if ((e$34 !== null)) {
     e$34.value$1 = y$34
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/tank rider 0.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 2 315.png");
   var this$108 = this.images$1;
   var y$35 = img;
-  var e$35 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$108, "tank rider 0", y$35));
+  var e$35 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$108, "char_human_2 315", y$35));
   if ((e$35 !== null)) {
     e$35.value$1 = y$35
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/tank rider 90.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 2 big.png");
   var this$111 = this.images$1;
   var y$36 = img;
-  var e$36 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$111, "tank rider 90", y$36));
+  var e$36 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$111, "char_human_2_big", y$36));
   if ((e$36 !== null)) {
     e$36.value$1 = y$36
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/tank rider 180.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 3 0.png");
   var this$114 = this.images$1;
   var y$37 = img;
-  var e$37 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$114, "tank rider 180", y$37));
+  var e$37 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$114, "char_human_3 0", y$37));
   if ((e$37 !== null)) {
     e$37.value$1 = y$37
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/tank rider 270.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 3 90.png");
   var this$117 = this.images$1;
   var y$38 = img;
-  var e$38 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$117, "tank rider 270", y$38));
+  var e$38 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$117, "char_human_3 90", y$38));
   if ((e$38 !== null)) {
     e$38.value$1 = y$38
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/tank rider 45.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 3 180.png");
   var this$120 = this.images$1;
   var y$39 = img;
-  var e$39 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$120, "tank rider 45", y$39));
+  var e$39 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$120, "char_human_3 180", y$39));
   if ((e$39 !== null)) {
     e$39.value$1 = y$39
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/tank rider 135.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 3 270.png");
   var this$123 = this.images$1;
   var y$40 = img;
-  var e$40 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$123, "tank rider 135", y$40));
+  var e$40 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$123, "char_human_3 270", y$40));
   if ((e$40 !== null)) {
     e$40.value$1 = y$40
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/tank rider 225.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 3 45.png");
   var this$126 = this.images$1;
   var y$41 = img;
-  var e$41 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$126, "tank rider 225", y$41));
+  var e$41 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$126, "char_human_3 45", y$41));
   if ((e$41 !== null)) {
     e$41.value$1 = y$41
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/tank rider 315.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 3 135.png");
   var this$129 = this.images$1;
   var y$42 = img;
-  var e$42 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$129, "tank rider 315", y$42));
+  var e$42 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$129, "char_human_3 135", y$42));
   if ((e$42 !== null)) {
     e$42.value$1 = y$42
   };
-  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/tank rider big.png");
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 3 225.png");
   var this$132 = this.images$1;
   var y$43 = img;
-  var e$43 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$132, "tank rider big", y$43));
+  var e$43 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$132, "char_human_3 225", y$43));
   if ((e$43 !== null)) {
     e$43.value$1 = y$43
   };
-  return this$132
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 3 315.png");
+  var this$135 = this.images$1;
+  var y$44 = img;
+  var e$44 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$135, "char_human_3 315", y$44));
+  if ((e$44 !== null)) {
+    e$44.value$1 = y$44
+  };
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/char 3 big.png");
+  var this$138 = this.images$1;
+  var y$45 = img;
+  var e$45 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$138, "char_human_3_big", y$45));
+  if ((e$45 !== null)) {
+    e$45.value$1 = y$45
+  };
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/tank rider 0.png");
+  var this$141 = this.images$1;
+  var y$46 = img;
+  var e$46 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$141, "tank rider 0", y$46));
+  if ((e$46 !== null)) {
+    e$46.value$1 = y$46
+  };
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/tank rider 90.png");
+  var this$144 = this.images$1;
+  var y$47 = img;
+  var e$47 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$144, "tank rider 90", y$47));
+  if ((e$47 !== null)) {
+    e$47.value$1 = y$47
+  };
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/tank rider 180.png");
+  var this$147 = this.images$1;
+  var y$48 = img;
+  var e$48 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$147, "tank rider 180", y$48));
+  if ((e$48 !== null)) {
+    e$48.value$1 = y$48
+  };
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/tank rider 270.png");
+  var this$150 = this.images$1;
+  var y$49 = img;
+  var e$49 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$150, "tank rider 270", y$49));
+  if ((e$49 !== null)) {
+    e$49.value$1 = y$49
+  };
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/tank rider 45.png");
+  var this$153 = this.images$1;
+  var y$50 = img;
+  var e$50 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$153, "tank rider 45", y$50));
+  if ((e$50 !== null)) {
+    e$50.value$1 = y$50
+  };
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/tank rider 135.png");
+  var this$156 = this.images$1;
+  var y$51 = img;
+  var e$51 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$156, "tank rider 135", y$51));
+  if ((e$51 !== null)) {
+    e$51.value$1 = y$51
+  };
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/tank rider 225.png");
+  var this$159 = this.images$1;
+  var y$52 = img;
+  var e$52 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$159, "tank rider 225", y$52));
+  if ((e$52 !== null)) {
+    e$52.value$1 = y$52
+  };
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/tank rider 315.png");
+  var this$162 = this.images$1;
+  var y$53 = img;
+  var e$53 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$162, "tank rider 315", y$53));
+  if ((e$53 !== null)) {
+    e$53.value$1 = y$53
+  };
+  img = this.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageElement("images/tank rider big.png");
+  var this$165 = this.images$1;
+  var y$54 = img;
+  var e$54 = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$165, "tank rider big", y$54));
+  if ((e$54 !== null)) {
+    e$54.value$1 = y$54
+  };
+  return this$165
 });
 ScalaJS.c.Lgame_Game.prototype.spawnSpecial__O = (function() {
   var this$1 = this.r$1;
@@ -1663,6 +1706,7 @@ ScalaJS.c.Lgame_Game.prototype.spawnSpecial__O = (function() {
   var charger = new ScalaJS.c.Lenemies_Charger().init___Lglobalvars_Pt(new ScalaJS.c.Lglobalvars_Pt().init___D__D(x, y));
   var spitter = new ScalaJS.c.Lenemies_Spitter().init___Lglobalvars_Pt(new ScalaJS.c.Lglobalvars_Pt().init___D__D(x, y));
   var tank = new ScalaJS.c.Lenemies_Tank().init___Lglobalvars_Pt(new ScalaJS.c.Lglobalvars_Pt().init___D__D(x, y));
+  var cannon = new ScalaJS.c.Lenemies_CannonTank().init___Lglobalvars_Pt(new ScalaJS.c.Lglobalvars_Pt().init___D__D(x, y));
   ScalaJS.m.sc_Seq$();
   var n$2 = ScalaJS.m.Lglobalvars_GV$().CHARGER$undCHANCE$1;
   ScalaJS.m.sci_Seq$();
@@ -1693,13 +1737,25 @@ ScalaJS.c.Lgame_Game.prototype.spawnSpecial__O = (function() {
     i$2 = ((1 + i$2) | 0)
   };
   var tankL = b$2.toList__sci_List();
-  var this$9 = ScalaJS.m.sc_Seq$();
-  var jsx$1 = ScalaJS.as.sc_TraversableLike(chargerL.$$plus$plus__sc_GenTraversableOnce__scg_CanBuildFrom__O(spitterL, this$9.ReusableCBFInstance$2));
-  var this$10 = ScalaJS.m.sc_Seq$();
-  var choices = ScalaJS.as.sc_Seq(jsx$1.$$plus$plus__sc_GenTraversableOnce__scg_CanBuildFrom__O(tankL, this$10.ReusableCBFInstance$2));
-  var this$11 = this.r$1;
-  var n$5 = choices.length__I();
-  var choice = ScalaJS.as.Lobjects_Actor(choices.apply__I__O(this$11.self$1.nextInt__I__I(n$5)));
+  ScalaJS.m.sc_Seq$();
+  var n$5 = ScalaJS.m.Lglobalvars_GV$().CANNON$undCHANCE$1;
+  ScalaJS.m.sci_Seq$();
+  var b$3 = new ScalaJS.c.scm_ListBuffer().init___();
+  var i$3 = 0;
+  while ((i$3 < n$5)) {
+    b$3.$$plus$eq__O__scm_ListBuffer(cannon);
+    i$3 = ((1 + i$3) | 0)
+  };
+  var cannonL = b$3.toList__sci_List();
+  var this$11 = ScalaJS.m.sc_Seq$();
+  var jsx$2 = ScalaJS.as.sc_TraversableLike(chargerL.$$plus$plus__sc_GenTraversableOnce__scg_CanBuildFrom__O(spitterL, this$11.ReusableCBFInstance$2));
+  var this$12 = ScalaJS.m.sc_Seq$();
+  var jsx$1 = ScalaJS.as.sc_TraversableLike(jsx$2.$$plus$plus__sc_GenTraversableOnce__scg_CanBuildFrom__O(tankL, this$12.ReusableCBFInstance$2));
+  var this$13 = ScalaJS.m.sc_Seq$();
+  var choices = ScalaJS.as.sc_Seq(jsx$1.$$plus$plus__sc_GenTraversableOnce__scg_CanBuildFrom__O(cannonL, this$13.ReusableCBFInstance$2));
+  var this$14 = this.r$1;
+  var n$6 = choices.length__I();
+  var choice = ScalaJS.as.Lobjects_Actor(choices.apply__I__O(this$14.self$1.nextInt__I__I(n$6)));
   return ((!this.collision__Lobjects_Obj__Z(choice)) ? this.addActor__Lobjects_Actor__scm_Set(choice) : (void 0))
 });
 ScalaJS.c.Lgame_Game.prototype.drawAllCond__F1__V = (function(cond) {
@@ -1717,7 +1773,7 @@ ScalaJS.c.Lgame_Game.prototype.runAllAIs__V = (function() {
   var f = new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(arg$outer) {
     return (function(x$1$2) {
       var x$1 = ScalaJS.as.Lobjects_Actor(x$1$2);
-      x$1.handleMomentum__Lgame_Game__V(arg$outer)
+      x$1.aiMove__Lgame_Game__V(arg$outer)
     })
   })(this));
   var this$1 = ScalaJS.m.scm_Set$();
@@ -1727,7 +1783,7 @@ ScalaJS.c.Lgame_Game.prototype.runAllAIs__V = (function() {
   var f$1 = new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(arg$outer$1) {
     return (function(x$2$2) {
       var x$2 = ScalaJS.as.Lobjects_Actor(x$2$2);
-      x$2.runEffects__Lgame_Game__V(arg$outer$1)
+      x$2.handleMomentum__Lgame_Game__V(arg$outer$1)
     })
   })(this));
   var this$3 = ScalaJS.m.scm_Set$();
@@ -1737,7 +1793,7 @@ ScalaJS.c.Lgame_Game.prototype.runAllAIs__V = (function() {
   var f$2 = new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(arg$outer$2) {
     return (function(x$3$2) {
       var x$3 = ScalaJS.as.Lobjects_Actor(x$3$2);
-      x$3.aiMove__Lgame_Game__V(arg$outer$2)
+      x$3.runEffects__Lgame_Game__V(arg$outer$2)
     })
   })(this));
   var this$5 = ScalaJS.m.scm_Set$();
@@ -1809,6 +1865,56 @@ ScalaJS.c.Lgame_Game.prototype.drawShadows__V = (function() {
     })
   })(this)))
 });
+ScalaJS.c.Lgame_Game.prototype.loadNewMap__Z = (function() {
+  ScalaJS.g["console"]["log"]("Generating new map");
+  this.score$1 = ((this.score$1 + ScalaJS.imul(10, this.difficulty$1)) | 0);
+  var this$2 = this.headTexts$1;
+  ScalaJS.s.scm_HashTable$class__clearTable__scm_HashTable__V(this$2);
+  var this$3 = this.acts$1;
+  var this$4 = new ScalaJS.c.scm_HashSet().init___();
+  var oldActs = ScalaJS.as.scm_HashSet(ScalaJS.s.scg_Growable$class__$$plus$plus$eq__scg_Growable__sc_TraversableOnce__scg_Growable(this$4, this$3));
+  this.genMap__Z();
+  var jsx$1 = ScalaJS.g["console"];
+  var s = (("Copying " + oldActs.tableSize$5) + " actors");
+  jsx$1["log"](s);
+  this.delayedActs$1.foreach__F1__V(new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(delAct$2) {
+    var delAct = ScalaJS.as.Lobjects_DelayedActor(delAct$2);
+    delAct.time$3 = ((delAct.time$3 + ((ScalaJS.m.Lglobalvars_GV$().GAMEY$1 / delAct.speed$2) | 0)) | 0)
+  })));
+  var i = 0;
+  var len = oldActs.table$5.u["length"];
+  while ((i < len)) {
+    var curEntry = oldActs.table$5.u[i];
+    if ((curEntry !== null)) {
+      var arg1 = ScalaJS.s.scm_FlatHashTable$HashUtils$class__entryToElem__scm_FlatHashTable$HashUtils__O__O(oldActs, curEntry);
+      var a = ScalaJS.as.Lobjects_Actor(arg1);
+      if ((!ScalaJS.is.Lobjects_ProjectileActor(a))) {
+        if (a.important$2) {
+          var x$2 = this.player$1;
+          var jsx$2 = (!(a === x$2))
+        } else {
+          var jsx$2 = false
+        };
+        if (jsx$2) {
+          var timed = (a.loc$1.y$1 / a.speed$2);
+          if ((!((timed === Infinity) || (timed === (-Infinity))))) {
+            var time = (timed | 0);
+            var jsx$3 = ScalaJS.g["console"];
+            var s$1 = ((("Delaying " + a.name$2) + " with time ") + time);
+            jsx$3["log"](s$1);
+            a.moveToNewMap__I__Lgame_Game__V(time, this);
+            a.loc$1.y$1 = ScalaJS.m.Lglobalvars_GV$().GAMEY$1;
+            var delayedAct = new ScalaJS.c.Lobjects_DelayedActor().init___Lobjects_Actor__I(a, time);
+            var this$10 = this.delayedActs$1;
+            this$10.$$plus$eq__O__scm_HashSet(delayedAct)
+          }
+        }
+      }
+    };
+    i = ((1 + i) | 0)
+  };
+  return true
+});
 ScalaJS.c.Lgame_Game.prototype.init___I__I__Lorg_scalajs_dom_raw_CanvasRenderingContext2D = (function(mSizeX, mSizeY, ctx_) {
   this.difficulty$1 = 0;
   this.score$1 = 0;
@@ -1826,6 +1932,8 @@ ScalaJS.c.Lgame_Game.prototype.init___I__I__Lorg_scalajs_dom_raw_CanvasRendering
   this.player$1 = new ScalaJS.c.Lenemies_Player().init___Lglobalvars_Pt(new ScalaJS.c.Lglobalvars_Pt().init___D__D(((ScalaJS.m.Lglobalvars_GV$().GAMEX$1 / 2) | 0), ((ScalaJS.m.Lglobalvars_GV$().GAMEY$1 / 2) | 0)));
   this.player$1.name$2 = "Tim Jones";
   this.addActor__Lobjects_Actor__scm_Set(this.player$1);
+  this.saloon$undlevel$1 = 2;
+  this.saloon$undhasPickedAlly$1 = false;
   return this
 });
 ScalaJS.c.Lgame_Game.prototype.genFarmhouse__Lglobalvars_Pt__Lglobalvars_Pt__V = (function(iloc, isize) {
@@ -1888,68 +1996,6 @@ ScalaJS.c.Lgame_Game.prototype.genFarmhouse__Lglobalvars_Pt__Lglobalvars_Pt__V =
       i$2 = ((1 + i$2) | 0)
     }
   }
-});
-ScalaJS.c.Lgame_Game.prototype.genMap__V = (function() {
-  var jsx$1 = ScalaJS.g["console"];
-  var s = ("Generating map with difficulty " + this.difficulty$1);
-  jsx$1["log"](s);
-  var this$2 = this.objs$1;
-  ScalaJS.s.scm_FlatHashTable$class__clearTable__scm_FlatHashTable__V(this$2);
-  var this$3 = this.acts$1;
-  ScalaJS.s.scm_FlatHashTable$class__clearTable__scm_FlatHashTable__V(this$3);
-  if ((this.difficulty$1 !== 0)) {
-    var this$4 = this.player$1;
-    var newLoc = new ScalaJS.c.Lglobalvars_Pt().init___D__D(this.player$1.loc$1.x$1, ((ScalaJS.m.Lglobalvars_GV$().GAMEY$1 - ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1) | 0));
-    this$4.loc$1 = newLoc.cloone__Lglobalvars_Pt()
-  };
-  this.addActor__Lobjects_Actor__scm_Set(this.player$1);
-  this.spawnMainWalls__scm_Set();
-  this.genFarmhouse__Lglobalvars_Pt__Lglobalvars_Pt__V(new ScalaJS.c.Lglobalvars_Pt().init___D__D(0.0, 0.0), new ScalaJS.c.Lglobalvars_Pt().init___D__D(((ScalaJS.m.Lglobalvars_GV$().GAMEX$1 / 2) | 0), ((ScalaJS.m.Lglobalvars_GV$().GAMEY$1 / 2) | 0)));
-  this.genFarmhouse__Lglobalvars_Pt__Lglobalvars_Pt__V(new ScalaJS.c.Lglobalvars_Pt().init___D__D(((ScalaJS.m.Lglobalvars_GV$().GAMEX$1 / 2) | 0), 0.0), new ScalaJS.c.Lglobalvars_Pt().init___D__D(((ScalaJS.m.Lglobalvars_GV$().GAMEX$1 / 2) | 0), ((ScalaJS.m.Lglobalvars_GV$().GAMEY$1 / 2) | 0)));
-  this.genFarmhouse__Lglobalvars_Pt__Lglobalvars_Pt__V(new ScalaJS.c.Lglobalvars_Pt().init___D__D(0.0, ((ScalaJS.m.Lglobalvars_GV$().GAMEY$1 / 2) | 0)), new ScalaJS.c.Lglobalvars_Pt().init___D__D(((ScalaJS.m.Lglobalvars_GV$().GAMEX$1 / 2) | 0), ((ScalaJS.m.Lglobalvars_GV$().GAMEY$1 / 2) | 0)));
-  this.genFarmhouse__Lglobalvars_Pt__Lglobalvars_Pt__V(new ScalaJS.c.Lglobalvars_Pt().init___D__D(((ScalaJS.m.Lglobalvars_GV$().GAMEX$1 / 2) | 0), ((ScalaJS.m.Lglobalvars_GV$().GAMEY$1 / 2) | 0)), new ScalaJS.c.Lglobalvars_Pt().init___D__D(((ScalaJS.m.Lglobalvars_GV$().GAMEX$1 / 2) | 0), ((ScalaJS.m.Lglobalvars_GV$().GAMEY$1 / 2) | 0)));
-  this.spawnItemsFromDummies__V();
-  var end = ScalaJS.imul(3, this.difficulty$1);
-  var isEmpty$4 = (end < 1);
-  var numRangeElements$4 = (isEmpty$4 ? 0 : end);
-  var lastElement$4 = (isEmpty$4 ? 0 : end);
-  var terminalElement$4 = ((1 + lastElement$4) | 0);
-  if ((numRangeElements$4 < 0)) {
-    ScalaJS.m.sci_Range$().scala$collection$immutable$Range$$fail__I__I__I__Z__sr_Nothing$(1, end, 1, true)
-  };
-  var i = 1;
-  var count = 0;
-  while ((i !== terminalElement$4)) {
-    var arg1 = i;
-    this.spawnZombie__O();
-    count = ((1 + count) | 0);
-    i = ((1 + i) | 0)
-  };
-  var end$1 = this.difficulty$1;
-  var isEmpty$4$1 = (end$1 < 1);
-  var numRangeElements$4$1 = (isEmpty$4$1 ? 0 : end$1);
-  var lastElement$4$1 = (isEmpty$4$1 ? 0 : end$1);
-  var terminalElement$4$1 = ((1 + lastElement$4$1) | 0);
-  if ((numRangeElements$4$1 < 0)) {
-    ScalaJS.m.sci_Range$().scala$collection$immutable$Range$$fail__I__I__I__Z__sr_Nothing$(1, end$1, 1, true)
-  };
-  var i$1 = 1;
-  var count$1 = 0;
-  while ((i$1 !== terminalElement$4$1)) {
-    var arg1$1 = i$1;
-    this.spawnSpecial__O();
-    count$1 = ((1 + count$1) | 0);
-    i$1 = ((1 + i$1) | 0)
-  };
-  var i$2 = 1;
-  var count$2 = 0;
-  while ((i$2 !== 2)) {
-    var arg1$2 = i$2;
-    this.spawnFriendly__O();
-    count$2 = ((1 + count$2) | 0);
-    i$2 = ((1 + i$2) | 0)
-  };
-  this.difficulty$1 = ((1 + this.difficulty$1) | 0)
 });
 ScalaJS.c.Lgame_Game.prototype.addHeadText__Lobjects_Obj__T__I__V = (function(o, text, time) {
   var ht = new ScalaJS.c.Lglobalvars_HeadText().init___T__I(text, time);
@@ -2106,12 +2152,185 @@ ScalaJS.c.Lgame_Game.prototype.loadImage__T__Lorg_scalajs_dom_raw_HTMLImageEleme
   _image["src"] = path;
   return _image
 });
+ScalaJS.c.Lgame_Game.prototype.genMap__Z = (function() {
+  var jsx$1 = ScalaJS.g["console"];
+  var s = ("Generating map with difficulty " + this.difficulty$1);
+  jsx$1["log"](s);
+  var this$2 = this.objs$1;
+  ScalaJS.s.scm_FlatHashTable$class__clearTable__scm_FlatHashTable__V(this$2);
+  var this$3 = this.acts$1;
+  ScalaJS.s.scm_FlatHashTable$class__clearTable__scm_FlatHashTable__V(this$3);
+  if ((this.difficulty$1 !== 0)) {
+    var this$4 = this.player$1;
+    var newLoc = new ScalaJS.c.Lglobalvars_Pt().init___D__D(this.player$1.loc$1.x$1, ((ScalaJS.m.Lglobalvars_GV$().GAMEY$1 - ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1) | 0));
+    this$4.loc$1 = newLoc.cloone__Lglobalvars_Pt()
+  };
+  this.addActor__Lobjects_Actor__scm_Set(this.player$1);
+  this.spawnMainWalls__scm_Set();
+  if ((this.difficulty$1 === this.saloon$undlevel$1)) {
+    this.genSaloon__V();
+    this.difficulty$1 = ((1 + this.difficulty$1) | 0);
+    return true
+  };
+  this.genFarmhouse__Lglobalvars_Pt__Lglobalvars_Pt__V(new ScalaJS.c.Lglobalvars_Pt().init___D__D(0.0, 0.0), new ScalaJS.c.Lglobalvars_Pt().init___D__D(((ScalaJS.m.Lglobalvars_GV$().GAMEX$1 / 2) | 0), ((ScalaJS.m.Lglobalvars_GV$().GAMEY$1 / 2) | 0)));
+  this.genFarmhouse__Lglobalvars_Pt__Lglobalvars_Pt__V(new ScalaJS.c.Lglobalvars_Pt().init___D__D(((ScalaJS.m.Lglobalvars_GV$().GAMEX$1 / 2) | 0), 0.0), new ScalaJS.c.Lglobalvars_Pt().init___D__D(((ScalaJS.m.Lglobalvars_GV$().GAMEX$1 / 2) | 0), ((ScalaJS.m.Lglobalvars_GV$().GAMEY$1 / 2) | 0)));
+  this.genFarmhouse__Lglobalvars_Pt__Lglobalvars_Pt__V(new ScalaJS.c.Lglobalvars_Pt().init___D__D(0.0, ((ScalaJS.m.Lglobalvars_GV$().GAMEY$1 / 2) | 0)), new ScalaJS.c.Lglobalvars_Pt().init___D__D(((ScalaJS.m.Lglobalvars_GV$().GAMEX$1 / 2) | 0), ((ScalaJS.m.Lglobalvars_GV$().GAMEY$1 / 2) | 0)));
+  this.genFarmhouse__Lglobalvars_Pt__Lglobalvars_Pt__V(new ScalaJS.c.Lglobalvars_Pt().init___D__D(((ScalaJS.m.Lglobalvars_GV$().GAMEX$1 / 2) | 0), ((ScalaJS.m.Lglobalvars_GV$().GAMEY$1 / 2) | 0)), new ScalaJS.c.Lglobalvars_Pt().init___D__D(((ScalaJS.m.Lglobalvars_GV$().GAMEX$1 / 2) | 0), ((ScalaJS.m.Lglobalvars_GV$().GAMEY$1 / 2) | 0)));
+  this.spawnItemsFromDummies__V();
+  var end = ScalaJS.imul(3, this.difficulty$1);
+  var isEmpty$4 = (end < 1);
+  var numRangeElements$4 = (isEmpty$4 ? 0 : end);
+  var lastElement$4 = (isEmpty$4 ? 0 : end);
+  var terminalElement$4 = ((1 + lastElement$4) | 0);
+  if ((numRangeElements$4 < 0)) {
+    ScalaJS.m.sci_Range$().scala$collection$immutable$Range$$fail__I__I__I__Z__sr_Nothing$(1, end, 1, true)
+  };
+  var i = 1;
+  var count = 0;
+  while ((i !== terminalElement$4)) {
+    var arg1 = i;
+    this.spawnZombie__O();
+    count = ((1 + count) | 0);
+    i = ((1 + i) | 0)
+  };
+  var end$1 = this.difficulty$1;
+  var isEmpty$4$1 = (end$1 < 1);
+  var numRangeElements$4$1 = (isEmpty$4$1 ? 0 : end$1);
+  var lastElement$4$1 = (isEmpty$4$1 ? 0 : end$1);
+  var terminalElement$4$1 = ((1 + lastElement$4$1) | 0);
+  if ((numRangeElements$4$1 < 0)) {
+    ScalaJS.m.sci_Range$().scala$collection$immutable$Range$$fail__I__I__I__Z__sr_Nothing$(1, end$1, 1, true)
+  };
+  var i$1 = 1;
+  var count$1 = 0;
+  while ((i$1 !== terminalElement$4$1)) {
+    var arg1$1 = i$1;
+    this.spawnSpecial__O();
+    count$1 = ((1 + count$1) | 0);
+    i$1 = ((1 + i$1) | 0)
+  };
+  var i$2 = 1;
+  var count$2 = 0;
+  while ((i$2 !== 2)) {
+    var arg1$2 = i$2;
+    this.spawnFriendly__O();
+    count$2 = ((1 + count$2) | 0);
+    i$2 = ((1 + i$2) | 0)
+  };
+  this.difficulty$1 = ((1 + this.difficulty$1) | 0);
+  return true
+});
 ScalaJS.c.Lgame_Game.prototype.removeActor__Lobjects_Actor__s_Option = (function(act) {
   var this$1 = this.acts$1;
   ScalaJS.s.scm_FlatHashTable$class__removeElem__scm_FlatHashTable__O__Z(this$1, act);
   var this$2 = this.objs$1;
   ScalaJS.s.scm_FlatHashTable$class__removeElem__scm_FlatHashTable__O__Z(this$2, act);
   return this.headTexts$1.remove__O__s_Option(act)
+});
+ScalaJS.c.Lgame_Game.prototype.genSaloon__V = (function() {
+  var top = new ScalaJS.c.Lobjects_Wall().init___Lglobalvars_Pt__Lglobalvars_Pt(new ScalaJS.c.Lglobalvars_Pt().init___D__D(100, 100), new ScalaJS.c.Lglobalvars_Pt().init___D__D((((-200) + ScalaJS.m.Lglobalvars_GV$().GAMEX$1) | 0), 5.0));
+  var left = new ScalaJS.c.Lobjects_Wall().init___Lglobalvars_Pt__Lglobalvars_Pt(new ScalaJS.c.Lglobalvars_Pt().init___D__D(100, 100), new ScalaJS.c.Lglobalvars_Pt().init___D__D(5.0, (((-200) + ScalaJS.m.Lglobalvars_GV$().GAMEY$1) | 0)));
+  var bot = new ScalaJS.c.Lobjects_Wall().init___Lglobalvars_Pt__Lglobalvars_Pt(new ScalaJS.c.Lglobalvars_Pt().init___D__D(100, (((-100) + ScalaJS.m.Lglobalvars_GV$().GAMEY$1) | 0)), new ScalaJS.c.Lglobalvars_Pt().init___D__D((((-195) + ScalaJS.m.Lglobalvars_GV$().GAMEX$1) | 0), 5.0));
+  var right = new ScalaJS.c.Lobjects_Wall().init___Lglobalvars_Pt__Lglobalvars_Pt(new ScalaJS.c.Lglobalvars_Pt().init___D__D((((-100) + ScalaJS.m.Lglobalvars_GV$().GAMEX$1) | 0), 100), new ScalaJS.c.Lglobalvars_Pt().init___D__D(5.0, (((-200) + ScalaJS.m.Lglobalvars_GV$().GAMEY$1) | 0)));
+  var x1 = top.splitWithDoorAt__I__I__T2((((-120) + ((ScalaJS.m.Lglobalvars_GV$().GAMEX$1 / 2) | 0)) | 0), 40);
+  if ((x1 !== null)) {
+    var top1 = ScalaJS.as.Lobjects_Wall(x1.$$und1__O());
+    var top2 = ScalaJS.as.Lobjects_Wall(x1.$$und2__O());
+    var x$12_$_$$und1$f = top1;
+    var x$12_$_$$und2$f = top2
+  } else {
+    var x$12;
+    throw new ScalaJS.c.s_MatchError().init___O(x1)
+  };
+  var top1$2 = ScalaJS.as.Lobjects_Wall(x$12_$_$$und1$f);
+  var top2$2 = ScalaJS.as.Lobjects_Wall(x$12_$_$$und2$f);
+  var x1$2 = bot.splitWithDoorAt__I__I__T2((((-120) + ((ScalaJS.m.Lglobalvars_GV$().GAMEX$1 / 2) | 0)) | 0), 40);
+  if ((x1$2 !== null)) {
+    var bot1 = ScalaJS.as.Lobjects_Wall(x1$2.$$und1__O());
+    var bot2 = ScalaJS.as.Lobjects_Wall(x1$2.$$und2__O());
+    var x$13_$_$$und1$f = bot1;
+    var x$13_$_$$und2$f = bot2
+  } else {
+    var x$13;
+    throw new ScalaJS.c.s_MatchError().init___O(x1$2)
+  };
+  var bot1$2 = ScalaJS.as.Lobjects_Wall(x$13_$_$$und1$f);
+  var bot2$2 = ScalaJS.as.Lobjects_Wall(x$13_$_$$und2$f);
+  var this$1 = this.objs$1;
+  this$1.$$plus$eq__O__scm_HashSet(top1$2);
+  var this$2 = this.objs$1;
+  this$2.$$plus$eq__O__scm_HashSet(top2$2);
+  var this$3 = this.objs$1;
+  this$3.$$plus$eq__O__scm_HashSet(bot1$2);
+  var this$4 = this.objs$1;
+  this$4.$$plus$eq__O__scm_HashSet(bot2$2);
+  var this$5 = this.objs$1;
+  this$5.$$plus$eq__O__scm_HashSet(left);
+  var this$6 = this.objs$1;
+  this$6.$$plus$eq__O__scm_HashSet(right);
+  var barRight = new ScalaJS.c.Lobjects_Barrier().init___Lglobalvars_Pt__Lglobalvars_Pt(new ScalaJS.c.Lglobalvars_Pt().init___D__D(150, 105), new ScalaJS.c.Lglobalvars_Pt().init___D__D(7.0, 300.0));
+  var barBot = new ScalaJS.c.Lobjects_Barrier().init___Lglobalvars_Pt__Lglobalvars_Pt(new ScalaJS.c.Lglobalvars_Pt().init___D__D(105, 405), new ScalaJS.c.Lglobalvars_Pt().init___D__D(50.0, 5.0));
+  var this$7 = this.objs$1;
+  this$7.$$plus$eq__O__scm_HashSet(barRight);
+  var this$8 = this.objs$1;
+  this$8.$$plus$eq__O__scm_HashSet(barBot);
+  var tender = new ScalaJS.c.Lenemies_Bartender().init___Lglobalvars_Pt(new ScalaJS.c.Lglobalvars_Pt().init___D__D(140, 200));
+  this.addActor__Lobjects_Actor__scm_Set(tender);
+  var seats = ScalaJS.as.scm_Buffer(ScalaJS.m.scm_Buffer$().apply__sc_Seq__sc_GenTraversable(ScalaJS.m.sci_Nil$()));
+  var elem$1 = 0;
+  elem$1 = 105;
+  var elem = (((-150) + ScalaJS.m.Lglobalvars_GV$().GAMEX$1) | 0);
+  var elem$1$1 = 0;
+  elem$1$1 = elem;
+  var end = (((((-200) + ScalaJS.m.Lglobalvars_GV$().GAMEY$1) | 0) / 59) | 0);
+  var isEmpty$4 = (end < 1);
+  var numRangeElements$4 = (isEmpty$4 ? 0 : end);
+  var lastElement$4 = (isEmpty$4 ? 0 : end);
+  var terminalElement$4 = ((1 + lastElement$4) | 0);
+  if ((numRangeElements$4 < 0)) {
+    ScalaJS.m.sci_Range$().scala$collection$immutable$Range$$fail__I__I__I__Z__sr_Nothing$(1, end, 1, true)
+  };
+  var i = 1;
+  var count = 0;
+  while ((i !== terminalElement$4)) {
+    var v1 = i;
+    seats.$$plus$eq__O__scm_Buffer(elem$1);
+    elem$1 = ((12 + elem$1) | 0);
+    var table = new ScalaJS.c.Lobjects_Barrier().init___Lglobalvars_Pt__Lglobalvars_Pt(new ScalaJS.c.Lglobalvars_Pt().init___D__D(elem$1$1, elem$1), new ScalaJS.c.Lglobalvars_Pt().init___D__D(50, 30));
+    var this$14 = this.objs$1;
+    this$14.$$plus$eq__O__scm_HashSet(table);
+    elem$1 = ((30 + elem$1) | 0);
+    seats.$$plus$eq__O__scm_Buffer(elem$1);
+    elem$1 = ((12 + elem$1) | 0);
+    var wall = new ScalaJS.c.Lobjects_Wall().init___Lglobalvars_Pt__Lglobalvars_Pt(new ScalaJS.c.Lglobalvars_Pt().init___D__D(elem$1$1, elem$1), new ScalaJS.c.Lglobalvars_Pt().init___D__D(50, 5.0));
+    var this$15 = this.objs$1;
+    this$15.$$plus$eq__O__scm_HashSet(wall);
+    elem$1 = ((5 + elem$1) | 0);
+    count = ((1 + count) | 0);
+    i = ((1 + i) | 0)
+  };
+  var jane = new ScalaJS.c.Lenemies_MolotovThrower().init___Lglobalvars_Pt(new ScalaJS.c.Lglobalvars_Pt().init___D__D((50 + this.player$1.loc$1.x$1), this.player$1.loc$1.y$1));
+  var tanky = new ScalaJS.c.Lenemies_TankRider().init___Lglobalvars_Pt(new ScalaJS.c.Lglobalvars_Pt().init___D__D((50 + this.player$1.loc$1.x$1), this.player$1.loc$1.y$1));
+  var this$16 = this.r$1;
+  var n = seats.length__I();
+  var seat1 = ScalaJS.uI(seats.apply__I__O(this$16.self$1.nextInt__I__I(n)));
+  seats.$$minus$eq__O__scm_Buffer(seat1);
+  var this$17 = this.r$1;
+  var n$1 = seats.length__I();
+  var seat2 = ScalaJS.uI(seats.apply__I__O(this$17.self$1.nextInt__I__I(n$1)));
+  seats.$$minus$eq__O__scm_Buffer(seat2);
+  var dude1 = new ScalaJS.c.Lenemies_BarDude().init___Lglobalvars_Pt__sci_List__sci_List__T__Lobjects_Actor(new ScalaJS.c.Lglobalvars_Pt().init___D__D(((10 + elem$1$1) | 0), seat1), ScalaJS.m.Lglobalvars_GV$().JANE$undBAR$undPHRASES$1, ScalaJS.m.Lglobalvars_GV$().JANE$undSEE$undPHRASES$1, "char_human_2", jane);
+  var dude2 = new ScalaJS.c.Lenemies_BarDude().init___Lglobalvars_Pt__sci_List__sci_List__T__Lobjects_Actor(new ScalaJS.c.Lglobalvars_Pt().init___D__D(((10 + elem$1$1) | 0), seat2), ScalaJS.m.Lglobalvars_GV$().TANK$undRIDER$undBAR$undPHRASES$1, ScalaJS.m.Lglobalvars_GV$().TANK$undRIDER$undSEE$undPHRASES$1, "tank rider", tanky);
+  this.addActor__Lobjects_Actor__scm_Set(dude1);
+  this.addActor__Lobjects_Actor__scm_Set(dude2);
+  var hp1 = new ScalaJS.c.Lobjects_MediumHealthPack().init___Lglobalvars_Pt(new ScalaJS.c.Lglobalvars_Pt().init___D__D((((-75) + ((ScalaJS.m.Lglobalvars_GV$().GAMEX$1 / 2) | 0)) | 0), 110));
+  var hp2 = new ScalaJS.c.Lobjects_MediumHealthPack().init___Lglobalvars_Pt(new ScalaJS.c.Lglobalvars_Pt().init___D__D((((-60) + ((ScalaJS.m.Lglobalvars_GV$().GAMEX$1 / 2) | 0)) | 0), 110));
+  var ammo1 = new ScalaJS.c.Lobjects_MediumAmmoPack().init___Lglobalvars_Pt(new ScalaJS.c.Lglobalvars_Pt().init___D__D((((-45) + ((ScalaJS.m.Lglobalvars_GV$().GAMEX$1 / 2) | 0)) | 0), 110));
+  var ammo2 = new ScalaJS.c.Lobjects_MediumAmmoPack().init___Lglobalvars_Pt(new ScalaJS.c.Lglobalvars_Pt().init___D__D((((-30) + ((ScalaJS.m.Lglobalvars_GV$().GAMEX$1 / 2) | 0)) | 0), 110));
+  this.addActor__Lobjects_Actor__scm_Set(hp1);
+  this.addActor__Lobjects_Actor__scm_Set(hp2);
+  this.addActor__Lobjects_Actor__scm_Set(ammo1);
+  this.addActor__Lobjects_Actor__scm_Set(ammo2)
 });
 ScalaJS.c.Lgame_Game.prototype.spawnFriendly__O = (function() {
   var this$1 = this.r$1;
@@ -2173,7 +2392,6 @@ ScalaJS.c.Lglobalvars_GV$ = (function() {
   this.PLAYER$undHEALTH$1 = 0;
   this.PLAYER$undTHROWDISTANCE$1 = 0;
   this.PLAYER$undTHROWSPEED$1 = 0;
-  this.JANE$undMOLOTOVRATE$1 = 0;
   this.HUMAN$undHEALTH$1 = 0;
   this.HUMAN$undAMMO$1 = 0;
   this.BASE$undAMMO$1 = 0;
@@ -2186,6 +2404,7 @@ ScalaJS.c.Lglobalvars_GV$ = (function() {
   this.GRENADE$undCHANCE$1 = 0;
   this.MOLOTOV$undCHANCE$1 = 0;
   this.TURRET$undCHANCE$1 = 0;
+  this.CONTROLLER$undCHANCE$1 = 0;
   this.PISTOL$undDAMAGE$1 = 0;
   this.PISTOL$undRANGE$1 = 0;
   this.PISTOL$undAPS$1 = 0;
@@ -2215,12 +2434,18 @@ ScalaJS.c.Lglobalvars_GV$ = (function() {
   this.TURRET$undRANGE$1 = 0;
   this.TURRET$undAPS$1 = 0;
   this.TURRET$undHP$1 = 0;
+  this.ZOMBIE$undCONTROLLER$undRADIUS$1 = 0;
+  this.ZOMBIE$undCONTROLLER$undTIMER$1 = 0;
   this.FIRE$undDAMAGE$1 = 0.0;
+  this.FIRE$undEXTINGUISHTIME$1 = 0;
   this.ZOMBIE$undATTACKCOOLDOWN$1 = 0;
   this.ZOMBIE$undDAMAGE$1 = 0;
+  this.ZOMBIESPAWNER$undSPAWNRATE$1 = 0;
+  this.ZOMBIESPAWNER$undSPEED$1 = 0.0;
   this.CHARGER$undCHANCE$1 = 0;
   this.SPITTER$undCHANCE$1 = 0;
   this.TANK$undCHANCE$1 = 0;
+  this.CANNON$undCHANCE$1 = 0;
   this.CHARGER$undCHARGECOOLDOWN$1 = 0;
   this.CHARGER$undCHARGERANGE$1 = 0;
   this.CHARGER$undCHARGESPEED$1 = 0;
@@ -2232,7 +2457,22 @@ ScalaJS.c.Lglobalvars_GV$ = (function() {
   this.SPITTER$undSPITDAMAGE$1 = 0.0;
   this.TANK$undHEALTH$1 = 0;
   this.TANK$undDAMAGE$1 = 0;
-  this.TANK$undHEALRATE$1 = 0
+  this.TANK$undHEALRATE$1 = 0;
+  this.TANK$undPUSH$1 = 0.0;
+  this.CANNON$undHEALTH$1 = 0;
+  this.CANNON$undDAMAGE$1 = 0;
+  this.CANNON$undHEALRATE$1 = 0;
+  this.CANNON$undSPITRATE$1 = 0;
+  this.CANNON$undSPITNUM$1 = 0;
+  this.JANE$undMOLOTOVRATE$1 = 0;
+  this.JANE$undBAR$undPHRASES$1 = null;
+  this.JANE$undSEE$undPHRASES$1 = null;
+  this.TANK$undRIDER$undHP$1 = 0;
+  this.TANK$undRIDER$undDAMAGE$1 = 0;
+  this.TANK$undRIDER$undBAR$undPHRASES$1 = null;
+  this.TANK$undRIDER$undSEE$undPHRASES$1 = null;
+  this.SALOON$undLEVEL$undMIN$1 = 0;
+  this.SALOON$undLEVEL$undRANGE$1 = 0
 });
 ScalaJS.c.Lglobalvars_GV$.prototype = new ScalaJS.h.O();
 ScalaJS.c.Lglobalvars_GV$.prototype.constructor = ScalaJS.c.Lglobalvars_GV$;
@@ -2258,7 +2498,6 @@ ScalaJS.c.Lglobalvars_GV$.prototype.init___ = (function() {
   this.PLAYER$undHEALTH$1 = 100;
   this.PLAYER$undTHROWDISTANCE$1 = 50;
   this.PLAYER$undTHROWSPEED$1 = 6;
-  this.JANE$undMOLOTOVRATE$1 = 300;
   this.HUMAN$undHEALTH$1 = 50;
   this.HUMAN$undAMMO$1 = 500;
   this.BASE$undAMMO$1 = 1000;
@@ -2271,6 +2510,7 @@ ScalaJS.c.Lglobalvars_GV$.prototype.init___ = (function() {
   this.GRENADE$undCHANCE$1 = 5;
   this.MOLOTOV$undCHANCE$1 = 5;
   this.TURRET$undCHANCE$1 = 5;
+  this.CONTROLLER$undCHANCE$1 = 5;
   this.PISTOL$undDAMAGE$1 = 10;
   this.PISTOL$undRANGE$1 = 100;
   this.PISTOL$undAPS$1 = 10;
@@ -2300,12 +2540,18 @@ ScalaJS.c.Lglobalvars_GV$.prototype.init___ = (function() {
   this.TURRET$undRANGE$1 = 150;
   this.TURRET$undAPS$1 = 4;
   this.TURRET$undHP$1 = 100;
+  this.ZOMBIE$undCONTROLLER$undRADIUS$1 = 100;
+  this.ZOMBIE$undCONTROLLER$undTIMER$1 = 200;
   this.FIRE$undDAMAGE$1 = 0.5;
+  this.FIRE$undEXTINGUISHTIME$1 = 40;
   this.ZOMBIE$undATTACKCOOLDOWN$1 = 10;
   this.ZOMBIE$undDAMAGE$1 = 10;
+  this.ZOMBIESPAWNER$undSPAWNRATE$1 = 30;
+  this.ZOMBIESPAWNER$undSPEED$1 = 0.3;
   this.CHARGER$undCHANCE$1 = 5;
   this.SPITTER$undCHANCE$1 = 5;
   this.TANK$undCHANCE$1 = 1;
+  this.CANNON$undCHANCE$1 = 1;
   this.CHARGER$undCHARGECOOLDOWN$1 = 300;
   this.CHARGER$undCHARGERANGE$1 = 200;
   this.CHARGER$undCHARGESPEED$1 = 6;
@@ -2318,6 +2564,37 @@ ScalaJS.c.Lglobalvars_GV$.prototype.init___ = (function() {
   this.TANK$undHEALTH$1 = 400;
   this.TANK$undDAMAGE$1 = 25;
   this.TANK$undHEALRATE$1 = 5;
+  this.TANK$undPUSH$1 = 1.5;
+  this.CANNON$undHEALTH$1 = 500;
+  this.CANNON$undDAMAGE$1 = 10;
+  this.CANNON$undHEALRATE$1 = 5;
+  this.CANNON$undSPITRATE$1 = 200;
+  this.CANNON$undSPITNUM$1 = 5;
+  this.JANE$undMOLOTOVRATE$1 = 150;
+  ScalaJS.m.sci_List$();
+  var xs = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array(["You need something burned?", "I just wanna watch the world burn"]);
+  var this$2 = ScalaJS.m.sci_List$();
+  var cbf = this$2.ReusableCBFInstance$2;
+  this.JANE$undBAR$undPHRASES$1 = ScalaJS.as.sci_List(ScalaJS.s.sc_TraversableLike$class__to__sc_TraversableLike__scg_CanBuildFrom__O(xs, cbf));
+  ScalaJS.m.sci_List$();
+  var xs$1 = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array(["Wassup!", "We'll bang ok", "Let's kill some dudes!", "Awww yiss!", "I'll bring the fire", "I like to set things on fire", "Watch, or you might get burned!", "They don't stand a chance!"]);
+  var this$4 = ScalaJS.m.sci_List$();
+  var cbf$1 = this$4.ReusableCBFInstance$2;
+  this.JANE$undSEE$undPHRASES$1 = ScalaJS.as.sci_List(ScalaJS.s.sc_TraversableLike$class__to__sc_TraversableLike__scg_CanBuildFrom__O(xs$1, cbf$1));
+  this.TANK$undRIDER$undHP$1 = ((ScalaJS.imul(5, this.TANK$undHEALTH$1) / 4) | 0);
+  this.TANK$undRIDER$undDAMAGE$1 = ((ScalaJS.imul(5, this.TANK$undDAMAGE$1) / 4) | 0);
+  ScalaJS.m.sci_List$();
+  var xs$2 = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array(["Me and Bessy will kick some butt!", "Let's ride!"]);
+  var this$6 = ScalaJS.m.sci_List$();
+  var cbf$2 = this$6.ReusableCBFInstance$2;
+  this.TANK$undRIDER$undBAR$undPHRASES$1 = ScalaJS.as.sci_List(ScalaJS.s.sc_TraversableLike$class__to__sc_TraversableLike__scg_CanBuildFrom__O(xs$2, cbf$2));
+  ScalaJS.m.sci_List$();
+  var xs$3 = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array(["Yeehaw!", "We'll bang ok", "Giddyup!", "Whoa there Buckaroo!", "Woooooaaaaa!", "Yippee!", "Yippekaya!", "Ride 'em cowboy!"]);
+  var this$8 = ScalaJS.m.sci_List$();
+  var cbf$3 = this$8.ReusableCBFInstance$2;
+  this.TANK$undRIDER$undSEE$undPHRASES$1 = ScalaJS.as.sci_List(ScalaJS.s.sc_TraversableLike$class__to__sc_TraversableLike__scg_CanBuildFrom__O(xs$3, cbf$3));
+  this.SALOON$undLEVEL$undMIN$1 = 5;
+  this.SALOON$undLEVEL$undRANGE$1 = 6;
   return this
 });
 ScalaJS.d.Lglobalvars_GV$ = new ScalaJS.ClassTypeData({
@@ -2393,6 +2670,9 @@ ScalaJS.c.Lglobalvars_Pt.prototype.$$plus__Lglobalvars_Pt__Lglobalvars_Pt = (fun
 ScalaJS.c.Lglobalvars_Pt.prototype.pythagLength__D = (function() {
   var x = ((this.x$1 * this.x$1) + (this.y$1 * this.y$1));
   return ScalaJS.uD(ScalaJS.g["Math"]["sqrt"](x))
+});
+ScalaJS.c.Lglobalvars_Pt.prototype.$$div__D__Lglobalvars_Pt = (function(n) {
+  return new ScalaJS.c.Lglobalvars_Pt().init___D__D((this.x$1 / n), (this.y$1 / n))
 });
 ScalaJS.c.Lglobalvars_Pt.prototype.toString__T = (function() {
   return (((("(" + this.x$1) + ", ") + this.y$1) + ")")
@@ -3795,6 +4075,13 @@ ScalaJS.s.sc_GenSeqLike$class__equals__sc_GenSeqLike__O__Z = (function($$this, t
     return false
   }
 });
+ScalaJS.s.sc_GenSeqLike$class__indexOf__sc_GenSeqLike__O__I__I = (function($$this, elem, from) {
+  return $$this.indexWhere__F1__I__I(new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function($$this$1, elem$1) {
+    return (function(x$1$2) {
+      return ScalaJS.m.sr_BoxesRunTime$().equals__O__O__Z(elem$1, x$1$2)
+    })
+  })($$this, elem)), from)
+});
 ScalaJS.s.sc_GenSeqLike$class__isDefinedAt__sc_GenSeqLike__I__Z = (function($$this, idx) {
   return ((idx >= 0) && (idx < $$this.length__I()))
 });
@@ -3836,6 +4123,9 @@ ScalaJS.s.sc_IndexedSeqOptimized$class__slice__sc_IndexedSeqOptimized__I__I__O =
     i = ((1 + i) | 0)
   };
   return b.result__O()
+});
+ScalaJS.s.sc_IndexedSeqOptimized$class__negLength__p0__sc_IndexedSeqOptimized__I__I = (function($$this, n) {
+  return ((n >= $$this.length__I()) ? (-1) : n)
 });
 ScalaJS.s.sc_IndexedSeqOptimized$class__copyToArray__sc_IndexedSeqOptimized__O__I__I__V = (function($$this, xs, start, len) {
   var i = 0;
@@ -3893,6 +4183,25 @@ ScalaJS.s.sc_IndexedSeqOptimized$class__isEmpty__sc_IndexedSeqOptimized__Z = (fu
 });
 ScalaJS.s.sc_IndexedSeqOptimized$class__head__sc_IndexedSeqOptimized__O = (function($$this) {
   return (ScalaJS.s.sc_IndexedSeqOptimized$class__isEmpty__sc_IndexedSeqOptimized__Z($$this) ? new ScalaJS.c.sc_IndexedSeqLike$Elements().init___sc_IndexedSeqLike__I__I($$this, 0, $$this.length__I()).next__O() : $$this.apply__I__O(0))
+});
+ScalaJS.s.sc_IndexedSeqOptimized$class__indexWhere__sc_IndexedSeqOptimized__F1__I__I = (function($$this, p, from) {
+  var start = ((from > 0) ? from : 0);
+  var len = $$this.length__I();
+  var i = start;
+  while (true) {
+    if ((i < len)) {
+      var arg1 = $$this.apply__I__O(i);
+      var jsx$1 = (!ScalaJS.uZ(p.apply__O__O(arg1)))
+    } else {
+      var jsx$1 = false
+    };
+    if (jsx$1) {
+      i = ((1 + i) | 0)
+    } else {
+      break
+    }
+  };
+  return ScalaJS.s.sc_IndexedSeqOptimized$class__negLength__p0__sc_IndexedSeqOptimized__I__I($$this, ((start + ((i - start) | 0)) | 0))
 });
 ScalaJS.s.sc_IterableLike$class__drop__sc_IterableLike__I__O = (function($$this, n) {
   var b = $$this.newBuilder__scm_Builder();
@@ -3974,6 +4283,9 @@ ScalaJS.m.sc_Iterator$ = (function() {
   };
   return ScalaJS.n.sc_Iterator$
 });
+ScalaJS.s.sc_Iterator$class__isEmpty__sc_Iterator__Z = (function($$this) {
+  return (!$$this.hasNext__Z())
+});
 ScalaJS.s.sc_Iterator$class__toStream__sc_Iterator__sci_Stream = (function($$this) {
   if ($$this.hasNext__Z()) {
     var hd = $$this.next__O();
@@ -3988,8 +4300,13 @@ ScalaJS.s.sc_Iterator$class__toStream__sc_Iterator__sci_Stream = (function($$thi
     return ScalaJS.m.sci_Stream$Empty$()
   }
 });
-ScalaJS.s.sc_Iterator$class__isEmpty__sc_Iterator__Z = (function($$this) {
-  return (!$$this.hasNext__Z())
+ScalaJS.s.sc_Iterator$class__drop__sc_Iterator__I__sc_Iterator = (function($$this, n) {
+  var j = 0;
+  while (((j < n) && $$this.hasNext__Z())) {
+    $$this.next__O();
+    j = ((1 + j) | 0)
+  };
+  return $$this
 });
 ScalaJS.s.sc_Iterator$class__toString__sc_Iterator__T = (function($$this) {
   return (($$this.hasNext__Z() ? "non-empty" : "empty") + " iterator")
@@ -4073,6 +4390,23 @@ ScalaJS.s.sc_LinearSeqOptimized$class__sameElements__sc_LinearSeqOptimized__sc_G
     return ScalaJS.s.sc_IterableLike$class__sameElements__sc_IterableLike__sc_GenIterable__Z($$this, that)
   }
 });
+ScalaJS.s.sc_LinearSeqOptimized$class__indexWhere__sc_LinearSeqOptimized__F1__I__I = (function($$this, p, from) {
+  var i = from;
+  var these = $$this.drop__I__sc_LinearSeqOptimized(from);
+  while (true) {
+    var this$1 = these;
+    if (ScalaJS.s.sc_TraversableOnce$class__nonEmpty__sc_TraversableOnce__Z(this$1)) {
+      if (ScalaJS.uZ(p.apply__O__O(these.head__O()))) {
+        return i
+      };
+      i = ((1 + i) | 0);
+      these = ScalaJS.as.sc_LinearSeqOptimized(these.tail__O())
+    } else {
+      break
+    }
+  };
+  return (-1)
+});
 ScalaJS.s.sc_MapLike$class__addString__sc_MapLike__scm_StringBuilder__T__T__T__scm_StringBuilder = (function($$this, b, start, sep, end) {
   var this$2 = $$this.iterator__sc_Iterator();
   var f = new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function($$this$1) {
@@ -4149,6 +4483,18 @@ ScalaJS.s.sc_SeqLike$class__$$colon$plus__sc_SeqLike__O__scg_CanBuildFrom__O = (
   b.$$plus$plus$eq__sc_TraversableOnce__scg_Growable($$this.thisCollection__sc_Seq());
   b.$$plus$eq__O__scm_Builder(elem);
   return b.result__O()
+});
+ScalaJS.s.sc_SeqLike$class__indexWhere__sc_SeqLike__F1__I__I = (function($$this, p, from) {
+  var i = from;
+  var it = $$this.iterator__sc_Iterator().drop__I__sc_Iterator(from);
+  while (it.hasNext__Z()) {
+    if (ScalaJS.uZ(p.apply__O__O(it.next__O()))) {
+      return i
+    } else {
+      i = ((1 + i) | 0)
+    }
+  };
+  return (-1)
 });
 ScalaJS.s.sc_SeqLike$class__lengthCompare__sc_SeqLike__I__I = (function($$this, len) {
   if ((len < 0)) {
@@ -5148,6 +5494,13 @@ ScalaJS.m.sci_WrappedString$ = (function() {
   };
   return ScalaJS.n.sci_WrappedString$
 });
+ScalaJS.s.scm_BufferLike$class__$$minus$eq__scm_Buffer__O__scm_Buffer = (function($$this, x) {
+  var i = $$this.indexOf__O__I(x);
+  if ((i !== (-1))) {
+    $$this.remove__I__O(i)
+  };
+  return $$this
+});
 ScalaJS.s.scm_Builder$class__sizeHint__scm_Builder__sc_TraversableLike__V = (function($$this, coll) {
   if (ScalaJS.is.sc_IndexedSeqLike(coll)) {
     $$this.sizeHint__I__V(coll.size__I())
@@ -5462,6 +5815,15 @@ ScalaJS.s.scm_HashTable$class__initWithContents__scm_HashTable__scm_HashTable$Co
 ScalaJS.s.scm_HashTable$class__findEntry__scm_HashTable__O__scm_HashEntry = (function($$this, key) {
   var hcode = ScalaJS.m.sr_ScalaRunTime$().hash__O__I(key);
   return ScalaJS.s.scm_HashTable$class__scala$collection$mutable$HashTable$$findEntry0__scm_HashTable__O__I__scm_HashEntry($$this, key, ScalaJS.s.scm_HashTable$class__index__scm_HashTable__I__I($$this, hcode))
+});
+ScalaJS.s.scm_HashTable$class__clearTable__scm_HashTable__V = (function($$this) {
+  var i = (((-1) + $$this.table$5.u["length"]) | 0);
+  while ((i >= 0)) {
+    $$this.table$5.u[i] = null;
+    i = (((-1) + i) | 0)
+  };
+  $$this.tableSize$5 = 0;
+  ScalaJS.s.scm_HashTable$class__nnSizeMapReset__scm_HashTable__I__V($$this, 0)
 });
 ScalaJS.s.scm_HashTable$class__scala$collection$mutable$HashTable$$findEntry0__scm_HashTable__O__I__scm_HashEntry = (function($$this, key, h) {
   var e = $$this.table$5.u[h];
@@ -6332,15 +6694,16 @@ ScalaJS.c.Lobjects_Actor = (function() {
   this.maxHp$2 = 0.0;
   this.hp$2 = 0.0;
   this.name$2 = null;
-  this.speed$2 = 0;
+  this.speed$2 = 0.0;
   this.points$2 = 0;
   this.faction$2 = null;
   this.momentum$2 = null;
   this.momentumFactor$2 = 0.0;
-  this.important$2 = false;
   this.lastLoc$2 = null;
   this.effects$2 = null;
-  this.flammable$2 = false
+  this.important$2 = false;
+  this.flammable$2 = false;
+  this.canPutSelfOut$2 = false
 });
 ScalaJS.c.Lobjects_Actor.prototype = new ScalaJS.h.Lobjects_Obj();
 ScalaJS.c.Lobjects_Actor.prototype.constructor = ScalaJS.c.Lobjects_Actor;
@@ -6349,6 +6712,15 @@ ScalaJS.h.Lobjects_Actor = (function() {
   /*<skip>*/
 });
 ScalaJS.h.Lobjects_Actor.prototype = ScalaJS.c.Lobjects_Actor.prototype;
+ScalaJS.c.Lobjects_Actor.prototype.moveToNewMap__I__Lgame_Game__V = (function(time, g) {
+  /*<skip>*/
+});
+ScalaJS.c.Lobjects_Actor.prototype.changeLocRel__D__D__V = (function(dx, dy) {
+  var ev$1 = this.loc$1;
+  ev$1.x$1 = (ev$1.x$1 + dx);
+  var ev$2 = this.loc$1;
+  ev$2.y$1 = (ev$2.y$1 + dy)
+});
 ScalaJS.c.Lobjects_Actor.prototype.runEffects__Lgame_Game__V = (function(g) {
   this.effects$2.foreach__F1__V(new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(arg$outer, g$3) {
     return (function(f$2) {
@@ -6401,17 +6773,41 @@ ScalaJS.c.Lobjects_Actor.prototype.inFov__Lobjects_Obj__Z = (function(o) {
   var dir = o.loc$1.$$minus__Lglobalvars_Pt__Lglobalvars_Pt(this.loc$1);
   var cosa = (((facing.x$1 * dir.x$1) + (facing.y$1 * dir.y$1)) / (facing.pythagLength__D() * dir.pythagLength__D()));
   var a = ScalaJS.uD(ScalaJS.g["Math"]["acos"](cosa));
-  ScalaJS.g["console"]["log"](a);
   return (((a < 0) ? (-a) : a) < ScalaJS.m.Lglobalvars_GV$().MAX$undFOV$1)
 });
 ScalaJS.c.Lobjects_Actor.prototype.onDeath__Lgame_Game__V = (function(g) {
   /*<skip>*/
+});
+ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__D__T__I__T = (function(loc_, size_, hp_, speed_, faction_, points_, name_) {
+  ScalaJS.c.Lobjects_Obj.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt.call(this, loc_, size_);
+  this.maxHp$2 = hp_;
+  this.hp$2 = hp_;
+  this.name$2 = name_;
+  this.speed$2 = speed_;
+  this.points$2 = points_;
+  this.faction$2 = faction_;
+  this.momentum$2 = new ScalaJS.c.Lglobalvars_Pt().init___D__D(0.0, 0.0);
+  this.momentumFactor$2 = ScalaJS.m.Lglobalvars_GV$().NORMMOMENTUMFACTOR$1;
+  this.lastLoc$2 = new ScalaJS.c.Lglobalvars_Pt().init___D__D((-1.0), (-1.0));
+  this.effects$2 = ScalaJS.as.scm_Set(ScalaJS.m.scm_Set$().apply__sc_Seq__sc_GenTraversable(ScalaJS.m.sci_Nil$()));
+  this.important$2 = true;
+  this.flammable$2 = true;
+  this.canPutSelfOut$2 = false;
+  return this
 });
 ScalaJS.c.Lobjects_Actor.prototype.aiMove__Lgame_Game__V = (function(g) {
   var changeX = ((3 * this.momentum$2.x$1) / 4);
   var changeY = ((3 * this.momentum$2.y$1) / 4);
   this.moveLoc__D__D__Lgame_Game__Z(changeX, changeY, g);
   this.momentum$2 = new ScalaJS.c.Lglobalvars_Pt().init___D__D(changeX, changeY)
+});
+ScalaJS.c.Lobjects_Actor.prototype.roundLoc__V = (function() {
+  var jsx$1 = this.loc$1;
+  var x = this.loc$1.x$1;
+  jsx$1.x$1 = ScalaJS.m.sjsr_RuntimeLong$().fromDouble__D__sjsr_RuntimeLong(ScalaJS.uD(ScalaJS.g["Math"]["round"](x))).toDouble__D();
+  var jsx$2 = this.loc$1;
+  var x$1 = this.loc$1.y$1;
+  jsx$2.y$1 = ScalaJS.m.sjsr_RuntimeLong$().fromDouble__D__sjsr_RuntimeLong(ScalaJS.uD(ScalaJS.g["Math"]["round"](x$1))).toDouble__D()
 });
 ScalaJS.c.Lobjects_Actor.prototype.getClosestEnemyInView__Lgame_Game__Lobjects_Actor = (function(g) {
   return this.getClosestValidActorInLOS__F1__Lgame_Game__Lobjects_Actor(new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(arg$outer) {
@@ -6436,9 +6832,10 @@ ScalaJS.c.Lobjects_Actor.prototype.handleMomentum__Lgame_Game__V = (function(g) 
   var i = 1;
   var count = 0;
   while ((i !== terminalElement$4)) {
-    var arg1 = i;
+    var v1 = i;
     var d = change.unitStep__Lglobalvars_Pt();
     this.moveLoc__D__D__Lgame_Game__Z(d.x$1, d.y$1, g);
+    this.lastLoc$2 = this.lastLoc$2.$$plus__Lglobalvars_Pt__Lglobalvars_Pt(change);
     count = ((1 + count) | 0);
     i = ((1 + i) | 0)
   };
@@ -6456,26 +6853,7 @@ ScalaJS.c.Lobjects_Actor.prototype.takeDamage__Lobjects_Actor__D__D__Lgame_Game_
 ScalaJS.c.Lobjects_Actor.prototype.isEnemy__Lobjects_Actor__Z = (function(a) {
   return (a.faction$2 !== this.faction$2)
 });
-ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__I__T__I__T = (function(loc_, size_, hp_, speed_, faction_, points_, name_) {
-  ScalaJS.c.Lobjects_Obj.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt.call(this, loc_, size_);
-  this.maxHp$2 = hp_;
-  this.hp$2 = hp_;
-  this.name$2 = name_;
-  this.speed$2 = speed_;
-  this.points$2 = points_;
-  this.faction$2 = faction_;
-  this.momentum$2 = new ScalaJS.c.Lglobalvars_Pt().init___D__D(0.0, 0.0);
-  this.momentumFactor$2 = ScalaJS.m.Lglobalvars_GV$().NORMMOMENTUMFACTOR$1;
-  this.important$2 = false;
-  this.lastLoc$2 = new ScalaJS.c.Lglobalvars_Pt().init___D__D((-1.0), (-1.0));
-  this.effects$2 = ScalaJS.as.scm_Set(ScalaJS.m.scm_Set$().apply__sc_Seq__sc_GenTraversable(ScalaJS.m.sci_Nil$()));
-  this.flammable$2 = true;
-  return this
-});
-ScalaJS.c.Lobjects_Actor.prototype.moveToNewMap__Lgame_Game__V = (function(g) {
-  /*<skip>*/
-});
-ScalaJS.c.Lobjects_Actor.prototype.moveLoc__D__D__Lgame_Game__Z = (function(dx, dy, g) {
+ScalaJS.c.Lobjects_Actor.prototype.moveLocWithoutRound__D__D__Lgame_Game__Z = (function(dx, dy, g) {
   var moved = false;
   var tempLoc = this.loc$1.cloone__Lglobalvars_Pt();
   if (((dx !== 0) && this.canMoveTo__Lglobalvars_Pt__Lgame_Game__Z(new ScalaJS.c.Lglobalvars_Pt().init___D__D((this.loc$1.x$1 + dx), this.loc$1.y$1), g))) {
@@ -6492,6 +6870,9 @@ ScalaJS.c.Lobjects_Actor.prototype.moveLoc__D__D__Lgame_Game__Z = (function(dx, 
     this.lastLoc$2 = tempLoc
   };
   return moved
+});
+ScalaJS.c.Lobjects_Actor.prototype.moveLoc__D__D__Lgame_Game__Z = (function(dx, dy, g) {
+  return (this.moveLocWithoutRound__D__D__Lgame_Game__Z(dx, dy, g) && (this.roundLoc__V(), true))
 });
 ScalaJS.c.Lobjects_Actor.prototype.gainHealth__I__V = (function(n) {
   var x = (this.hp$2 + n);
@@ -6563,7 +6944,8 @@ ScalaJS.asArrayOf.Lobjects_Actor = (function(obj, depth) {
 ScalaJS.c.Lobjects_ThrowableItem = (function() {
   ScalaJS.c.Lobjects_UsableItem.call(this);
   this.dist$2 = 0;
-  this.speed$2 = 0
+  this.speed$2 = 0;
+  this.minDist$2 = 0
 });
 ScalaJS.c.Lobjects_ThrowableItem.prototype = new ScalaJS.h.Lobjects_UsableItem();
 ScalaJS.c.Lobjects_ThrowableItem.prototype.constructor = ScalaJS.c.Lobjects_ThrowableItem;
@@ -6572,22 +6954,25 @@ ScalaJS.h.Lobjects_ThrowableItem = (function() {
   /*<skip>*/
 });
 ScalaJS.h.Lobjects_ThrowableItem.prototype = ScalaJS.c.Lobjects_ThrowableItem.prototype;
+ScalaJS.c.Lobjects_ThrowableItem.prototype.init___Lobjects_Actor__I__T__T = (function(owner_, minDist_, name_, picture_) {
+  ScalaJS.c.Lobjects_UsableItem.prototype.init___Lobjects_Actor__T__T.call(this, owner_, name_, picture_);
+  this.dist$2 = ScalaJS.m.Lglobalvars_GV$().PLAYER$undTHROWDISTANCE$1;
+  this.speed$2 = ScalaJS.m.Lglobalvars_GV$().PLAYER$undTHROWSPEED$1;
+  this.minDist$2 = minDist_;
+  return this
+});
 ScalaJS.c.Lobjects_ThrowableItem.prototype.getUntargetedThrowPosition__Lgame_Game__Lglobalvars_Pt = (function(g) {
   var d = this.owner$1.loc$1.$$minus__Lglobalvars_Pt__Lglobalvars_Pt(this.owner$1.lastLoc$2);
   var diff = d.$$times__D__Lglobalvars_Pt(this.dist$2);
   return this.owner$1.loc$1.$$plus__Lglobalvars_Pt__Lglobalvars_Pt(diff)
 });
-ScalaJS.c.Lobjects_ThrowableItem.prototype.init___Lobjects_Actor__T__T = (function(owner_, name_, picture_) {
-  ScalaJS.c.Lobjects_UsableItem.prototype.init___Lobjects_Actor__T__T.call(this, owner_, name_, picture_);
-  this.dist$2 = ScalaJS.m.Lglobalvars_GV$().PLAYER$undTHROWDISTANCE$1;
-  this.speed$2 = ScalaJS.m.Lglobalvars_GV$().PLAYER$undTHROWSPEED$1;
-  return this
-});
 ScalaJS.c.Lobjects_ThrowableItem.prototype.getThrowPosition__Lgame_Game__Lglobalvars_Pt = (function(g) {
   var target = this.owner$1.getClosestEnemyInView__Lgame_Game__Lobjects_Actor(g);
-  if ((target !== null)) {
+  if (((target !== null) && (this.owner$1.distanceTo__Lobjects_Obj__I(target) > this.minDist$2))) {
+    ScalaJS.g["console"]["log"]("Target");
     return target.loc$1
   } else {
+    ScalaJS.g["console"]["log"]("straight");
     return this.getUntargetedThrowPosition__Lgame_Game__Lglobalvars_Pt(g)
   }
 });
@@ -6623,8 +7008,36 @@ ScalaJS.d.Lobjects_UsableLandMine = new ScalaJS.ClassTypeData({
 });
 ScalaJS.c.Lobjects_UsableLandMine.prototype.$classData = ScalaJS.d.Lobjects_UsableLandMine;
 /** @constructor */
+ScalaJS.c.Lobjects_UsableZombieController = (function() {
+  ScalaJS.c.Lobjects_UsableItem.call(this)
+});
+ScalaJS.c.Lobjects_UsableZombieController.prototype = new ScalaJS.h.Lobjects_UsableItem();
+ScalaJS.c.Lobjects_UsableZombieController.prototype.constructor = ScalaJS.c.Lobjects_UsableZombieController;
+/** @constructor */
+ScalaJS.h.Lobjects_UsableZombieController = (function() {
+  /*<skip>*/
+});
+ScalaJS.h.Lobjects_UsableZombieController.prototype = ScalaJS.c.Lobjects_UsableZombieController.prototype;
+ScalaJS.c.Lobjects_UsableZombieController.prototype.use__Lgame_Game__V = (function(g) {
+  var mine = new ScalaJS.c.Lobjects_ZombieController().init___Lglobalvars_Pt(this.owner$1.loc$1.cloone__Lglobalvars_Pt());
+  g.addActor__Lobjects_Actor__scm_Set(mine)
+});
+ScalaJS.c.Lobjects_UsableZombieController.prototype.init___Lobjects_Actor = (function(owner_) {
+  ScalaJS.c.Lobjects_UsableItem.prototype.init___Lobjects_Actor__T__T.call(this, owner_, "wifi router", "item_zombiecontroller");
+  return this
+});
+ScalaJS.d.Lobjects_UsableZombieController = new ScalaJS.ClassTypeData({
+  Lobjects_UsableZombieController: 0
+}, false, "objects.UsableZombieController", {
+  Lobjects_UsableZombieController: 1,
+  Lobjects_UsableItem: 1,
+  O: 1
+});
+ScalaJS.c.Lobjects_UsableZombieController.prototype.$classData = ScalaJS.d.Lobjects_UsableZombieController;
+/** @constructor */
 ScalaJS.c.Lobjects_Wall = (function() {
-  ScalaJS.c.Lobjects_Obj.call(this)
+  ScalaJS.c.Lobjects_Obj.call(this);
+  this.color$2 = null
 });
 ScalaJS.c.Lobjects_Wall.prototype = new ScalaJS.h.Lobjects_Obj();
 ScalaJS.c.Lobjects_Wall.prototype.constructor = ScalaJS.c.Lobjects_Wall;
@@ -6637,6 +7050,7 @@ ScalaJS.c.Lobjects_Wall.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt = (funct
   ScalaJS.c.Lobjects_Obj.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt.call(this, loc_, size_);
   this.blocksLos$1 = true;
   this.alwaysVisible$1 = true;
+  this.color$2 = "blue";
   return this
 });
 ScalaJS.c.Lobjects_Wall.prototype.splitWithDoorAt__I__I__T2 = (function(i, doorSize) {
@@ -6651,7 +7065,9 @@ ScalaJS.c.Lobjects_Wall.prototype.splitWithDoorAt__I__I__T2 = (function(i, doorS
   }
 });
 ScalaJS.c.Lobjects_Wall.prototype.draw__Lgame_Game__V = (function(g) {
-  g.ctx$1["fillStyle"] = "blue";
+  var jsx$1 = g.ctx$1;
+  var s = this.color$2;
+  jsx$1["fillStyle"] = s;
   g.ctx$1["fillRect"](this.loc$1.x$1, this.loc$1.y$1, this.size$1.x$1, this.size$1.y$1)
 });
 ScalaJS.is.Lobjects_Wall = (function(obj) {
@@ -7377,6 +7793,155 @@ ScalaJS.d.sr_ObjectRef = new ScalaJS.ClassTypeData({
 });
 ScalaJS.c.sr_ObjectRef.prototype.$classData = ScalaJS.d.sr_ObjectRef;
 /** @constructor */
+ScalaJS.c.Lenemies_BarDude = (function() {
+  ScalaJS.c.Lobjects_Actor.call(this);
+  this.char$undimage$3 = null;
+  this.player$undclose$3 = false;
+  this.seePhrases$3 = null;
+  this.joinPhrases$3 = null;
+  this.act$3 = null;
+  this.state$3 = null;
+  this.moveCounter$3 = 0
+});
+ScalaJS.c.Lenemies_BarDude.prototype = new ScalaJS.h.Lobjects_Actor();
+ScalaJS.c.Lenemies_BarDude.prototype.constructor = ScalaJS.c.Lenemies_BarDude;
+/** @constructor */
+ScalaJS.h.Lenemies_BarDude = (function() {
+  /*<skip>*/
+});
+ScalaJS.h.Lenemies_BarDude.prototype = ScalaJS.c.Lenemies_BarDude.prototype;
+ScalaJS.c.Lenemies_BarDude.prototype.aiMove__Lgame_Game__V = (function(g) {
+  if (((this.state$3 === "waiting") && (!g.saloon$undhasPickedAlly$1))) {
+    if (((!this.player$undclose$3) && (this.distanceTo__Lobjects_Obj__I(g.player$1) < 100))) {
+      this.player$undclose$3 = true;
+      var this$3 = this.seePhrases$3;
+      var this$2 = g.r$1;
+      var this$1 = this.seePhrases$3;
+      var n = ScalaJS.s.sc_LinearSeqOptimized$class__length__sc_LinearSeqOptimized__I(this$1);
+      var n$1 = this$2.self$1.nextInt__I__I(n);
+      var phrase = ScalaJS.as.T(ScalaJS.s.sc_LinearSeqOptimized$class__apply__sc_LinearSeqOptimized__I__O(this$3, n$1));
+      g.addHeadText__Lobjects_Obj__T__I__V(this, phrase, 150)
+    };
+    if ((this.distanceTo__Lobjects_Obj__I(g.player$1) < 30)) {
+      g.saloon$undhasPickedAlly$1 = true;
+      this.state$3 = "moving"
+    }
+  } else if ((this.state$3 === "moving")) {
+    if ((this.moveCounter$3 > 0)) {
+      if (this.moveLoc__D__D__Lgame_Game__Z((-1.0), 0.0, g)) {
+        this.moveCounter$3 = (((-1) + this.moveCounter$3) | 0)
+      }
+    } else {
+      var this$4 = this.act$3;
+      var newLoc = this.loc$1;
+      this$4.loc$1 = newLoc.cloone__Lglobalvars_Pt();
+      g.removeActor__Lobjects_Actor__s_Option(this);
+      g.addActor__Lobjects_Actor__scm_Set(this.act$3);
+      var this$7 = this.joinPhrases$3;
+      var this$6 = g.r$1;
+      var this$5 = this.joinPhrases$3;
+      var n$2 = ScalaJS.s.sc_LinearSeqOptimized$class__length__sc_LinearSeqOptimized__I(this$5);
+      var n$3 = this$6.self$1.nextInt__I__I(n$2);
+      var phrase$2 = ScalaJS.as.T(ScalaJS.s.sc_LinearSeqOptimized$class__apply__sc_LinearSeqOptimized__I__O(this$7, n$3));
+      g.addHeadText__Lobjects_Obj__T__I__V(this.act$3, phrase$2, 150)
+    }
+  }
+});
+ScalaJS.c.Lenemies_BarDude.prototype.init___Lglobalvars_Pt__sci_List__sci_List__T__Lobjects_Actor = (function(loc_, seePhrases_, joinPhrases_, char_image_, act_) {
+  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__D__T__I__T.call(this, loc_, new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1), 50.0, 0.0, "human", 0, act_.name$2);
+  this.char$undimage$3 = char_image_;
+  this.player$undclose$3 = false;
+  this.seePhrases$3 = seePhrases_;
+  this.joinPhrases$3 = joinPhrases_;
+  this.act$3 = act_;
+  this.state$3 = "waiting";
+  this.moveCounter$3 = 100;
+  return this
+});
+ScalaJS.c.Lenemies_BarDude.prototype.draw__Lgame_Game__V = (function(g) {
+  if ((this.state$3 === "waiting")) {
+    var img = g.images$1.apply__O__O((this.char$undimage$3 + " 0"));
+    g.ctx$1["drawImage"](img, this.loc$1.x$1, this.loc$1.y$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1)
+  } else if ((this.state$3 === "moving")) {
+    var img$2 = g.images$1.apply__O__O((this.char$undimage$3 + " 90"));
+    g.ctx$1["drawImage"](img$2, this.loc$1.x$1, this.loc$1.y$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1)
+  }
+});
+ScalaJS.d.Lenemies_BarDude = new ScalaJS.ClassTypeData({
+  Lenemies_BarDude: 0
+}, false, "enemies.BarDude", {
+  Lenemies_BarDude: 1,
+  Lobjects_Actor: 1,
+  Lobjects_Obj: 1,
+  O: 1
+});
+ScalaJS.c.Lenemies_BarDude.prototype.$classData = ScalaJS.d.Lenemies_BarDude;
+/** @constructor */
+ScalaJS.c.Lenemies_Bartender = (function() {
+  ScalaJS.c.Lobjects_Actor.call(this);
+  this.hasSeenPlayer$3 = false;
+  this.speechIndex$3 = 0;
+  this.speechRate$3 = 0;
+  this.speechTimer$3 = 0;
+  this.phrases$3 = null
+});
+ScalaJS.c.Lenemies_Bartender.prototype = new ScalaJS.h.Lobjects_Actor();
+ScalaJS.c.Lenemies_Bartender.prototype.constructor = ScalaJS.c.Lenemies_Bartender;
+/** @constructor */
+ScalaJS.h.Lenemies_Bartender = (function() {
+  /*<skip>*/
+});
+ScalaJS.h.Lenemies_Bartender.prototype = ScalaJS.c.Lenemies_Bartender.prototype;
+ScalaJS.c.Lenemies_Bartender.prototype.init___Lglobalvars_Pt = (function(loc_) {
+  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__D__T__I__T.call(this, loc_, new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1), 50.0, 0.0, "human", 0, "bartender");
+  this.hasSeenPlayer$3 = false;
+  this.speechIndex$3 = 0;
+  this.speechRate$3 = 150;
+  this.speechTimer$3 = 0;
+  ScalaJS.m.sci_List$();
+  var xs = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array(["Well hello there!", "Come on in and have a drink.", "I bet one of the regulars would help you out,", "If you ask nicely, that is."]);
+  var this$2 = ScalaJS.m.sci_List$();
+  var cbf = this$2.ReusableCBFInstance$2;
+  this.phrases$3 = ScalaJS.as.sci_List(ScalaJS.s.sc_TraversableLike$class__to__sc_TraversableLike__scg_CanBuildFrom__O(xs, cbf));
+  return this
+});
+ScalaJS.c.Lenemies_Bartender.prototype.aiMove__Lgame_Game__V = (function(g) {
+  if (((!this.hasSeenPlayer$3) && this.hasLosTo__Lobjects_Obj__Lgame_Game__Z(g.player$1, g))) {
+    this.hasSeenPlayer$3 = true
+  };
+  if (this.hasSeenPlayer$3) {
+    var jsx$2 = this.speechIndex$3;
+    var this$1 = this.phrases$3;
+    var jsx$1 = (jsx$2 < ScalaJS.s.sc_LinearSeqOptimized$class__length__sc_LinearSeqOptimized__I(this$1))
+  } else {
+    var jsx$1 = false
+  };
+  if (jsx$1) {
+    if ((this.speechTimer$3 <= 0)) {
+      this.speechTimer$3 = this.speechRate$3;
+      var this$2 = this.phrases$3;
+      var n = this.speechIndex$3;
+      g.addHeadText__Lobjects_Obj__T__I__V(this, ScalaJS.as.T(ScalaJS.s.sc_LinearSeqOptimized$class__apply__sc_LinearSeqOptimized__I__O(this$2, n)), this.speechRate$3);
+      this.speechIndex$3 = ((1 + this.speechIndex$3) | 0)
+    } else {
+      this.speechTimer$3 = (((-1) + this.speechTimer$3) | 0)
+    }
+  }
+});
+ScalaJS.c.Lenemies_Bartender.prototype.draw__Lgame_Game__V = (function(g) {
+  var img = g.images$1.apply__O__O("char_human_2 270");
+  g.ctx$1["drawImage"](img, this.loc$1.x$1, this.loc$1.y$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1)
+});
+ScalaJS.d.Lenemies_Bartender = new ScalaJS.ClassTypeData({
+  Lenemies_Bartender: 0
+}, false, "enemies.Bartender", {
+  Lenemies_Bartender: 1,
+  Lobjects_Actor: 1,
+  Lobjects_Obj: 1,
+  O: 1
+});
+ScalaJS.c.Lenemies_Bartender.prototype.$classData = ScalaJS.d.Lenemies_Bartender;
+/** @constructor */
 ScalaJS.c.Lenemies_BaseHuman = (function() {
   ScalaJS.c.Lobjects_Actor.call(this);
   this.timeToNextShot$3 = 0;
@@ -7404,11 +7969,12 @@ ScalaJS.c.Lenemies_BaseHuman.prototype.aiMove__Lgame_Game__V = (function(g) {
   }
 });
 ScalaJS.c.Lenemies_BaseHuman.prototype.init___Lglobalvars_Pt__I = (function(loc_, hp_) {
-  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__I__T__I__T.call(this, loc_, new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1), hp_, 2, "human", 0, "human");
+  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__D__T__I__T.call(this, loc_, new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1), hp_, 2.0, "human", 0, "human");
   this.timeToNextShot$3 = 0;
   this.shotCooldown$3 = 20;
   this.bigDisplayname$3 = "";
   this.gun$3 = new ScalaJS.c.Lenemies_Gun().init___I__I__I__I__Lobjects_Actor(ScalaJS.m.Lglobalvars_GV$().PISTOL$undFIRETIME$1, ScalaJS.m.Lglobalvars_GV$().PISTOL$undDAMAGE$1, ScalaJS.m.Lglobalvars_GV$().PISTOL$undRANGE$1, ScalaJS.m.Lglobalvars_GV$().PISTOL$undAPS$1, this);
+  this.canPutSelfOut$2 = true;
   return this
 });
 ScalaJS.is.Lenemies_BaseHuman = (function(obj) {
@@ -7423,6 +7989,102 @@ ScalaJS.isArrayOf.Lenemies_BaseHuman = (function(obj, depth) {
 ScalaJS.asArrayOf.Lenemies_BaseHuman = (function(obj, depth) {
   return ((ScalaJS.isArrayOf.Lenemies_BaseHuman(obj, depth) || (obj === null)) ? obj : ScalaJS.throwArrayCastException(obj, "Lenemies.BaseHuman;", depth))
 });
+/** @constructor */
+ScalaJS.c.Lenemies_CannonTank = (function() {
+  ScalaJS.c.Lobjects_Actor.call(this);
+  this.target$3 = null;
+  this.direction$3 = null;
+  this.chanceToChangeDirection$3 = 0;
+  this.spitTimer$3 = 0;
+  this.spitRate$3 = 0
+});
+ScalaJS.c.Lenemies_CannonTank.prototype = new ScalaJS.h.Lobjects_Actor();
+ScalaJS.c.Lenemies_CannonTank.prototype.constructor = ScalaJS.c.Lenemies_CannonTank;
+/** @constructor */
+ScalaJS.h.Lenemies_CannonTank = (function() {
+  /*<skip>*/
+});
+ScalaJS.h.Lenemies_CannonTank.prototype = ScalaJS.c.Lenemies_CannonTank.prototype;
+ScalaJS.c.Lenemies_CannonTank.prototype.init___Lglobalvars_Pt = (function(loc_) {
+  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__D__T__I__T.call(this, loc_, new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.m.Lglobalvars_GV$().HUGEUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().HUGEUNITSIZE$1), ScalaJS.m.Lglobalvars_GV$().TANK$undHEALTH$1, 1.0, "zombie", 50, "tank");
+  this.target$3 = null;
+  this.direction$3 = new ScalaJS.c.Lglobalvars_Pt().init___D__D(0.0, 0.0);
+  this.chanceToChangeDirection$3 = 400;
+  this.spitTimer$3 = 0;
+  this.spitRate$3 = ScalaJS.m.Lglobalvars_GV$().CANNON$undSPITRATE$1;
+  this.momentumFactor$2 = ScalaJS.m.Lglobalvars_GV$().HUGEMOMENTUMFACTOR$1;
+  return this
+});
+ScalaJS.c.Lenemies_CannonTank.prototype.aiMove__Lgame_Game__V = (function(g) {
+  var y = (((-1) + this.spitTimer$3) | 0);
+  this.spitTimer$3 = ((y < 0) ? 0 : y);
+  if ((this.spitTimer$3 <= 0)) {
+    var target = this.getClosestEnemyInLOS__Lgame_Game__Lobjects_Actor(g);
+    if ((target !== null)) {
+      var spitLoc = this.loc$1.$$plus__Lglobalvars_Pt__Lglobalvars_Pt(target.loc$1.$$minus__Lglobalvars_Pt__Lglobalvars_Pt(this.loc$1).$$div__D__Lglobalvars_Pt(2.0));
+      var end = ScalaJS.m.Lglobalvars_GV$().CANNON$undSPITNUM$1;
+      var isEmpty$4 = (end < 1);
+      var numRangeElements$4 = (isEmpty$4 ? 0 : end);
+      var lastElement$4 = (isEmpty$4 ? 0 : end);
+      var terminalElement$4 = ((1 + lastElement$4) | 0);
+      if ((numRangeElements$4 < 0)) {
+        ScalaJS.m.sci_Range$().scala$collection$immutable$Range$$fail__I__I__I__Z__sr_Nothing$(1, end, 1, true)
+      };
+      var i = 1;
+      var count = 0;
+      while ((i !== terminalElement$4)) {
+        var arg1 = i;
+        var targetLoc = spitLoc.cloone__Lglobalvars_Pt();
+        var jsx$1 = targetLoc.x$1;
+        var this$6 = g.r$1;
+        var n = ScalaJS.imul(10, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1);
+        targetLoc.x$1 = (jsx$1 + ((this$6.self$1.nextInt__I__I(n) - ScalaJS.imul(5, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1)) | 0));
+        var jsx$2 = targetLoc.y$1;
+        var this$7 = g.r$1;
+        var n$1 = ScalaJS.imul(10, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1);
+        targetLoc.y$1 = (jsx$2 + ((this$7.self$1.nextInt__I__I(n$1) - ScalaJS.imul(5, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1)) | 0));
+        var spitLine = new ScalaJS.c.Lglobalvars_SimpleLine().init___Lglobalvars_Pt__Lglobalvars_Pt__T(this.loc$1.cloone__Lglobalvars_Pt(), targetLoc, "black");
+        var zed = new ScalaJS.c.Lenemies_Zombie().init___Lglobalvars_Pt(targetLoc);
+        var proj = new ScalaJS.c.Lobjects_ProjectileActor().init___Lobjects_Actor__Lglobalvars_SimpleLine__I(zed, spitLine, 6);
+        proj.forceSpawn$3 = false;
+        g.addActor__Lobjects_Actor__scm_Set(proj);
+        count = ((1 + count) | 0);
+        i = ((1 + i) | 0)
+      };
+      this.spitTimer$3 = this.spitRate$3
+    }
+  };
+  if (this.direction$3.is$undzero__Z()) {
+    var this$8 = g.r$1;
+    var jsx$3 = this$8.self$1.nextInt__I__I(3);
+    var this$9 = g.r$1;
+    this.direction$3 = new ScalaJS.c.Lglobalvars_Pt().init___D__D((((-1) + jsx$3) | 0), (((-1) + this$9.self$1.nextInt__I__I(3)) | 0))
+  };
+  if ((!this.moveLoc__D__D__Lgame_Game__Z(this.direction$3.x$1, this.direction$3.y$1, g))) {
+    this.direction$3 = new ScalaJS.c.Lglobalvars_Pt().init___D__D(0.0, 0.0)
+  } else {
+    var this$10 = g.r$1;
+    var n$2 = this.chanceToChangeDirection$3;
+    if ((this$10.self$1.nextInt__I__I(n$2) === 0)) {
+      this.direction$3 = new ScalaJS.c.Lglobalvars_Pt().init___D__D(0.0, 0.0)
+    }
+  }
+});
+ScalaJS.c.Lenemies_CannonTank.prototype.draw__Lgame_Game__V = (function(g) {
+  var jsx$1 = g.ctx$1;
+  var s = new ScalaJS.c.s_StringContext().init___sc_Seq(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array(["rgb(30, 150, 250)"])).s__sc_Seq__T(ScalaJS.m.sci_Nil$());
+  jsx$1["fillStyle"] = s;
+  g.ctx$1["fillRect"](this.loc$1.x$1, this.loc$1.y$1, this.size$1.x$1, this.size$1.y$1)
+});
+ScalaJS.d.Lenemies_CannonTank = new ScalaJS.ClassTypeData({
+  Lenemies_CannonTank: 0
+}, false, "enemies.CannonTank", {
+  Lenemies_CannonTank: 1,
+  Lobjects_Actor: 1,
+  Lobjects_Obj: 1,
+  O: 1
+});
+ScalaJS.c.Lenemies_CannonTank.prototype.$classData = ScalaJS.d.Lenemies_CannonTank;
 /** @constructor */
 ScalaJS.c.Lenemies_Charger = (function() {
   ScalaJS.c.Lobjects_Actor.call(this);
@@ -7442,8 +8104,12 @@ ScalaJS.h.Lenemies_Charger = (function() {
   /*<skip>*/
 });
 ScalaJS.h.Lenemies_Charger.prototype = ScalaJS.c.Lenemies_Charger.prototype;
+ScalaJS.c.Lenemies_Charger.prototype.moveToNewMap__I__Lgame_Game__V = (function(time, g) {
+  var y = ((this.chargeTimer$3 - time) | 0);
+  this.chargeTimer$3 = ((y < 0) ? 0 : y)
+});
 ScalaJS.c.Lenemies_Charger.prototype.init___Lglobalvars_Pt = (function(loc_) {
-  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__I__T__I__T.call(this, loc_, new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.m.Lglobalvars_GV$().BIGUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().BIGUNITSIZE$1), 200.0, 1, "zombie", 5, "charger");
+  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__D__T__I__T.call(this, loc_, new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.m.Lglobalvars_GV$().BIGUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().BIGUNITSIZE$1), 200.0, 1.0, "zombie", 5, "charger");
   this.direction$3 = new ScalaJS.c.s_Tuple2$mcII$sp().init___I__I(0, 0);
   this.chanceToChangeDirection$3 = 400;
   this.state$3 = "moving";
@@ -7518,10 +8184,6 @@ ScalaJS.c.Lenemies_Charger.prototype.stateCharging__V = (function() {
   this.chargeTimer$3 = this.chargeCooldown$3;
   this.momentumFactor$2 = ScalaJS.m.Lglobalvars_GV$().CHARGER$undCHARGINGMOMENTUMFACTOR$1
 });
-ScalaJS.c.Lenemies_Charger.prototype.moveToNewMap__Lgame_Game__V = (function(g) {
-  var y = ((this.chargeTimer$3 - ((this.loc$1.y$1 / this.speed$2) | 0)) | 0);
-  this.chargeTimer$3 = ((y < 0) ? 0 : y)
-});
 ScalaJS.c.Lenemies_Charger.prototype.draw__Lgame_Game__V = (function(g) {
   var jsx$1 = g.ctx$1;
   var s = new ScalaJS.c.s_StringContext().init___sc_Seq(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array(["rgb(100, 150, 100)"])).s__sc_Seq__T(ScalaJS.m.sci_Nil$());
@@ -7554,8 +8216,12 @@ ScalaJS.h.Lenemies_Spitter = (function() {
   /*<skip>*/
 });
 ScalaJS.h.Lenemies_Spitter.prototype = ScalaJS.c.Lenemies_Spitter.prototype;
+ScalaJS.c.Lenemies_Spitter.prototype.moveToNewMap__I__Lgame_Game__V = (function(time, g) {
+  var y = ((this.spitTimer$3 - time) | 0);
+  this.spitTimer$3 = ((y < 0) ? 0 : y)
+});
 ScalaJS.c.Lenemies_Spitter.prototype.init___Lglobalvars_Pt = (function(loc_) {
-  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__I__T__I__T.call(this, loc_, new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1), 70.0, 1, "zombie", 5, "spitter");
+  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__D__T__I__T.call(this, loc_, new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1), 70.0, 1.0, "zombie", 5, "spitter");
   this.direction$3 = new ScalaJS.c.s_Tuple2$mcII$sp().init___I__I(0, 0);
   this.chanceToChangeDirection$3 = 400;
   this.spitTimer$3 = 0;
@@ -7577,6 +8243,7 @@ ScalaJS.c.Lenemies_Spitter.prototype.aiMove__Lgame_Game__V = (function(g) {
       var spitLine = new ScalaJS.c.Lglobalvars_SimpleLine().init___Lglobalvars_Pt__Lglobalvars_Pt__T(this.loc$1.cloone__Lglobalvars_Pt(), target.loc$1.cloone__Lglobalvars_Pt(), "black");
       var spit = new ScalaJS.c.Lobjects_CausticAcid().init___Lglobalvars_Pt__I__I(target.loc$1.cloone__Lglobalvars_Pt(), this.spitRadius$3, this.spitReduceRate$3);
       var proj = new ScalaJS.c.Lobjects_ProjectileActor().init___Lobjects_Actor__Lglobalvars_SimpleLine__I(spit, spitLine, 6);
+      proj.passThrough$3 = true;
       g.addActor__Lobjects_Actor__scm_Set(proj);
       this.spitTimer$3 = this.spitRate$3
     }
@@ -7598,10 +8265,6 @@ ScalaJS.c.Lenemies_Spitter.prototype.aiMove__Lgame_Game__V = (function(g) {
       this.direction$3 = new ScalaJS.c.s_Tuple2$mcII$sp().init___I__I(0, 0)
     }
   }
-});
-ScalaJS.c.Lenemies_Spitter.prototype.moveToNewMap__Lgame_Game__V = (function(g) {
-  var y = ((this.spitTimer$3 - ((this.loc$1.y$1 / this.speed$2) | 0)) | 0);
-  this.spitTimer$3 = ((y < 0) ? 0 : y)
 });
 ScalaJS.c.Lenemies_Spitter.prototype.draw__Lgame_Game__V = (function(g) {
   var jsx$1 = g.ctx$1;
@@ -7633,7 +8296,7 @@ ScalaJS.h.Lenemies_Tank = (function() {
 });
 ScalaJS.h.Lenemies_Tank.prototype = ScalaJS.c.Lenemies_Tank.prototype;
 ScalaJS.c.Lenemies_Tank.prototype.init___Lglobalvars_Pt = (function(loc_) {
-  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__I__T__I__T.call(this, loc_, new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.m.Lglobalvars_GV$().HUGEUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().HUGEUNITSIZE$1), ScalaJS.m.Lglobalvars_GV$().TANK$undHEALTH$1, 1, "zombie", 50, "tank");
+  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__D__T__I__T.call(this, loc_, new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.m.Lglobalvars_GV$().HUGEUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().HUGEUNITSIZE$1), ScalaJS.m.Lglobalvars_GV$().TANK$undHEALTH$1, 1.0, "zombie", 50, "tank");
   this.target$3 = null;
   this.direction$3 = new ScalaJS.c.Lglobalvars_Pt().init___D__D(0.0, 0.0);
   this.chanceToChangeDirection$3 = 400;
@@ -7660,7 +8323,7 @@ ScalaJS.c.Lenemies_Tank.prototype.aiMove__Lgame_Game__V = (function(g) {
     this.direction$3 = new ScalaJS.c.Lglobalvars_Pt().init___D__D((((-1) + jsx$1) | 0), (((-1) + this$7.self$1.nextInt__I__I(3)) | 0))
   };
   if (((this.target$3 !== null) && this.target$3.collides__Lglobalvars_Pt__Lglobalvars_Pt__Z(new ScalaJS.c.Lglobalvars_Pt().init___D__D((this.loc$1.x$1 + this.direction$3.x$1), (this.loc$1.y$1 + this.direction$3.y$1)), new ScalaJS.c.Lglobalvars_Pt().init___D__D(this.size$1.x$1, this.size$1.y$1)))) {
-    this.target$3.takeDamage__Lobjects_Actor__D__D__Lgame_Game__V(this, ScalaJS.m.Lglobalvars_GV$().TANK$undDAMAGE$1, 1.5, g)
+    this.target$3.takeDamage__Lobjects_Actor__D__D__Lgame_Game__V(this, ScalaJS.m.Lglobalvars_GV$().TANK$undDAMAGE$1, ScalaJS.m.Lglobalvars_GV$().TANK$undPUSH$1, g)
   };
   if ((!this.moveLoc__D__D__Lgame_Game__Z(this.direction$3.x$1, this.direction$3.y$1, g))) {
     this.direction$3 = new ScalaJS.c.Lglobalvars_Pt().init___D__D(0.0, 0.0)
@@ -7707,8 +8370,11 @@ ScalaJS.h.Lenemies_TankRider = (function() {
   /*<skip>*/
 });
 ScalaJS.h.Lenemies_TankRider.prototype = ScalaJS.c.Lenemies_TankRider.prototype;
+ScalaJS.c.Lenemies_TankRider.prototype.moveToNewMap__I__Lgame_Game__V = (function(time, g) {
+  this.dest$3 = new ScalaJS.c.Lglobalvars_Pt().init___D__D((-1.0), (-1.0))
+});
 ScalaJS.c.Lenemies_TankRider.prototype.init___Lglobalvars_Pt = (function(loc_) {
-  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__I__T__I__T.call(this, loc_, new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.m.Lglobalvars_GV$().HUGEUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().HUGEUNITSIZE$1), ScalaJS.m.Lglobalvars_GV$().TANK$undHEALTH$1, 1, "human", 0, "The Colonel");
+  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__D__T__I__T.call(this, loc_, new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.m.Lglobalvars_GV$().HUGEUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().HUGEUNITSIZE$1), ScalaJS.m.Lglobalvars_GV$().TANK$undRIDER$undHP$1, 2.0, "human", 0, "The Colonel");
   this.bigDisplayname$3 = "tank rider big";
   this.dest$3 = new ScalaJS.c.Lglobalvars_Pt().init___D__D((-1.0), (-1.0));
   this.target$3 = null;
@@ -7719,6 +8385,7 @@ ScalaJS.c.Lenemies_TankRider.prototype.init___Lglobalvars_Pt = (function(loc_) {
   this.chanceToChangeDirection$3 = 400;
   this.momentumFactor$2 = ScalaJS.m.Lglobalvars_GV$().HUGEMOMENTUMFACTOR$1;
   this.healTimer$3 = 0;
+  this.canPutSelfOut$2 = true;
   return this
 });
 ScalaJS.c.Lenemies_TankRider.prototype.canTakeItem__Lobjects_Actor__Z = (function(item) {
@@ -7744,33 +8411,42 @@ ScalaJS.c.Lenemies_TankRider.prototype.onDeath__Lgame_Game__V = (function(g) {
   g.addActor__Lobjects_Actor__scm_Set(hooman)
 });
 ScalaJS.c.Lenemies_TankRider.prototype.aiMove__Lgame_Game__V = (function(g) {
-  var this$1 = g.r$1;
-  if ((this$1.self$1.nextInt__I__I(400) === 0)) {
+  var jsx$1 = ScalaJS.g["console"];
+  var s = ("" + this.dest$3);
+  jsx$1["log"](s);
+  var this$2 = g.r$1;
+  if ((this$2.self$1.nextInt__I__I(400) === 0)) {
     g.addHeadText__Lobjects_Obj__T__I__V(this, "Yeehaw!", 10)
   };
   this.target$3 = this.getClosestEnemyInLOS__Lgame_Game__Lobjects_Actor(g);
-  if ((this.target$3 !== null)) {
-    var dest = this.target$3.loc$1;
-    var x = (dest.x$1 - this.loc$1.x$1);
-    var dx = ((x > 0) ? 1.0 : ((x < 0) ? (-1.0) : x));
-    var x$1 = (dest.y$1 - this.loc$1.y$1);
-    var dy = ((x$1 > 0) ? 1.0 : ((x$1 < 0) ? (-1.0) : x$1));
-    this.direction$3 = new ScalaJS.c.Lglobalvars_Pt().init___D__D(dx, dy)
+  if (((this.target$3 !== null) && ((this.distanceTo__Lobjects_Obj__I(this.target$3) < 30) || (g.player$1.distanceTo__Lobjects_Obj__I(this.target$3) < 150)))) {
+    this.dest$3 = this.target$3.loc$1
   } else if (this.direction$3.is$undzero__Z()) {
-    var this$6 = g.r$1;
-    var jsx$1 = this$6.self$1.nextInt__I__I(3);
-    var this$7 = g.r$1;
-    this.direction$3 = new ScalaJS.c.Lglobalvars_Pt().init___D__D((((-1) + jsx$1) | 0), (((-1) + this$7.self$1.nextInt__I__I(3)) | 0))
+    var jsx$2 = g.player$1.loc$1.x$1;
+    var this$3 = g.r$1;
+    var n = ScalaJS.imul(10, ScalaJS.m.Lglobalvars_GV$().HUGEUNITSIZE$1);
+    var destX = ((jsx$2 + this$3.self$1.nextInt__I__I(n)) - ScalaJS.imul(5, ScalaJS.m.Lglobalvars_GV$().HUGEUNITSIZE$1));
+    var jsx$3 = g.player$1.loc$1.y$1;
+    var this$4 = g.r$1;
+    var n$1 = ScalaJS.imul(10, ScalaJS.m.Lglobalvars_GV$().HUGEUNITSIZE$1);
+    var destY = ((jsx$3 + this$4.self$1.nextInt__I__I(n$1)) - ScalaJS.imul(5, ScalaJS.m.Lglobalvars_GV$().HUGEUNITSIZE$1));
+    this.dest$3 = new ScalaJS.c.Lglobalvars_Pt().init___D__D(destX, destY)
   };
+  var x = (this.dest$3.x$1 - this.loc$1.x$1);
+  var dx = ((x > 0) ? 1.0 : ((x < 0) ? (-1.0) : x));
+  var x$1 = (this.dest$3.y$1 - this.loc$1.y$1);
+  var dy = ((x$1 > 0) ? 1.0 : ((x$1 < 0) ? (-1.0) : x$1));
+  this.direction$3 = new ScalaJS.c.Lglobalvars_Pt().init___D__D(dx, dy);
   if (((this.target$3 !== null) && this.target$3.collides__Lglobalvars_Pt__Lglobalvars_Pt__Z(new ScalaJS.c.Lglobalvars_Pt().init___D__D((this.loc$1.x$1 + this.direction$3.x$1), (this.loc$1.y$1 + this.direction$3.y$1)), new ScalaJS.c.Lglobalvars_Pt().init___D__D(this.size$1.x$1, this.size$1.y$1)))) {
-    this.target$3.takeDamage__Lobjects_Actor__D__D__Lgame_Game__V(this, ScalaJS.m.Lglobalvars_GV$().TANK$undDAMAGE$1, 1.5, g)
+    this.target$3.takeDamage__Lobjects_Actor__D__D__Lgame_Game__V(this, ScalaJS.m.Lglobalvars_GV$().TANK$undRIDER$undDAMAGE$1, ScalaJS.m.Lglobalvars_GV$().TANK$undPUSH$1, g)
   };
-  if ((!this.moveLoc__D__D__Lgame_Game__Z(this.direction$3.x$1, this.direction$3.y$1, g))) {
+  var moved = this.moveLoc__D__D__Lgame_Game__Z(this.direction$3.x$1, this.direction$3.y$1, g);
+  if (((!moved) || (this.distanceTo__Lglobalvars_Pt__I(this.dest$3) <= 2))) {
     this.direction$3 = new ScalaJS.c.Lglobalvars_Pt().init___D__D(0.0, 0.0)
   } else {
-    var this$8 = g.r$1;
-    var n = this.chanceToChangeDirection$3;
-    if ((this$8.self$1.nextInt__I__I(n) === 0)) {
+    var this$9 = g.r$1;
+    var n$2 = this.chanceToChangeDirection$3;
+    if ((this$9.self$1.nextInt__I__I(n$2) === 0)) {
       this.direction$3 = new ScalaJS.c.Lglobalvars_Pt().init___D__D(0.0, 0.0)
     }
   };
@@ -7780,9 +8456,6 @@ ScalaJS.c.Lenemies_TankRider.prototype.aiMove__Lgame_Game__V = (function(g) {
   } else {
     this.healTimer$3 = (((-1) + this.healTimer$3) | 0)
   }
-});
-ScalaJS.c.Lenemies_TankRider.prototype.moveToNewMap__Lgame_Game__V = (function(g) {
-  this.dest$3 = new ScalaJS.c.Lglobalvars_Pt().init___D__D((-1.0), (-1.0))
 });
 ScalaJS.c.Lenemies_TankRider.prototype.draw__Lgame_Game__V = (function(g) {
   var change = this.lastLoc$2.$$minus__Lglobalvars_Pt__Lglobalvars_Pt(this.loc$1);
@@ -7816,7 +8489,8 @@ ScalaJS.c.Lenemies_Zombie = (function() {
   this.target$3 = null;
   this.direction$3 = null;
   this.chanceToChangeDirection$3 = 0;
-  this.attackTimer$3 = 0
+  this.attackTimer$3 = 0;
+  this.color$3 = null
 });
 ScalaJS.c.Lenemies_Zombie.prototype = new ScalaJS.h.Lobjects_Actor();
 ScalaJS.c.Lenemies_Zombie.prototype.constructor = ScalaJS.c.Lenemies_Zombie;
@@ -7826,11 +8500,13 @@ ScalaJS.h.Lenemies_Zombie = (function() {
 });
 ScalaJS.h.Lenemies_Zombie.prototype = ScalaJS.c.Lenemies_Zombie.prototype;
 ScalaJS.c.Lenemies_Zombie.prototype.init___Lglobalvars_Pt = (function(loc_) {
-  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__I__T__I__T.call(this, loc_, new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1), 20.0, 1, "zombie", 1, "zombie");
+  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__D__T__I__T.call(this, loc_, new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1), 20.0, 1.0, "zombie", 1, "zombie");
   this.target$3 = null;
   this.direction$3 = new ScalaJS.c.Lglobalvars_Pt().init___D__D(0.0, 0.0);
   this.chanceToChangeDirection$3 = 400;
   this.attackTimer$3 = 0;
+  this.color$3 = new ScalaJS.c.s_StringContext().init___sc_Seq(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array(["rgb(30, 150, 30)"])).s__sc_Seq__T(ScalaJS.m.sci_Nil$());
+  this.important$2 = false;
   return this
 });
 ScalaJS.c.Lenemies_Zombie.prototype.aiMove__Lgame_Game__V = (function(g) {
@@ -7871,9 +8547,21 @@ ScalaJS.c.Lenemies_Zombie.prototype.aiMove__Lgame_Game__V = (function(g) {
 });
 ScalaJS.c.Lenemies_Zombie.prototype.draw__Lgame_Game__V = (function(g) {
   var jsx$1 = g.ctx$1;
-  var s = new ScalaJS.c.s_StringContext().init___sc_Seq(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array(["rgb(30, 150, 30)"])).s__sc_Seq__T(ScalaJS.m.sci_Nil$());
+  var s = this.color$3;
   jsx$1["fillStyle"] = s;
   g.ctx$1["fillRect"](this.loc$1.x$1, this.loc$1.y$1, this.size$1.x$1, this.size$1.y$1)
+});
+ScalaJS.is.Lenemies_Zombie = (function(obj) {
+  return (!(!((obj && obj.$classData) && obj.$classData.ancestors.Lenemies_Zombie)))
+});
+ScalaJS.as.Lenemies_Zombie = (function(obj) {
+  return ((ScalaJS.is.Lenemies_Zombie(obj) || (obj === null)) ? obj : ScalaJS.throwClassCastException(obj, "enemies.Zombie"))
+});
+ScalaJS.isArrayOf.Lenemies_Zombie = (function(obj, depth) {
+  return (!(!(((obj && obj.$classData) && (obj.$classData.arrayDepth === depth)) && obj.$classData.arrayBase.ancestors.Lenemies_Zombie)))
+});
+ScalaJS.asArrayOf.Lenemies_Zombie = (function(obj, depth) {
+  return ((ScalaJS.isArrayOf.Lenemies_Zombie(obj, depth) || (obj === null)) ? obj : ScalaJS.throwArrayCastException(obj, "Lenemies.Zombie;", depth))
 });
 ScalaJS.d.Lenemies_Zombie = new ScalaJS.ClassTypeData({
   Lenemies_Zombie: 0
@@ -7898,6 +8586,33 @@ ScalaJS.h.Ljava_io_OutputStream.prototype = ScalaJS.c.Ljava_io_OutputStream.prot
 ScalaJS.c.Ljava_io_OutputStream.prototype.close__V = (function() {
   /*<skip>*/
 });
+/** @constructor */
+ScalaJS.c.Lobjects_Barrier = (function() {
+  ScalaJS.c.Lobjects_Wall.call(this)
+});
+ScalaJS.c.Lobjects_Barrier.prototype = new ScalaJS.h.Lobjects_Wall();
+ScalaJS.c.Lobjects_Barrier.prototype.constructor = ScalaJS.c.Lobjects_Barrier;
+/** @constructor */
+ScalaJS.h.Lobjects_Barrier = (function() {
+  /*<skip>*/
+});
+ScalaJS.h.Lobjects_Barrier.prototype = ScalaJS.c.Lobjects_Barrier.prototype;
+ScalaJS.c.Lobjects_Barrier.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt = (function(loc_, size_) {
+  ScalaJS.c.Lobjects_Wall.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt.call(this, loc_, size_);
+  this.blocksLos$1 = false;
+  this.alwaysVisible$1 = true;
+  this.color$2 = "brown";
+  return this
+});
+ScalaJS.d.Lobjects_Barrier = new ScalaJS.ClassTypeData({
+  Lobjects_Barrier: 0
+}, false, "objects.Barrier", {
+  Lobjects_Barrier: 1,
+  Lobjects_Wall: 1,
+  Lobjects_Obj: 1,
+  O: 1
+});
+ScalaJS.c.Lobjects_Barrier.prototype.$classData = ScalaJS.d.Lobjects_Barrier;
 /** @constructor */
 ScalaJS.c.Lobjects_CausticAcid = (function() {
   ScalaJS.c.Lobjects_Actor.call(this);
@@ -7938,7 +8653,7 @@ ScalaJS.c.Lobjects_CausticAcid.prototype.aiMove__Lgame_Game__V = (function(g) {
   }
 });
 ScalaJS.c.Lobjects_CausticAcid.prototype.init___Lglobalvars_Pt__I__I = (function(loc_, radius_, reduceRate_) {
-  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__I__T__I__T.call(this, new ScalaJS.c.Lglobalvars_Pt().init___D__D((loc_.x$1 - radius_), (loc_.y$1 - radius_)), new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.imul(2, radius_), ScalaJS.imul(2, radius_)), (-1.0), 0, "NA", 0, "caustic acid");
+  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__D__T__I__T.call(this, new ScalaJS.c.Lglobalvars_Pt().init___D__D((loc_.x$1 - radius_), (loc_.y$1 - radius_)), new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.imul(2, radius_), ScalaJS.imul(2, radius_)), (-1.0), 0.0, "NA", 0, "caustic acid");
   this.radius$3 = radius_;
   this.reduceRate$3 = reduceRate_;
   this.reduceTimer$3 = this.reduceRate$3;
@@ -7987,6 +8702,9 @@ ScalaJS.h.Lobjects_DelayedActor = (function() {
   /*<skip>*/
 });
 ScalaJS.h.Lobjects_DelayedActor.prototype = ScalaJS.c.Lobjects_DelayedActor.prototype;
+ScalaJS.c.Lobjects_DelayedActor.prototype.moveToNewMap__I__Lgame_Game__V = (function(time, g) {
+  /*<skip>*/
+});
 ScalaJS.c.Lobjects_DelayedActor.prototype.aiMove__Lgame_Game__V = (function(g) {
   if ((this.time$3 <= 0)) {
     if ((!g.collision__Lobjects_Obj__Z(this.act$3))) {
@@ -8003,14 +8721,11 @@ ScalaJS.c.Lobjects_DelayedActor.prototype.aiMove__Lgame_Game__V = (function(g) {
   }
 });
 ScalaJS.c.Lobjects_DelayedActor.prototype.init___Lobjects_Actor__I = (function(act_, delayTime_) {
-  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__I__T__I__T.call(this, new ScalaJS.c.Lglobalvars_Pt().init___D__D((-1.0), (-1.0)), new ScalaJS.c.Lglobalvars_Pt().init___D__D(0.0, 0.0), (-1.0), act_.speed$2, "NA", 0, ("delayed " + act_.name$2));
+  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__D__T__I__T.call(this, new ScalaJS.c.Lglobalvars_Pt().init___D__D((-1.0), (-1.0)), new ScalaJS.c.Lglobalvars_Pt().init___D__D(0.0, 0.0), (-1.0), act_.speed$2, "NA", 0, ("delayed " + act_.name$2));
   this.act$3 = act_;
   this.time$3 = delayTime_;
   this.blocksMovement$1 = false;
   return this
-});
-ScalaJS.c.Lobjects_DelayedActor.prototype.moveToNewMap__Lgame_Game__V = (function(g) {
-  /*<skip>*/
 });
 ScalaJS.c.Lobjects_DelayedActor.prototype.draw__Lgame_Game__V = (function(g) {
   /*<skip>*/
@@ -8048,7 +8763,7 @@ ScalaJS.h.Lobjects_DummyItem = (function() {
 });
 ScalaJS.h.Lobjects_DummyItem.prototype = ScalaJS.c.Lobjects_DummyItem.prototype;
 ScalaJS.c.Lobjects_DummyItem.prototype.init___Lglobalvars_Pt = (function(loc_) {
-  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__I__T__I__T.call(this, loc_, new ScalaJS.c.Lglobalvars_Pt().init___D__D(0.0, 0.0), (-1.0), 0, "NA", 0, "dummy");
+  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__D__T__I__T.call(this, loc_, new ScalaJS.c.Lglobalvars_Pt().init___D__D(0.0, 0.0), (-1.0), 0.0, "NA", 0, "dummy");
   return this
 });
 ScalaJS.is.Lobjects_DummyItem = (function(obj) {
@@ -8092,8 +8807,12 @@ ScalaJS.c.Lobjects_FirePatch.prototype.aiMove__Lgame_Game__V = (function(g) {
       return (function(a$2) {
         var a = ScalaJS.as.Lobjects_Actor(a$2);
         if (((((a.faction$2 !== "NA") && arg$outer.collides__Lglobalvars_Pt__Lglobalvars_Pt__Z(a.loc$1, a.size$1)) && arg$outer.hasLosTo__Lobjects_Obj__Lgame_Game__Z(a, g$9)) && a.flammable$2)) {
-          var this$1 = arg$outer.actsOnFire$3;
-          return this$1.$$plus$eq__O__scm_HashSet(a)
+          var this$3 = arg$outer.actsOnFire$3;
+          var e = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this$3, a, 0));
+          if ((e !== null)) {
+            e.value$1 = 0
+          };
+          return this$3
         } else {
           return (void 0)
         }
@@ -8101,27 +8820,57 @@ ScalaJS.c.Lobjects_FirePatch.prototype.aiMove__Lgame_Game__V = (function(g) {
     })(this, g)));
     this.timer$3 = (((-1) + this.timer$3) | 0)
   };
-  this.actsOnFire$3.foreach__F1__V(new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(arg$outer$1, g$9$1) {
-    return (function(a$2$1) {
-      var a$1 = ScalaJS.as.Lobjects_Actor(a$2$1);
-      a$1.takeDamage__Lobjects_Actor__D__D__Lgame_Game__V(arg$outer$1, ScalaJS.m.Lglobalvars_GV$().FIRE$undDAMAGE$1, 0.0, g$9$1);
-      if (a$1.isDead__Z()) {
-        var this$2 = arg$outer$1.actsOnFire$3;
-        return ScalaJS.s.scm_FlatHashTable$class__removeElem__scm_FlatHashTable__O__Z(this$2, a$1)
+  var this$4 = this.actsOnFire$3;
+  var p = new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(check$ifrefutable$2$2) {
+    var check$ifrefutable$2 = ScalaJS.as.T2(check$ifrefutable$2$2);
+    return (check$ifrefutable$2 !== null)
+  }));
+  new ScalaJS.c.sc_TraversableLike$WithFilter().init___sc_TraversableLike__F1(this$4, p).foreach__F1__V(new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(arg$outer$1, g$9$1) {
+    return (function(x$2$2) {
+      var x$2 = ScalaJS.as.T2(x$2$2);
+      if ((x$2 !== null)) {
+        var a$1 = ScalaJS.as.Lobjects_Actor(x$2.$$und1__O());
+        a$1.takeDamage__Lobjects_Actor__D__D__Lgame_Game__V(arg$outer$1, ScalaJS.m.Lglobalvars_GV$().FIRE$undDAMAGE$1, 0.0, g$9$1)
       } else {
-        return (void 0)
+        throw new ScalaJS.c.s_MatchError().init___O(x$2)
       }
     })
   })(this, g)));
+  var this$5 = this.actsOnFire$3;
+  var p$1 = new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(check$ifrefutable$3$2) {
+    var check$ifrefutable$3 = ScalaJS.as.T2(check$ifrefutable$3$2);
+    return (check$ifrefutable$3 !== null)
+  }));
+  new ScalaJS.c.sc_TraversableLike$WithFilter().init___sc_TraversableLike__F1(this$5, p$1).foreach__F1__V(new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(arg$outer$2) {
+    return (function(x$3$2) {
+      var x$3 = ScalaJS.as.T2(x$3$2);
+      if ((x$3 !== null)) {
+        var a$3 = ScalaJS.as.Lobjects_Actor(x$3.$$und1__O());
+        var t = x$3.$$und2$mcI$sp__I();
+        if (a$3.canPutSelfOut$2) {
+          if ((t >= ScalaJS.m.Lglobalvars_GV$().FIRE$undEXTINGUISHTIME$1)) {
+            arg$outer$2.actsOnFire$3.remove__O__s_Option(a$3)
+          } else {
+            var this$6 = arg$outer$2.actsOnFire$3;
+            var value = ((1 + ScalaJS.uI(arg$outer$2.actsOnFire$3.apply__O__O(a$3))) | 0);
+            this$6.put__O__O__s_Option(a$3, value)
+          }
+        };
+        return (a$3.isDead__Z() ? arg$outer$2.actsOnFire$3.remove__O__s_Option(a$3) : (void 0))
+      } else {
+        throw new ScalaJS.c.s_MatchError().init___O(x$3)
+      }
+    })
+  })(this)));
   if ((this.timer$3 <= 0)) {
-    var this$3 = this.actsOnFire$3;
-    var jsx$1 = ScalaJS.s.sc_SetLike$class__isEmpty__sc_SetLike__Z(this$3)
+    var this$7 = this.actsOnFire$3;
+    var jsx$1 = ScalaJS.s.sc_MapLike$class__isEmpty__sc_MapLike__Z(this$7)
   } else {
     var jsx$1 = false
   };
   if (jsx$1) {
-    var this$4 = this.actsOnFire$3;
-    ScalaJS.s.scm_FlatHashTable$class__clearTable__scm_FlatHashTable__V(this$4);
+    var this$8 = this.actsOnFire$3;
+    ScalaJS.s.scm_HashTable$class__clearTable__scm_HashTable__V(this$8);
     g.removeActor__Lobjects_Actor__s_Option(this)
   }
 });
@@ -8155,10 +8904,10 @@ ScalaJS.c.Lobjects_FirePatch.prototype.objects$FirePatch$$drawFire$1__Lglobalvar
   }
 });
 ScalaJS.c.Lobjects_FirePatch.prototype.init___Lglobalvars_Pt__I__I = (function(loc_, radius_, timer_) {
-  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__I__T__I__T.call(this, new ScalaJS.c.Lglobalvars_Pt().init___D__D((loc_.x$1 - radius_), (loc_.y$1 - radius_)), new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.imul(2, radius_), ScalaJS.imul(2, radius_)), (-1.0), 0, "NA", 0, "fire");
+  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__D__T__I__T.call(this, new ScalaJS.c.Lglobalvars_Pt().init___D__D((loc_.x$1 - radius_), (loc_.y$1 - radius_)), new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.imul(2, radius_), ScalaJS.imul(2, radius_)), (-1.0), 0.0, "NA", 0, "fire");
   this.radius$3 = radius_;
   this.timer$3 = timer_;
-  this.actsOnFire$3 = ScalaJS.as.scm_Set(ScalaJS.m.scm_Set$().apply__sc_Seq__sc_GenTraversable(ScalaJS.m.sci_Nil$()));
+  this.actsOnFire$3 = ScalaJS.as.scm_HashMap(ScalaJS.m.scm_HashMap$().apply__sc_Seq__sc_GenMap(ScalaJS.m.sci_Nil$()));
   this.blocksMovement$1 = false;
   this.highPriority$1 = true;
   return this
@@ -8167,10 +8916,20 @@ ScalaJS.c.Lobjects_FirePatch.prototype.draw__Lgame_Game__V = (function(g) {
   if ((this.timer$3 > 0)) {
     this.objects$FirePatch$$drawFire$1__Lglobalvars_Pt__Lglobalvars_Pt__Lgame_Game__V(this.loc$1, this.size$1, g)
   };
-  this.actsOnFire$3.foreach__F1__V(new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(arg$outer, g$8) {
-    return (function(a$2) {
-      var a = ScalaJS.as.Lobjects_Actor(a$2);
-      arg$outer.objects$FirePatch$$drawFire$1__Lglobalvars_Pt__Lglobalvars_Pt__Lgame_Game__V(a.loc$1, a.size$1, g$8)
+  var this$1 = this.actsOnFire$3;
+  var p = new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(check$ifrefutable$1$2) {
+    var check$ifrefutable$1 = ScalaJS.as.T2(check$ifrefutable$1$2);
+    return (check$ifrefutable$1 !== null)
+  }));
+  new ScalaJS.c.sc_TraversableLike$WithFilter().init___sc_TraversableLike__F1(this$1, p).foreach__F1__V(new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(arg$outer, g$8) {
+    return (function(x$1$2) {
+      var x$1 = ScalaJS.as.T2(x$1$2);
+      if ((x$1 !== null)) {
+        var a = ScalaJS.as.Lobjects_Actor(x$1.$$und1__O());
+        arg$outer.objects$FirePatch$$drawFire$1__Lglobalvars_Pt__Lglobalvars_Pt__Lgame_Game__V(a.loc$1, a.size$1, g$8)
+      } else {
+        throw new ScalaJS.c.s_MatchError().init___O(x$1)
+      }
     })
   })(this, g)))
 });
@@ -8187,7 +8946,9 @@ ScalaJS.c.Lobjects_FirePatch.prototype.$classData = ScalaJS.d.Lobjects_FirePatch
 ScalaJS.c.Lobjects_GunTurret = (function() {
   ScalaJS.c.Lobjects_Actor.call(this);
   this.gun$3 = null;
-  this.ignoreFaction$3 = null
+  this.ignoreFaction$3 = null;
+  this.lastTarget$3 = null;
+  this.displayName$3 = null
 });
 ScalaJS.c.Lobjects_GunTurret.prototype = new ScalaJS.h.Lobjects_Actor();
 ScalaJS.c.Lobjects_GunTurret.prototype.constructor = ScalaJS.c.Lobjects_GunTurret;
@@ -8197,9 +8958,11 @@ ScalaJS.h.Lobjects_GunTurret = (function() {
 });
 ScalaJS.h.Lobjects_GunTurret.prototype = ScalaJS.c.Lobjects_GunTurret.prototype;
 ScalaJS.c.Lobjects_GunTurret.prototype.init___Lglobalvars_Pt__Lenemies_Gun__D__T__T = (function(loc_, gun_, hp_, faction_, ignoreFaction_) {
-  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__I__T__I__T.call(this, loc_, new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1), hp_, 0, faction_, 0, "gun turret");
+  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__D__T__I__T.call(this, loc_, new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1), hp_, 0.0, faction_, 0, "gun turret");
   this.gun$3 = gun_;
   this.ignoreFaction$3 = ignoreFaction_;
+  this.lastTarget$3 = new ScalaJS.c.Lglobalvars_Pt().init___D__D(0.0, 0.0);
+  this.displayName$3 = "turret";
   return this
 });
 ScalaJS.c.Lobjects_GunTurret.prototype.aiMove__Lgame_Game__V = (function(g) {
@@ -8214,6 +8977,7 @@ ScalaJS.c.Lobjects_GunTurret.prototype.aiMove__Lgame_Game__V = (function(g) {
     if ((closestAct !== null)) {
       var distance = this.distanceTo__Lobjects_Obj__I(closestAct);
       if ((distance <= this.gun$3.range$1)) {
+        this.lastTarget$3 = closestAct.loc$1;
         this.gun$3.shoot__Lobjects_Actor__Lgame_Game__V(closestAct, g)
       }
     }
@@ -8223,10 +8987,9 @@ ScalaJS.c.Lobjects_GunTurret.prototype.targetIsValid__Lobjects_Actor__Z = (funct
   return ((this.faction$2 !== a.faction$2) && (this.ignoreFaction$3 !== a.faction$2))
 });
 ScalaJS.c.Lobjects_GunTurret.prototype.draw__Lgame_Game__V = (function(g) {
-  var jsx$1 = g.ctx$1;
-  var s = new ScalaJS.c.s_StringContext().init___sc_Seq(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array(["rgb(100, 100, 100)"])).s__sc_Seq__T(ScalaJS.m.sci_Nil$());
-  jsx$1["fillStyle"] = s;
-  g.ctx$1["fillRect"](this.loc$1.x$1, this.loc$1.y$1, this.size$1.x$1, this.size$1.y$1)
+  var change = this.loc$1.$$minus__Lglobalvars_Pt__Lglobalvars_Pt(this.lastTarget$3);
+  var img = g.images$1.apply__O__O(("turret " + this.angleToSpriteAngle__Lglobalvars_Pt__I(change)));
+  g.ctx$1["drawImage"](img, this.loc$1.x$1, this.loc$1.y$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1)
 });
 ScalaJS.d.Lobjects_GunTurret = new ScalaJS.ClassTypeData({
   Lobjects_GunTurret: 0
@@ -8249,7 +9012,7 @@ ScalaJS.h.Lobjects_Item = (function() {
 });
 ScalaJS.h.Lobjects_Item.prototype = ScalaJS.c.Lobjects_Item.prototype;
 ScalaJS.c.Lobjects_Item.prototype.init___Lglobalvars_Pt = (function(loc_) {
-  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__I__T__I__T.call(this, loc_, new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1), (-1.0), 0, "NA", 0, "item");
+  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__D__T__I__T.call(this, loc_, new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1), (-1.0), 0.0, "NA", 0, "item");
   this.blocksMovement$1 = false;
   return this
 });
@@ -8328,7 +9091,7 @@ ScalaJS.c.Lobjects_LandMine.prototype.draw__Lgame_Game__V = (function(g) {
   }
 });
 ScalaJS.c.Lobjects_LandMine.prototype.init___Lglobalvars_Pt__T = (function(loc_, ignoreFaction_) {
-  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__I__T__I__T.call(this, loc_, new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1), (-1.0), 0, "NA", 0, "land mine");
+  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__D__T__I__T.call(this, loc_, new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1), (-1.0), 0.0, "NA", 0, "land mine");
   this.radius$3 = ScalaJS.m.Lglobalvars_GV$().LANDMINE$undRADIUS$1;
   this.damage$3 = ScalaJS.m.Lglobalvars_GV$().LANDMINE$undDAMAGE$1;
   this.ignoreFaction$3 = ignoreFaction_;
@@ -8359,7 +9122,7 @@ ScalaJS.h.Lobjects_PipeBomb = (function() {
 });
 ScalaJS.h.Lobjects_PipeBomb.prototype = ScalaJS.c.Lobjects_PipeBomb.prototype;
 ScalaJS.c.Lobjects_PipeBomb.prototype.init___Lglobalvars_Pt = (function(loc_) {
-  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__I__T__I__T.call(this, loc_, new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1), 100000.0, 0, "human", 0, "pipe bomb");
+  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__D__T__I__T.call(this, loc_, new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1), 100000.0, 0.0, "human", 0, "pipe bomb");
   this.timer$3 = ScalaJS.m.Lglobalvars_GV$().PIPEBOMB$undTIME$1;
   this.momentumFactor$2 = 0.0;
   return this
@@ -8391,7 +9154,9 @@ ScalaJS.c.Lobjects_ProjectileActor = (function() {
   ScalaJS.c.Lobjects_Actor.call(this);
   this.line$3 = null;
   this.act$3 = null;
-  this.rate$3 = 0
+  this.rate$3 = 0;
+  this.forceSpawn$3 = false;
+  this.passThrough$3 = false
 });
 ScalaJS.c.Lobjects_ProjectileActor.prototype = new ScalaJS.h.Lobjects_Actor();
 ScalaJS.c.Lobjects_ProjectileActor.prototype.constructor = ScalaJS.c.Lobjects_ProjectileActor;
@@ -8401,45 +9166,37 @@ ScalaJS.h.Lobjects_ProjectileActor = (function() {
 });
 ScalaJS.h.Lobjects_ProjectileActor.prototype = ScalaJS.c.Lobjects_ProjectileActor.prototype;
 ScalaJS.c.Lobjects_ProjectileActor.prototype.init___Lobjects_Actor__Lglobalvars_SimpleLine__I = (function(act_, line_, rate_) {
-  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__I__T__I__T.call(this, line_.start$1.cloone__Lglobalvars_Pt(), new ScalaJS.c.Lglobalvars_Pt().init___D__D(0.0, 0.0), (-1.0), 0, "NA", 0, ("projectile " + act_.name$2));
+  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__D__T__I__T.call(this, line_.start$1.cloone__Lglobalvars_Pt(), new ScalaJS.c.Lglobalvars_Pt().init___D__D(0.0, 0.0), (-1.0), 0.0, "NA", 0, ("projectile " + act_.name$2));
   this.line$3 = line_;
   this.act$3 = act_;
   this.rate$3 = rate_;
+  this.forceSpawn$3 = true;
+  this.passThrough$3 = false;
   this.blocksMovement$1 = true;
   return this
 });
 ScalaJS.c.Lobjects_ProjectileActor.prototype.aiMove__Lgame_Game__V = (function(g) {
   var step = this.line$3.unitStep__Lglobalvars_Pt();
-  var elem$1 = false;
-  elem$1 = false;
+  var done = false;
   var start = this.loc$1.cloone__Lglobalvars_Pt();
-  var end = this.rate$3;
-  var isEmpty$4 = (end < 1);
-  var numRangeElements$4 = (isEmpty$4 ? 0 : end);
-  var lastElement$4 = (isEmpty$4 ? 0 : end);
-  var terminalElement$4 = ((1 + lastElement$4) | 0);
-  if ((numRangeElements$4 < 0)) {
-    ScalaJS.m.sci_Range$().scala$collection$immutable$Range$$fail__I__I__I__Z__sr_Nothing$(1, end, 1, true)
-  };
-  var i = 1;
-  var count = 0;
-  while ((i !== terminalElement$4)) {
-    var arg1 = i;
-    if ((!elem$1)) {
-      elem$1 = (!this.moveLoc__D__D__Lgame_Game__Z(step.x$1, step.y$1, g));
-      if ((this.loc$1.$$minus__Lglobalvars_Pt__Lglobalvars_Pt(this.line$3.start$1).pythagLength__D() > this.line$3.length__D())) {
-        elem$1 = true
-      };
-      if (elem$1) {
-        var this$5 = this.act$3;
-        var newLoc = this.loc$1.$$minus__Lglobalvars_Pt__Lglobalvars_Pt(this.act$3.size$1.$$times__D__Lglobalvars_Pt(0.5));
-        this$5.loc$1 = newLoc.cloone__Lglobalvars_Pt();
-        g.addActor__Lobjects_Actor__scm_Set(this.act$3);
-        g.removeActor__Lobjects_Actor__s_Option(this)
-      }
+  while ((((!done) && (ScalaJS.imul(2, this.rate$3) > 0)) && (this.distanceTo__Lglobalvars_Pt__I(start) < this.rate$3))) {
+    if (this.passThrough$3) {
+      this.changeLocRel__D__D__V(step.x$1, step.y$1)
+    } else {
+      done = (!this.moveLocWithoutRound__D__D__Lgame_Game__Z(step.x$1, step.y$1, g))
     };
-    count = ((1 + count) | 0);
-    i = ((1 + i) | 0)
+    if ((this.loc$1.$$minus__Lglobalvars_Pt__Lglobalvars_Pt(this.line$3.start$1).pythagLength__D() > this.line$3.length__D())) {
+      done = true
+    }
+  };
+  if (done) {
+    var this$1 = this.act$3;
+    var newLoc = this.loc$1.$$minus__Lglobalvars_Pt__Lglobalvars_Pt(this.act$3.size$1.$$times__D__Lglobalvars_Pt(0.5));
+    this$1.loc$1 = newLoc.cloone__Lglobalvars_Pt();
+    g.removeActor__Lobjects_Actor__s_Option(this);
+    if ((this.forceSpawn$3 || (!g.collision__Lobjects_Obj__Z(this.act$3)))) {
+      g.addActor__Lobjects_Actor__scm_Set(this.act$3)
+    }
   };
   var lineToDraw = new ScalaJS.c.Lglobalvars_SimpleLine().init___Lglobalvars_Pt__Lglobalvars_Pt__T(start, this.loc$1, this.line$3.color$1);
   g.linesToDraw$1.$$plus$eq__O__scm_Buffer(lineToDraw)
@@ -8493,7 +9250,7 @@ ScalaJS.c.Lobjects_SimpleBomb.prototype.aiMove__Lgame_Game__V = (function(g) {
   g.removeActor__Lobjects_Actor__s_Option(this)
 });
 ScalaJS.c.Lobjects_SimpleBomb.prototype.init___Lglobalvars_Pt__I__I = (function(loc_, radius_, damage_) {
-  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__I__T__I__T.call(this, loc_, new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1), (-1.0), 0, "NA", 0, "bomb");
+  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__D__T__I__T.call(this, loc_, new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1), (-1.0), 0.0, "NA", 0, "bomb");
   this.radius$3 = radius_;
   this.damage$3 = damage_;
   return this
@@ -8526,7 +9283,7 @@ ScalaJS.c.Lobjects_UsableGrenade.prototype.use__Lgame_Game__V = (function(g) {
   g.addActor__Lobjects_Actor__scm_Set(proj)
 });
 ScalaJS.c.Lobjects_UsableGrenade.prototype.init___Lobjects_Actor = (function(owner_) {
-  ScalaJS.c.Lobjects_ThrowableItem.prototype.init___Lobjects_Actor__T__T.call(this, owner_, "grenade", "item_pipebomb");
+  ScalaJS.c.Lobjects_ThrowableItem.prototype.init___Lobjects_Actor__I__T__T.call(this, owner_, ((ScalaJS.imul(3, ScalaJS.m.Lglobalvars_GV$().GRENADE$undRADIUS$1) / 2) | 0), "grenade", "item_grenade");
   return this
 });
 ScalaJS.d.Lobjects_UsableGrenade = new ScalaJS.ClassTypeData({
@@ -8559,7 +9316,7 @@ ScalaJS.c.Lobjects_UsableGunTurret.prototype.use__Lgame_Game__V = (function(g) {
   g.addActor__Lobjects_Actor__scm_Set(proj)
 });
 ScalaJS.c.Lobjects_UsableGunTurret.prototype.init___Lobjects_Actor = (function(owner_) {
-  ScalaJS.c.Lobjects_ThrowableItem.prototype.init___Lobjects_Actor__T__T.call(this, owner_, "gun turret", "item_gunturret");
+  ScalaJS.c.Lobjects_ThrowableItem.prototype.init___Lobjects_Actor__I__T__T.call(this, owner_, 0, "turret", "turret big");
   return this
 });
 ScalaJS.d.Lobjects_UsableGunTurret = new ScalaJS.ClassTypeData({
@@ -8584,13 +9341,13 @@ ScalaJS.h.Lobjects_UsableMolotov = (function() {
 ScalaJS.h.Lobjects_UsableMolotov.prototype = ScalaJS.c.Lobjects_UsableMolotov.prototype;
 ScalaJS.c.Lobjects_UsableMolotov.prototype.use__Lgame_Game__V = (function(g) {
   var dest = this.getThrowPosition__Lgame_Game__Lglobalvars_Pt(g);
-  var spit = new ScalaJS.c.Lobjects_FirePatch().init___Lglobalvars_Pt__I__I(dest, ScalaJS.m.Lglobalvars_GV$().SPITTER$undSPITRADIUS$1, ScalaJS.m.Lglobalvars_GV$().MOLOTOV$undDURATION$1);
+  var spit = new ScalaJS.c.Lobjects_FirePatch().init___Lglobalvars_Pt__I__I(dest, ScalaJS.m.Lglobalvars_GV$().MOLOTOV$undRADIUS$1, ScalaJS.m.Lglobalvars_GV$().MOLOTOV$undDURATION$1);
   var spitLine = new ScalaJS.c.Lglobalvars_SimpleLine().init___Lglobalvars_Pt__Lglobalvars_Pt__T(this.owner$1.loc$1.cloone__Lglobalvars_Pt(), dest, "black");
   var proj = new ScalaJS.c.Lobjects_ProjectileActor().init___Lobjects_Actor__Lglobalvars_SimpleLine__I(spit, spitLine, this.speed$2);
   g.addActor__Lobjects_Actor__scm_Set(proj)
 });
 ScalaJS.c.Lobjects_UsableMolotov.prototype.init___Lobjects_Actor = (function(owner_) {
-  ScalaJS.c.Lobjects_ThrowableItem.prototype.init___Lobjects_Actor__T__T.call(this, owner_, "molotov", "item_molotov");
+  ScalaJS.c.Lobjects_ThrowableItem.prototype.init___Lobjects_Actor__I__T__T.call(this, owner_, ScalaJS.m.Lglobalvars_GV$().MOLOTOV$undRADIUS$1, "molotov", "item_molotov");
   return this
 });
 ScalaJS.d.Lobjects_UsableMolotov = new ScalaJS.ClassTypeData({
@@ -8621,7 +9378,7 @@ ScalaJS.c.Lobjects_UsablePipeBomb.prototype.use__Lgame_Game__V = (function(g) {
   g.addActor__Lobjects_Actor__scm_Set(proj)
 });
 ScalaJS.c.Lobjects_UsablePipeBomb.prototype.init___Lobjects_Actor = (function(owner_) {
-  ScalaJS.c.Lobjects_ThrowableItem.prototype.init___Lobjects_Actor__T__T.call(this, owner_, "pipe bomb", "item_pipebomb");
+  ScalaJS.c.Lobjects_ThrowableItem.prototype.init___Lobjects_Actor__I__T__T.call(this, owner_, 0, "pipe bomb", "item_pipebomb");
   return this
 });
 ScalaJS.d.Lobjects_UsablePipeBomb = new ScalaJS.ClassTypeData({
@@ -8652,7 +9409,7 @@ ScalaJS.c.Lobjects_UsableSpitterAcid.prototype.use__Lgame_Game__V = (function(g)
   g.addActor__Lobjects_Actor__scm_Set(proj)
 });
 ScalaJS.c.Lobjects_UsableSpitterAcid.prototype.init___Lobjects_Actor = (function(owner_) {
-  ScalaJS.c.Lobjects_ThrowableItem.prototype.init___Lobjects_Actor__T__T.call(this, owner_, "spitter acid", "item_acid");
+  ScalaJS.c.Lobjects_ThrowableItem.prototype.init___Lobjects_Actor__I__T__T.call(this, owner_, ScalaJS.m.Lglobalvars_GV$().SPITTER$undSPITRADIUS$1, "spitter acid", "item_acid");
   return this
 });
 ScalaJS.d.Lobjects_UsableSpitterAcid = new ScalaJS.ClassTypeData({
@@ -8664,6 +9421,59 @@ ScalaJS.d.Lobjects_UsableSpitterAcid = new ScalaJS.ClassTypeData({
   O: 1
 });
 ScalaJS.c.Lobjects_UsableSpitterAcid.prototype.$classData = ScalaJS.d.Lobjects_UsableSpitterAcid;
+/** @constructor */
+ScalaJS.c.Lobjects_ZombieController = (function() {
+  ScalaJS.c.Lobjects_Actor.call(this);
+  this.radius$3 = 0;
+  this.timer$3 = 0
+});
+ScalaJS.c.Lobjects_ZombieController.prototype = new ScalaJS.h.Lobjects_Actor();
+ScalaJS.c.Lobjects_ZombieController.prototype.constructor = ScalaJS.c.Lobjects_ZombieController;
+/** @constructor */
+ScalaJS.h.Lobjects_ZombieController = (function() {
+  /*<skip>*/
+});
+ScalaJS.h.Lobjects_ZombieController.prototype = ScalaJS.c.Lobjects_ZombieController.prototype;
+ScalaJS.c.Lobjects_ZombieController.prototype.init___Lglobalvars_Pt = (function(loc_) {
+  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__D__T__I__T.call(this, loc_, new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1), (-1.0), 0.0, "NA", 0, "zombie controller");
+  this.radius$3 = ScalaJS.m.Lglobalvars_GV$().ZOMBIE$undCONTROLLER$undRADIUS$1;
+  this.timer$3 = ScalaJS.m.Lglobalvars_GV$().ZOMBIE$undCONTROLLER$undTIMER$1;
+  this.blocksMovement$1 = false;
+  this.lowPriority$1 = true;
+  return this
+});
+ScalaJS.c.Lobjects_ZombieController.prototype.aiMove__Lgame_Game__V = (function(g) {
+  g.acts$1.foreach__F1__V(new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(arg$outer) {
+    return (function(a$2) {
+      var a = ScalaJS.as.Lobjects_Actor(a$2);
+      if (((a.faction$2 === "zombie") && (arg$outer.distanceTo__Lobjects_Obj__I(a) < arg$outer.radius$3))) {
+        if (ScalaJS.is.Lenemies_Zombie(a)) {
+          var x2 = ScalaJS.as.Lenemies_Zombie(a);
+          x2.faction$2 = "human";
+          x2.color$3 = new ScalaJS.c.s_StringContext().init___sc_Seq(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array(["rgb(150, 30, 150)"])).s__sc_Seq__T(ScalaJS.m.sci_Nil$())
+        }
+      }
+    })
+  })(this)));
+  if ((this.timer$3 <= 0)) {
+    g.removeActor__Lobjects_Actor__s_Option(this)
+  } else {
+    this.timer$3 = (((-1) + this.timer$3) | 0)
+  }
+});
+ScalaJS.c.Lobjects_ZombieController.prototype.draw__Lgame_Game__V = (function(g) {
+  var img = g.images$1.apply__O__O("item_zombiecontroller");
+  g.ctx$1["drawImage"](img, this.loc$1.x$1, this.loc$1.y$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1)
+});
+ScalaJS.d.Lobjects_ZombieController = new ScalaJS.ClassTypeData({
+  Lobjects_ZombieController: 0
+}, false, "objects.ZombieController", {
+  Lobjects_ZombieController: 1,
+  Lobjects_Actor: 1,
+  Lobjects_Obj: 1,
+  O: 1
+});
+ScalaJS.c.Lobjects_ZombieController.prototype.$classData = ScalaJS.d.Lobjects_ZombieController;
 /** @constructor */
 ScalaJS.c.Lobjects_ZombieSpawner = (function() {
   ScalaJS.c.Lobjects_Actor.call(this);
@@ -8679,27 +9489,29 @@ ScalaJS.h.Lobjects_ZombieSpawner = (function() {
 ScalaJS.h.Lobjects_ZombieSpawner.prototype = ScalaJS.c.Lobjects_ZombieSpawner.prototype;
 ScalaJS.c.Lobjects_ZombieSpawner.prototype.aiMove__Lgame_Game__V = (function(g) {
   if ((this.timeToNextSpawn$3 === 0)) {
+    var this$1 = g.r$1;
+    var n = (this.size$1.x$1 | 0);
+    var destx = this$1.self$1.nextInt__I__I(n);
+    var dest = new ScalaJS.c.Lglobalvars_Pt().init___D__D(destx, this.loc$1.y$1);
     var newZed = new ScalaJS.c.Lenemies_Zombie().init___Lglobalvars_Pt(new ScalaJS.c.Lglobalvars_Pt().init___D__D((-100.0), (-100.0)));
-    if (newZed.canMoveTo__Lglobalvars_Pt__Lgame_Game__Z(this.loc$1, g)) {
+    if (newZed.canMoveTo__Lglobalvars_Pt__Lgame_Game__Z(dest, g)) {
       g.addActor__Lobjects_Actor__scm_Set(newZed);
-      var newLoc = this.loc$1;
-      newZed.loc$1 = newLoc.cloone__Lglobalvars_Pt()
+      newZed.loc$1 = dest.cloone__Lglobalvars_Pt()
     };
     this.timeToNextSpawn$3 = this.spawnRate$3;
     var jsx$1 = ScalaJS.g["console"];
-    var this$1 = g.acts$1;
-    var s = (("Spawning: " + this$1.tableSize$5) + " total actors");
+    var this$2 = g.acts$1;
+    var s = (("Spawning: " + this$2.tableSize$5) + " total actors");
     jsx$1["log"](s)
   } else {
     this.timeToNextSpawn$3 = (((-1) + this.timeToNextSpawn$3) | 0)
   }
 });
-ScalaJS.c.Lobjects_ZombieSpawner.prototype.init___Lglobalvars_Pt__I = (function(loc_, spawnRate_) {
-  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__I__T__I__T.call(this, loc_, new ScalaJS.c.Lglobalvars_Pt().init___D__D(ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1, ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1), (-1.0), 1, "NA", 0, "zombie spawner");
+ScalaJS.c.Lobjects_ZombieSpawner.prototype.init___I = (function(spawnRate_) {
+  ScalaJS.c.Lobjects_Actor.prototype.init___Lglobalvars_Pt__Lglobalvars_Pt__D__D__T__I__T.call(this, new ScalaJS.c.Lglobalvars_Pt().init___D__D(6.0, ScalaJS.m.Lglobalvars_GV$().GAMEY$1), new ScalaJS.c.Lglobalvars_Pt().init___D__D((((-12) + ScalaJS.m.Lglobalvars_GV$().GAMEX$1) | 0), ScalaJS.m.Lglobalvars_GV$().NORMUNITSIZE$1), (-1.0), ScalaJS.m.Lglobalvars_GV$().ZOMBIESPAWNER$undSPEED$1, "NA", 0, "zombie spawner");
   this.spawnRate$3 = spawnRate_;
   this.timeToNextSpawn$3 = this.spawnRate$3;
   this.blocksMovement$1 = false;
-  this.important$2 = true;
   return this
 });
 ScalaJS.c.Lobjects_ZombieSpawner.prototype.draw__Lgame_Game__V = (function(g) {
@@ -10912,6 +11724,9 @@ ScalaJS.h.Lenemies_Human = (function() {
   /*<skip>*/
 });
 ScalaJS.h.Lenemies_Human.prototype = ScalaJS.c.Lenemies_Human.prototype;
+ScalaJS.c.Lenemies_Human.prototype.moveToNewMap__I__Lgame_Game__V = (function(time, g) {
+  this.dest$4 = new ScalaJS.c.Lglobalvars_Pt().init___D__D((-1.0), (-1.0))
+});
 ScalaJS.c.Lenemies_Human.prototype.init___Lglobalvars_Pt = (function(loc_) {
   ScalaJS.c.Lenemies_BaseHuman.prototype.init___Lglobalvars_Pt__I.call(this, loc_, ScalaJS.m.Lglobalvars_GV$().HUMAN$undHEALTH$1);
   this.bigDisplayname$3 = "char_human_3_big";
@@ -10922,6 +11737,9 @@ ScalaJS.c.Lenemies_Human.prototype.init___Lglobalvars_Pt = (function(loc_) {
   this.isLowHealth$4 = false;
   this.gun$3.ammo$1 = ScalaJS.m.Lglobalvars_GV$().HUMAN$undAMMO$1;
   return this
+});
+ScalaJS.c.Lenemies_Human.prototype.canTakeItem__Lobjects_Actor__Z = (function(item) {
+  return false
 });
 ScalaJS.c.Lenemies_Human.prototype.onLowAmmo__Lgame_Game__V = (function(g) {
   ScalaJS.m.sci_List$();
@@ -10935,22 +11753,6 @@ ScalaJS.c.Lenemies_Human.prototype.onLowAmmo__Lgame_Game__V = (function(g) {
   var phrase = ScalaJS.as.T(ScalaJS.s.sc_LinearSeqOptimized$class__apply__sc_LinearSeqOptimized__I__O(phrases, n$1));
   g.addHeadText__Lobjects_Obj__T__I__V(this, phrase, 100);
   this.isLowAmmo$4 = true
-});
-ScalaJS.c.Lenemies_Human.prototype.canTakeItem__Lobjects_Actor__Z = (function(item) {
-  if (ScalaJS.is.Lobjects_AmmoPack(item)) {
-    if (this.isLowAmmo$4) {
-      this.isLowAmmo$4 = false;
-      return true
-    }
-  } else if (ScalaJS.is.Lobjects_HealthPack(item)) {
-    if (this.isLowHealth$4) {
-      this.isLowHealth$4 = false;
-      return true
-    }
-  } else {
-    return false
-  };
-  return false
 });
 ScalaJS.c.Lenemies_Human.prototype.onLowHealth__Lgame_Game__V = (function(g) {
   ScalaJS.m.sci_List$();
@@ -11018,9 +11820,6 @@ ScalaJS.c.Lenemies_Human.prototype.aiMove__Lgame_Game__V = (function(g) {
     this.dest$4 = new ScalaJS.c.Lglobalvars_Pt().init___D__D((-1.0), (-1.0))
   }
 });
-ScalaJS.c.Lenemies_Human.prototype.moveToNewMap__Lgame_Game__V = (function(g) {
-  this.dest$4 = new ScalaJS.c.Lglobalvars_Pt().init___D__D((-1.0), (-1.0))
-});
 ScalaJS.c.Lenemies_Human.prototype.draw__Lgame_Game__V = (function(g) {
   var change = this.lastLoc$2.$$minus__Lglobalvars_Pt__Lglobalvars_Pt(this.loc$1);
   var img = g.images$1.apply__O__O(((this.displayName$4 + " ") + this.angleToSpriteAngle__Lglobalvars_Pt__I(change)));
@@ -11053,6 +11852,9 @@ ScalaJS.h.Lenemies_MolotovThrower = (function() {
   /*<skip>*/
 });
 ScalaJS.h.Lenemies_MolotovThrower.prototype = ScalaJS.c.Lenemies_MolotovThrower.prototype;
+ScalaJS.c.Lenemies_MolotovThrower.prototype.moveToNewMap__I__Lgame_Game__V = (function(time, g) {
+  this.dest$4 = new ScalaJS.c.Lglobalvars_Pt().init___D__D((-1.0), (-1.0))
+});
 ScalaJS.c.Lenemies_MolotovThrower.prototype.init___Lglobalvars_Pt = (function(loc_) {
   ScalaJS.c.Lenemies_BaseHuman.prototype.init___Lglobalvars_Pt__I.call(this, loc_, ScalaJS.m.Lglobalvars_GV$().PLAYER$undHEALTH$1);
   this.bigDisplayname$3 = "char_human_2_big";
@@ -11082,7 +11884,7 @@ ScalaJS.c.Lenemies_MolotovThrower.prototype.canTakeItem__Lobjects_Actor__Z = (fu
       return true
     }
   } else if (ScalaJS.is.Lobjects_HealthPack(item)) {
-    if (this.isLowHealth$4) {
+    if ((this.hp$2 < (this.maxHp$2 / 2))) {
       this.isLowHealth$4 = false;
       return true
     }
@@ -11118,14 +11920,10 @@ ScalaJS.c.Lenemies_MolotovThrower.prototype.onLowHealth__Lgame_Game__V = (functi
   this.isLowHealth$4 = true
 });
 ScalaJS.c.Lenemies_MolotovThrower.prototype.onSeePlayer__Lgame_Game__V = (function(g) {
-  ScalaJS.m.sci_List$();
-  var xs = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array(["Wassup!", "We'll bang ok", "Let's kill some dudes!", "Awww yiss!", "I'll bring the fire", "I like to set things on fire", "Watch, or you might get burned!", "They don't stand a chance!"]);
-  var this$2 = ScalaJS.m.sci_List$();
-  var cbf = this$2.ReusableCBFInstance$2;
-  var phrases = ScalaJS.as.sci_List(ScalaJS.s.sc_TraversableLike$class__to__sc_TraversableLike__scg_CanBuildFrom__O(xs, cbf));
-  var this$3 = g.r$1;
+  var phrases = ScalaJS.m.Lglobalvars_GV$().JANE$undSEE$undPHRASES$1;
+  var this$1 = g.r$1;
   var n = ScalaJS.s.sc_LinearSeqOptimized$class__length__sc_LinearSeqOptimized__I(phrases);
-  var n$1 = this$3.self$1.nextInt__I__I(n);
+  var n$1 = this$1.self$1.nextInt__I__I(n);
   var phrase = ScalaJS.as.T(ScalaJS.s.sc_LinearSeqOptimized$class__apply__sc_LinearSeqOptimized__I__O(phrases, n$1));
   g.addHeadText__Lobjects_Obj__T__I__V(this, phrase, 100);
   this.hasSeenPlayer$4 = true
@@ -11161,7 +11959,7 @@ ScalaJS.c.Lenemies_MolotovThrower.prototype.aiMove__Lgame_Game__V = (function(g)
   if ((g.player$1.distanceTo__Lglobalvars_Pt__I(this.dest$4) > 200)) {
     this.dest$4 = new ScalaJS.c.Lglobalvars_Pt().init___D__D((-1.0), (-1.0))
   };
-  g.acts$1.foreach__F1__V(new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(arg$outer, g$2) {
+  g.acts$1.foreach__F1__V(new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(arg$outer, g$3) {
     return (function(a$2) {
       var a = ScalaJS.as.Lobjects_Actor(a$2);
       if ((a.faction$2 === "NA")) {
@@ -11174,7 +11972,7 @@ ScalaJS.c.Lenemies_MolotovThrower.prototype.aiMove__Lgame_Game__V = (function(g)
           }
         }
       } else if ((a.faction$2 !== arg$outer.faction$2)) {
-        if (((arg$outer.distanceTo__Lobjects_Obj__I(a) < 30) && arg$outer.hasLosTo__Lobjects_Obj__Lgame_Game__Z(a, g$2))) {
+        if (((arg$outer.distanceTo__Lobjects_Obj__I(a) < 30) && arg$outer.hasLosTo__Lobjects_Obj__Lgame_Game__Z(a, g$3))) {
           arg$outer.dest$4 = arg$outer.loc$1.$$plus__Lglobalvars_Pt__Lglobalvars_Pt(arg$outer.loc$1.$$minus__Lglobalvars_Pt__Lglobalvars_Pt(a.loc$1))
         }
       }
@@ -11188,7 +11986,8 @@ ScalaJS.c.Lenemies_MolotovThrower.prototype.aiMove__Lgame_Game__V = (function(g)
   var dy = ((x$2 < 2.0) ? x$2 : 2.0);
   var x$3 = dy;
   dy = ((x$3 > (-2.0)) ? x$3 : (-2.0));
-  if ((!this.moveLoc__D__D__Lgame_Game__Z(dx, dy, g))) {
+  var moved = this.moveLoc__D__D__Lgame_Game__Z(dx, dy, g);
+  if (((!moved) || (this.distanceTo__Lglobalvars_Pt__I(this.dest$4) <= 2))) {
     this.dest$4 = new ScalaJS.c.Lglobalvars_Pt().init___D__D((-1.0), (-1.0))
   };
   if ((this.molotovTimer$4 <= 0)) {
@@ -11198,9 +11997,6 @@ ScalaJS.c.Lenemies_MolotovThrower.prototype.aiMove__Lgame_Game__V = (function(g)
   } else {
     this.molotovTimer$4 = (((-1) + this.molotovTimer$4) | 0)
   }
-});
-ScalaJS.c.Lenemies_MolotovThrower.prototype.moveToNewMap__Lgame_Game__V = (function(g) {
-  this.dest$4 = new ScalaJS.c.Lglobalvars_Pt().init___D__D((-1.0), (-1.0))
 });
 ScalaJS.c.Lenemies_MolotovThrower.prototype.draw__Lgame_Game__V = (function(g) {
   var change = this.lastLoc$2.$$minus__Lglobalvars_Pt__Lglobalvars_Pt(this.loc$1);
@@ -11412,6 +12208,7 @@ ScalaJS.c.Lobjects_GroundUsableItem.prototype.pickup__Lobjects_Actor__V = (funct
 ScalaJS.c.Lobjects_GroundUsableItem.prototype.init___Lglobalvars_Pt__Lobjects_UsableItem__T = (function(loc_, item_, displayName_) {
   ScalaJS.c.Lobjects_Item.prototype.init___Lglobalvars_Pt.call(this, loc_);
   this.item$4 = item_;
+  this.important$2 = false;
   return this
 });
 ScalaJS.c.Lobjects_GroundUsableItem.prototype.draw__Lgame_Game__V = (function(g) {
@@ -11441,7 +12238,8 @@ ScalaJS.h.Lobjects_HealthPack = (function() {
 });
 ScalaJS.h.Lobjects_HealthPack.prototype = ScalaJS.c.Lobjects_HealthPack.prototype;
 ScalaJS.c.Lobjects_HealthPack.prototype.pickup__Lobjects_Actor__V = (function(owner) {
-  var x = (owner.hp$2 + this.amount$4);
+  var n = ((owner.maxHp$2 * this.amount$4) / 100);
+  var x = (owner.hp$2 + n);
   var y = owner.maxHp$2;
   owner.hp$2 = ((x < y) ? x : y)
 });
@@ -11882,6 +12680,9 @@ ScalaJS.c.sc_AbstractIterator.prototype.toStream__sci_Stream = (function() {
 });
 ScalaJS.c.sc_AbstractIterator.prototype.addString__scm_StringBuilder__T__T__T__scm_StringBuilder = (function(b, start, sep, end) {
   return ScalaJS.s.sc_TraversableOnce$class__addString__sc_TraversableOnce__scm_StringBuilder__T__T__T__scm_StringBuilder(this, b, start, sep, end)
+});
+ScalaJS.c.sc_AbstractIterator.prototype.drop__I__sc_Iterator = (function(n) {
+  return ScalaJS.s.sc_Iterator$class__drop__sc_Iterator__I__sc_Iterator(this, n)
 });
 ScalaJS.c.sc_AbstractIterator.prototype.isTraversableAgain__Z = (function() {
   return false
@@ -15041,7 +15842,7 @@ ScalaJS.c.Lenemies_Charger$$anonfun$aiMove$1.prototype.apply__O__O = (function(v
 ScalaJS.c.Lenemies_Charger$$anonfun$aiMove$1.prototype.apply$mcVI$sp__I__V = (function(i) {
   if ((this.$$outer$3.state$3 === "charging")) {
     var d = this.$$outer$3.chargeLine$3.unitStep__Lglobalvars_Pt();
-    var moveSuccess = this.$$outer$3.moveLoc__D__D__Lgame_Game__Z(d.x$1, d.y$1, this.g$1$f);
+    var moveSuccess = this.$$outer$3.moveLocWithoutRound__D__D__Lgame_Game__Z(d.x$1, d.y$1, this.g$1$f);
     if ((!moveSuccess)) {
       this.$$outer$3.stateMoving__V()
     };
@@ -15823,6 +16624,9 @@ ScalaJS.c.sc_IndexedSeqLike$Elements.prototype.init___sc_IndexedSeqLike__I__I = 
 });
 ScalaJS.c.sc_IndexedSeqLike$Elements.prototype.hasNext__Z = (function() {
   return (this.index$2 < this.end$2)
+});
+ScalaJS.c.sc_IndexedSeqLike$Elements.prototype.drop__I__sc_Iterator = (function(n) {
+  return ((n <= 0) ? new ScalaJS.c.sc_IndexedSeqLike$Elements().init___sc_IndexedSeqLike__I__I(this.$$outer$f, this.index$2, this.end$2) : ((((this.index$2 + n) | 0) >= this.end$2) ? new ScalaJS.c.sc_IndexedSeqLike$Elements().init___sc_IndexedSeqLike__I__I(this.$$outer$f, this.end$2, this.end$2) : new ScalaJS.c.sc_IndexedSeqLike$Elements().init___sc_IndexedSeqLike__I__I(this.$$outer$f, ((this.index$2 + n) | 0), this.end$2)))
 });
 ScalaJS.d.sc_IndexedSeqLike$Elements = new ScalaJS.ClassTypeData({
   sc_IndexedSeqLike$Elements: 0
@@ -16955,6 +17759,18 @@ ScalaJS.c.sc_AbstractTraversable.prototype.newBuilder__scm_Builder = (function()
 ScalaJS.c.sc_AbstractTraversable.prototype.stringPrefix__T = (function() {
   return ScalaJS.s.sc_TraversableLike$class__stringPrefix__sc_TraversableLike__T(this)
 });
+ScalaJS.is.sc_SeqLike = (function(obj) {
+  return (!(!((obj && obj.$classData) && obj.$classData.ancestors.sc_SeqLike)))
+});
+ScalaJS.as.sc_SeqLike = (function(obj) {
+  return ((ScalaJS.is.sc_SeqLike(obj) || (obj === null)) ? obj : ScalaJS.throwClassCastException(obj, "scala.collection.SeqLike"))
+});
+ScalaJS.isArrayOf.sc_SeqLike = (function(obj, depth) {
+  return (!(!(((obj && obj.$classData) && (obj.$classData.arrayDepth === depth)) && obj.$classData.arrayBase.ancestors.sc_SeqLike)))
+});
+ScalaJS.asArrayOf.sc_SeqLike = (function(obj, depth) {
+  return ((ScalaJS.isArrayOf.sc_SeqLike(obj, depth) || (obj === null)) ? obj : ScalaJS.throwArrayCastException(obj, "Lscala.collection.SeqLike;", depth))
+});
 ScalaJS.is.sc_GenSet = (function(obj) {
   return (!(!((obj && obj.$classData) && obj.$classData.ancestors.sc_GenSet)))
 });
@@ -17101,13 +17917,13 @@ ScalaJS.c.sci_StringOps.prototype.lengthCompare__I__I = (function(len) {
 ScalaJS.c.sci_StringOps.prototype.sameElements__sc_GenIterable__Z = (function(that) {
   return ScalaJS.s.sc_IndexedSeqOptimized$class__sameElements__sc_IndexedSeqOptimized__sc_GenIterable__Z(this, that)
 });
+ScalaJS.c.sci_StringOps.prototype.isEmpty__Z = (function() {
+  return ScalaJS.s.sc_IndexedSeqOptimized$class__isEmpty__sc_IndexedSeqOptimized__Z(this)
+});
 ScalaJS.c.sci_StringOps.prototype.toList__sci_List = (function() {
   var this$1 = ScalaJS.m.sci_List$();
   var cbf = this$1.ReusableCBFInstance$2;
   return ScalaJS.as.sci_List(ScalaJS.s.sc_TraversableLike$class__to__sc_TraversableLike__scg_CanBuildFrom__O(this, cbf))
-});
-ScalaJS.c.sci_StringOps.prototype.isEmpty__Z = (function() {
-  return ScalaJS.s.sc_IndexedSeqOptimized$class__isEmpty__sc_IndexedSeqOptimized__Z(this)
 });
 ScalaJS.c.sci_StringOps.prototype.thisCollection__sc_Traversable = (function() {
   var $$this = this.repr$1;
@@ -17125,6 +17941,9 @@ ScalaJS.c.sci_StringOps.prototype.toString__T = (function() {
 });
 ScalaJS.c.sci_StringOps.prototype.foreach__F1__V = (function(f) {
   ScalaJS.s.sc_IndexedSeqOptimized$class__foreach__sc_IndexedSeqOptimized__F1__V(this, f)
+});
+ScalaJS.c.sci_StringOps.prototype.indexWhere__F1__I__I = (function(p, from) {
+  return ScalaJS.s.sc_IndexedSeqOptimized$class__indexWhere__sc_IndexedSeqOptimized__F1__I__I(this, p, from)
 });
 ScalaJS.c.sci_StringOps.prototype.slice__I__I__O = (function(from, until) {
   return ScalaJS.m.sci_StringOps$().slice$extension__T__I__I__T(this.repr$1, from, until)
@@ -17145,12 +17964,12 @@ ScalaJS.c.sci_StringOps.prototype.iterator__sc_Iterator = (function() {
   var $$this = this.repr$1;
   return new ScalaJS.c.sc_IndexedSeqLike$Elements().init___sc_IndexedSeqLike__I__I(this, 0, ScalaJS.uI($$this["length"]))
 });
+ScalaJS.c.sci_StringOps.prototype.$$plus$plus__sc_GenTraversableOnce__scg_CanBuildFrom__O = (function(that, bf) {
+  return ScalaJS.s.sc_TraversableLike$class__$$plus$plus__sc_TraversableLike__sc_GenTraversableOnce__scg_CanBuildFrom__O(this, that, bf)
+});
 ScalaJS.c.sci_StringOps.prototype.length__I = (function() {
   var $$this = this.repr$1;
   return ScalaJS.uI($$this["length"])
-});
-ScalaJS.c.sci_StringOps.prototype.$$plus$plus__sc_GenTraversableOnce__scg_CanBuildFrom__O = (function(that, bf) {
-  return ScalaJS.s.sc_TraversableLike$class__$$plus$plus__sc_TraversableLike__sc_GenTraversableOnce__scg_CanBuildFrom__O(this, that, bf)
 });
 ScalaJS.c.sci_StringOps.prototype.toStream__sci_Stream = (function() {
   var $$this = this.repr$1;
@@ -17162,12 +17981,12 @@ ScalaJS.c.sci_StringOps.prototype.drop__I__O = (function(n) {
   var until = ScalaJS.uI($$this["length"]);
   return ScalaJS.m.sci_StringOps$().slice$extension__T__I__I__T(this.repr$1, n, until)
 });
+ScalaJS.c.sci_StringOps.prototype.tail__O = (function() {
+  return ScalaJS.s.sc_IndexedSeqOptimized$class__tail__sc_IndexedSeqOptimized__O(this)
+});
 ScalaJS.c.sci_StringOps.prototype.thisCollection__sc_Seq = (function() {
   var $$this = this.repr$1;
   return new ScalaJS.c.sci_WrappedString().init___T($$this)
-});
-ScalaJS.c.sci_StringOps.prototype.tail__O = (function() {
-  return ScalaJS.s.sc_IndexedSeqOptimized$class__tail__sc_IndexedSeqOptimized__O(this)
 });
 ScalaJS.c.sci_StringOps.prototype.addString__scm_StringBuilder__T__T__T__scm_StringBuilder = (function(b, start, sep, end) {
   return ScalaJS.s.sc_TraversableOnce$class__addString__sc_TraversableOnce__scm_StringBuilder__T__T__T__scm_StringBuilder(this, b, start, sep, end)
@@ -17175,15 +17994,15 @@ ScalaJS.c.sci_StringOps.prototype.addString__scm_StringBuilder__T__T__T__scm_Str
 ScalaJS.c.sci_StringOps.prototype.repr__O = (function() {
   return this.repr$1
 });
-ScalaJS.c.sci_StringOps.prototype.hashCode__I = (function() {
-  var $$this = this.repr$1;
-  return ScalaJS.m.sjsr_RuntimeString$().hashCode__T__I($$this)
-});
 ScalaJS.c.sci_StringOps.prototype.copyToArray__O__I__I__V = (function(xs, start, len) {
   ScalaJS.s.sc_IndexedSeqOptimized$class__copyToArray__sc_IndexedSeqOptimized__O__I__I__V(this, xs, start, len)
 });
 ScalaJS.c.sci_StringOps.prototype.isTraversableAgain__Z = (function() {
   return true
+});
+ScalaJS.c.sci_StringOps.prototype.hashCode__I = (function() {
+  var $$this = this.repr$1;
+  return ScalaJS.m.sjsr_RuntimeString$().hashCode__T__I($$this)
 });
 ScalaJS.c.sci_StringOps.prototype.init___T = (function(repr) {
   this.repr$1 = repr;
@@ -17307,6 +18126,9 @@ ScalaJS.h.sc_AbstractSeq = (function() {
   /*<skip>*/
 });
 ScalaJS.h.sc_AbstractSeq.prototype = ScalaJS.c.sc_AbstractSeq.prototype;
+ScalaJS.c.sc_AbstractSeq.prototype.indexOf__O__I__I = (function(elem, from) {
+  return ScalaJS.s.sc_GenSeqLike$class__indexOf__sc_GenSeqLike__O__I__I(this, elem, from)
+});
 ScalaJS.c.sc_AbstractSeq.prototype.lengthCompare__I__I = (function(len) {
   return ScalaJS.s.sc_SeqLike$class__lengthCompare__sc_SeqLike__I__I(this, len)
 });
@@ -17322,6 +18144,9 @@ ScalaJS.c.sc_AbstractSeq.prototype.equals__O__Z = (function(that) {
 ScalaJS.c.sc_AbstractSeq.prototype.toString__T = (function() {
   return ScalaJS.s.sc_TraversableLike$class__toString__sc_TraversableLike__T(this)
 });
+ScalaJS.c.sc_AbstractSeq.prototype.indexWhere__F1__I__I = (function(p, from) {
+  return ScalaJS.s.sc_SeqLike$class__indexWhere__sc_SeqLike__F1__I__I(this, p, from)
+});
 ScalaJS.c.sc_AbstractSeq.prototype.reverse__O = (function() {
   return ScalaJS.s.sc_SeqLike$class__reverse__sc_SeqLike__O(this)
 });
@@ -17330,6 +18155,9 @@ ScalaJS.c.sc_AbstractSeq.prototype.size__I = (function() {
 });
 ScalaJS.c.sc_AbstractSeq.prototype.thisCollection__sc_Seq = (function() {
   return this
+});
+ScalaJS.c.sc_AbstractSeq.prototype.indexOf__O__I = (function(elem) {
+  return this.indexOf__O__I__I(elem, 0)
 });
 ScalaJS.c.sc_AbstractSeq.prototype.applyOrElse__O__F1__O = (function(x, default$2) {
   return ScalaJS.s.s_PartialFunction$class__applyOrElse__s_PartialFunction__O__F1__O(this, x, default$2)
@@ -19479,6 +20307,9 @@ ScalaJS.c.sci_List.prototype.foreach__F1__V = (function(f) {
     these = ScalaJS.as.sci_List(these.tail__O())
   }
 });
+ScalaJS.c.sci_List.prototype.indexWhere__F1__I__I = (function(p, from) {
+  return ScalaJS.s.sc_LinearSeqOptimized$class__indexWhere__sc_LinearSeqOptimized__F1__I__I(this, p, from)
+});
 ScalaJS.c.sci_List.prototype.$$colon$colon$colon__sci_List__sci_List = (function(prefix) {
   return (this.isEmpty__Z() ? prefix : (prefix.isEmpty__Z() ? this : new ScalaJS.c.scm_ListBuffer().init___().$$plus$plus$eq__sc_TraversableOnce__scm_ListBuffer(prefix).prependToList__sci_List__sci_List(this)))
 });
@@ -19882,6 +20713,9 @@ ScalaJS.c.sci_Stream.prototype.foreach__F1__V = (function(f) {
       break x
     }
   }
+});
+ScalaJS.c.sci_Stream.prototype.indexWhere__F1__I__I = (function(p, from) {
+  return ScalaJS.s.sc_LinearSeqOptimized$class__indexWhere__sc_LinearSeqOptimized__F1__I__I(this, p, from)
 });
 ScalaJS.c.sci_Stream.prototype.reverse__O = (function() {
   return this.reverse__sci_Stream()
@@ -21293,6 +22127,9 @@ ScalaJS.c.sci_WrappedString.prototype.companion__scg_GenericCompanion = (functio
 ScalaJS.c.sci_WrappedString.prototype.foreach__F1__V = (function(f) {
   ScalaJS.s.sc_IndexedSeqOptimized$class__foreach__sc_IndexedSeqOptimized__F1__V(this, f)
 });
+ScalaJS.c.sci_WrappedString.prototype.indexWhere__F1__I__I = (function(p, from) {
+  return ScalaJS.s.sc_IndexedSeqOptimized$class__indexWhere__sc_IndexedSeqOptimized__F1__I__I(this, p, from)
+});
 ScalaJS.c.sci_WrappedString.prototype.slice__I__I__O = (function(from, until) {
   return this.slice__I__I__sci_WrappedString(from, until)
 });
@@ -21815,6 +22652,9 @@ ScalaJS.h.scm_AbstractBuffer = (function() {
   /*<skip>*/
 });
 ScalaJS.h.scm_AbstractBuffer.prototype = ScalaJS.c.scm_AbstractBuffer.prototype;
+ScalaJS.c.scm_AbstractBuffer.prototype.$$minus$eq__O__scm_Buffer = (function(x) {
+  return ScalaJS.s.scm_BufferLike$class__$$minus$eq__scm_Buffer__O__scm_Buffer(this, x)
+});
 ScalaJS.c.scm_AbstractBuffer.prototype.$$plus$plus$eq__sc_TraversableOnce__scg_Growable = (function(xs) {
   return ScalaJS.s.scg_Growable$class__$$plus$plus$eq__scg_Growable__sc_TraversableOnce__scg_Growable(this, xs)
 });
@@ -21837,6 +22677,16 @@ ScalaJS.h.scm_HashMap = (function() {
 ScalaJS.h.scm_HashMap.prototype = ScalaJS.c.scm_HashMap.prototype;
 ScalaJS.c.scm_HashMap.prototype.seq__sc_TraversableOnce = (function() {
   return this
+});
+ScalaJS.c.scm_HashMap.prototype.put__O__O__s_Option = (function(key, value) {
+  var e = ScalaJS.as.scm_DefaultEntry(ScalaJS.s.scm_HashTable$class__findOrAddEntry__scm_HashTable__O__O__scm_HashEntry(this, key, value));
+  if ((e === null)) {
+    return ScalaJS.m.s_None$()
+  } else {
+    var v = e.value$1;
+    e.value$1 = value;
+    return new ScalaJS.c.s_Some().init___O(v)
+  }
 });
 ScalaJS.c.scm_HashMap.prototype.init___ = (function() {
   ScalaJS.c.scm_HashMap.prototype.init___scm_HashTable$Contents.call(this, null);
@@ -22135,6 +22985,10 @@ ScalaJS.h.scm_ListBuffer = (function() {
   /*<skip>*/
 });
 ScalaJS.h.scm_ListBuffer.prototype = ScalaJS.c.scm_ListBuffer.prototype;
+ScalaJS.c.scm_ListBuffer.prototype.indexOf__O__I__I = (function(elem, from) {
+  var this$1 = this.scala$collection$mutable$ListBuffer$$start$6;
+  return ScalaJS.s.sc_GenSeqLike$class__indexOf__sc_GenSeqLike__O__I__I(this$1, elem, from)
+});
 ScalaJS.c.scm_ListBuffer.prototype.copy__p6__V = (function() {
   if (this.scala$collection$mutable$ListBuffer$$start$6.isEmpty__Z()) {
     return (void 0)
@@ -22212,6 +23066,10 @@ ScalaJS.c.scm_ListBuffer.prototype.foreach__F1__V = (function(f) {
     these = ScalaJS.as.sci_List(these.tail__O())
   }
 });
+ScalaJS.c.scm_ListBuffer.prototype.indexWhere__F1__I__I = (function(p, from) {
+  var this$1 = this.scala$collection$mutable$ListBuffer$$start$6;
+  return ScalaJS.s.sc_LinearSeqOptimized$class__indexWhere__sc_LinearSeqOptimized__F1__I__I(this$1, p, from)
+});
 ScalaJS.c.scm_ListBuffer.prototype.$$plus$eq__O__scm_Buffer = (function(elem) {
   return this.$$plus$eq__O__scm_ListBuffer(elem)
 });
@@ -22259,6 +23117,33 @@ ScalaJS.c.scm_ListBuffer.prototype.remove__I__O = (function(n) {
   this.reduceLengthBy__p6__I__V(1);
   return old
 });
+ScalaJS.c.scm_ListBuffer.prototype.$$minus$eq__O__scm_ListBuffer = (function(elem) {
+  if (this.exported$6) {
+    this.copy__p6__V()
+  };
+  if ((!this.scala$collection$mutable$ListBuffer$$start$6.isEmpty__Z())) {
+    if (ScalaJS.m.sr_BoxesRunTime$().equals__O__O__Z(this.scala$collection$mutable$ListBuffer$$start$6.head__O(), elem)) {
+      this.scala$collection$mutable$ListBuffer$$start$6 = ScalaJS.as.sci_List(this.scala$collection$mutable$ListBuffer$$start$6.tail__O());
+      this.reduceLengthBy__p6__I__V(1)
+    } else {
+      var cursor = this.scala$collection$mutable$ListBuffer$$start$6;
+      while (((!ScalaJS.as.sc_SeqLike(cursor.tail__O()).isEmpty__Z()) && (!ScalaJS.m.sr_BoxesRunTime$().equals__O__O__Z(ScalaJS.as.sc_IterableLike(cursor.tail__O()).head__O(), elem)))) {
+        cursor = ScalaJS.as.sci_List(cursor.tail__O())
+      };
+      if ((!ScalaJS.as.sc_SeqLike(cursor.tail__O()).isEmpty__Z())) {
+        var z = ScalaJS.as.sci_$colon$colon(cursor);
+        var x = z.tl$5;
+        var x$2 = this.last0$6;
+        if (((x === null) ? (x$2 === null) : x.equals__O__Z(x$2))) {
+          this.last0$6 = z
+        };
+        z.tl$5 = ScalaJS.as.sci_List(ScalaJS.as.sc_TraversableLike(cursor.tail__O()).tail__O());
+        this.reduceLengthBy__p6__I__V(1)
+      }
+    }
+  };
+  return this
+});
 ScalaJS.c.scm_ListBuffer.prototype.toStream__sci_Stream = (function() {
   return this.scala$collection$mutable$ListBuffer$$start$6.toStream__sci_Stream()
 });
@@ -22298,6 +23183,9 @@ ScalaJS.c.scm_ListBuffer.prototype.$$plus$eq__O__scm_ListBuffer = (function(x) {
   this.len$6 = ((1 + this.len$6) | 0);
   return this
 });
+ScalaJS.c.scm_ListBuffer.prototype.$$minus$eq__O__scm_Buffer = (function(x) {
+  return this.$$minus$eq__O__scm_ListBuffer(x)
+});
 ScalaJS.c.scm_ListBuffer.prototype.isDefinedAt__O__Z = (function(x) {
   var x$1 = ScalaJS.uI(x);
   var this$1 = this.scala$collection$mutable$ListBuffer$$start$6;
@@ -22305,6 +23193,10 @@ ScalaJS.c.scm_ListBuffer.prototype.isDefinedAt__O__Z = (function(x) {
 });
 ScalaJS.c.scm_ListBuffer.prototype.$$plus$eq__O__scm_Builder = (function(elem) {
   return this.$$plus$eq__O__scm_ListBuffer(elem)
+});
+ScalaJS.c.scm_ListBuffer.prototype.indexOf__O__I = (function(elem) {
+  var this$1 = this.scala$collection$mutable$ListBuffer$$start$6;
+  return ScalaJS.s.sc_GenSeqLike$class__indexOf__sc_GenSeqLike__O__I__I(this$1, elem, 0)
 });
 ScalaJS.c.scm_ListBuffer.prototype.sizeHint__I__V = (function(size) {
   /*<skip>*/
@@ -22473,6 +23365,9 @@ ScalaJS.c.scm_StringBuilder.prototype.toString__T = (function() {
 });
 ScalaJS.c.scm_StringBuilder.prototype.foreach__F1__V = (function(f) {
   ScalaJS.s.sc_IndexedSeqOptimized$class__foreach__sc_IndexedSeqOptimized__F1__V(this, f)
+});
+ScalaJS.c.scm_StringBuilder.prototype.indexWhere__F1__I__I = (function(p, from) {
+  return ScalaJS.s.sc_IndexedSeqOptimized$class__indexWhere__sc_IndexedSeqOptimized__F1__I__I(this, p, from)
 });
 ScalaJS.c.scm_StringBuilder.prototype.slice__I__I__O = (function(from, until) {
   return ScalaJS.s.sci_StringLike$class__slice__sci_StringLike__I__I__O(this, from, until)
@@ -22651,12 +23546,12 @@ ScalaJS.h.sjs_js_WrappedArray.prototype = ScalaJS.c.sjs_js_WrappedArray.prototyp
 ScalaJS.c.sjs_js_WrappedArray.prototype.seq__sc_TraversableOnce = (function() {
   return this
 });
+ScalaJS.c.sjs_js_WrappedArray.prototype.head__O = (function() {
+  return ScalaJS.s.sc_IndexedSeqOptimized$class__head__sc_IndexedSeqOptimized__O(this)
+});
 ScalaJS.c.sjs_js_WrappedArray.prototype.init___ = (function() {
   ScalaJS.c.sjs_js_WrappedArray.prototype.init___sjs_js_Array.call(this, []);
   return this
-});
-ScalaJS.c.sjs_js_WrappedArray.prototype.head__O = (function() {
-  return ScalaJS.s.sc_IndexedSeqOptimized$class__head__sc_IndexedSeqOptimized__O(this)
 });
 ScalaJS.c.sjs_js_WrappedArray.prototype.apply__I__O = (function(index) {
   return this.array$6[index]
@@ -22664,12 +23559,12 @@ ScalaJS.c.sjs_js_WrappedArray.prototype.apply__I__O = (function(index) {
 ScalaJS.c.sjs_js_WrappedArray.prototype.lengthCompare__I__I = (function(len) {
   return ScalaJS.s.sc_IndexedSeqOptimized$class__lengthCompare__sc_IndexedSeqOptimized__I__I(this, len)
 });
+ScalaJS.c.sjs_js_WrappedArray.prototype.sameElements__sc_GenIterable__Z = (function(that) {
+  return ScalaJS.s.sc_IndexedSeqOptimized$class__sameElements__sc_IndexedSeqOptimized__sc_GenIterable__Z(this, that)
+});
 ScalaJS.c.sjs_js_WrappedArray.prototype.apply__O__O = (function(v1) {
   var index = ScalaJS.uI(v1);
   return this.array$6[index]
-});
-ScalaJS.c.sjs_js_WrappedArray.prototype.sameElements__sc_GenIterable__Z = (function(that) {
-  return ScalaJS.s.sc_IndexedSeqOptimized$class__sameElements__sc_IndexedSeqOptimized__sc_GenIterable__Z(this, that)
 });
 ScalaJS.c.sjs_js_WrappedArray.prototype.isEmpty__Z = (function() {
   return ScalaJS.s.sc_IndexedSeqOptimized$class__isEmpty__sc_IndexedSeqOptimized__Z(this)
@@ -22687,6 +23582,9 @@ ScalaJS.c.sjs_js_WrappedArray.prototype.companion__scg_GenericCompanion = (funct
 ScalaJS.c.sjs_js_WrappedArray.prototype.foreach__F1__V = (function(f) {
   ScalaJS.s.sc_IndexedSeqOptimized$class__foreach__sc_IndexedSeqOptimized__F1__V(this, f)
 });
+ScalaJS.c.sjs_js_WrappedArray.prototype.indexWhere__F1__I__I = (function(p, from) {
+  return ScalaJS.s.sc_IndexedSeqOptimized$class__indexWhere__sc_IndexedSeqOptimized__F1__I__I(this, p, from)
+});
 ScalaJS.c.sjs_js_WrappedArray.prototype.$$plus$eq__O__scm_Buffer = (function(elem) {
   this.array$6["push"](elem);
   return this
@@ -22700,20 +23598,20 @@ ScalaJS.c.sjs_js_WrappedArray.prototype.reverse__O = (function() {
 ScalaJS.c.sjs_js_WrappedArray.prototype.result__O = (function() {
   return this
 });
-ScalaJS.c.sjs_js_WrappedArray.prototype.seq__scm_Seq = (function() {
-  return this
-});
 ScalaJS.c.sjs_js_WrappedArray.prototype.iterator__sc_Iterator = (function() {
   return new ScalaJS.c.sc_IndexedSeqLike$Elements().init___sc_IndexedSeqLike__I__I(this, 0, ScalaJS.uI(this.array$6["length"]))
+});
+ScalaJS.c.sjs_js_WrappedArray.prototype.seq__scm_Seq = (function() {
+  return this
 });
 ScalaJS.c.sjs_js_WrappedArray.prototype.sizeHintBounded__I__sc_TraversableLike__V = (function(size, boundingColl) {
   ScalaJS.s.scm_Builder$class__sizeHintBounded__scm_Builder__I__sc_TraversableLike__V(this, size, boundingColl)
 });
-ScalaJS.c.sjs_js_WrappedArray.prototype.seq__sc_Seq = (function() {
-  return this
-});
 ScalaJS.c.sjs_js_WrappedArray.prototype.length__I = (function() {
   return ScalaJS.uI(this.array$6["length"])
+});
+ScalaJS.c.sjs_js_WrappedArray.prototype.seq__sc_Seq = (function() {
+  return this
 });
 ScalaJS.c.sjs_js_WrappedArray.prototype.remove__I__O = (function(n) {
   return this.array$6["splice"](n, 1)[0]
@@ -22722,11 +23620,11 @@ ScalaJS.c.sjs_js_WrappedArray.prototype.drop__I__O = (function(n) {
   var until = ScalaJS.uI(this.array$6["length"]);
   return ScalaJS.s.sc_IndexedSeqOptimized$class__slice__sc_IndexedSeqOptimized__I__I__O(this, n, until)
 });
-ScalaJS.c.sjs_js_WrappedArray.prototype.thisCollection__sc_Seq = (function() {
-  return this
-});
 ScalaJS.c.sjs_js_WrappedArray.prototype.tail__O = (function() {
   return ScalaJS.s.sc_IndexedSeqOptimized$class__tail__sc_IndexedSeqOptimized__O(this)
+});
+ScalaJS.c.sjs_js_WrappedArray.prototype.thisCollection__sc_Seq = (function() {
+  return this
 });
 ScalaJS.c.sjs_js_WrappedArray.prototype.isDefinedAt__O__Z = (function(x) {
   var idx = ScalaJS.uI(x);
@@ -22736,21 +23634,21 @@ ScalaJS.c.sjs_js_WrappedArray.prototype.$$plus$eq__O__scm_Builder = (function(el
   this.array$6["push"](elem);
   return this
 });
-ScalaJS.c.sjs_js_WrappedArray.prototype.copyToArray__O__I__I__V = (function(xs, start, len) {
-  ScalaJS.s.sc_IndexedSeqOptimized$class__copyToArray__sc_IndexedSeqOptimized__O__I__I__V(this, xs, start, len)
-});
 ScalaJS.c.sjs_js_WrappedArray.prototype.sizeHint__I__V = (function(size) {
   /*<skip>*/
+});
+ScalaJS.c.sjs_js_WrappedArray.prototype.copyToArray__O__I__I__V = (function(xs, start, len) {
+  ScalaJS.s.sc_IndexedSeqOptimized$class__copyToArray__sc_IndexedSeqOptimized__O__I__I__V(this, xs, start, len)
 });
 ScalaJS.c.sjs_js_WrappedArray.prototype.hashCode__I = (function() {
   return ScalaJS.m.s_util_hashing_MurmurHash3$().seqHash__sc_Seq__I(this)
 });
-ScalaJS.c.sjs_js_WrappedArray.prototype.toCollection__O__sc_Seq = (function(repr) {
-  return ScalaJS.as.scm_IndexedSeq(repr)
-});
 ScalaJS.c.sjs_js_WrappedArray.prototype.init___sjs_js_Array = (function(array) {
   this.array$6 = array;
   return this
+});
+ScalaJS.c.sjs_js_WrappedArray.prototype.toCollection__O__sc_Seq = (function(repr) {
+  return ScalaJS.as.scm_IndexedSeq(repr)
 });
 ScalaJS.c.sjs_js_WrappedArray.prototype.stringPrefix__T = (function() {
   return "WrappedArray"
@@ -22885,6 +23783,9 @@ ScalaJS.c.scm_ArrayBuffer.prototype.companion__scg_GenericCompanion = (function(
 });
 ScalaJS.c.scm_ArrayBuffer.prototype.foreach__F1__V = (function(f) {
   ScalaJS.s.scm_ResizableArray$class__foreach__scm_ResizableArray__F1__V(this, f)
+});
+ScalaJS.c.scm_ArrayBuffer.prototype.indexWhere__F1__I__I = (function(p, from) {
+  return ScalaJS.s.sc_IndexedSeqOptimized$class__indexWhere__sc_IndexedSeqOptimized__F1__I__I(this, p, from)
 });
 ScalaJS.c.scm_ArrayBuffer.prototype.$$plus$eq__O__scm_Buffer = (function(elem) {
   return this.$$plus$eq__O__scm_ArrayBuffer(elem)
