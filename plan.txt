@@ -5,22 +5,24 @@ Actual pathfinding
 Should be able to go backwards to previous maps
 
 Switch to a priority system for drawing
-switch to a queue for movement?
 
 add a max range for throwing
 
 Make the direction picking for sprites octagons instead of the current thing
 
+
+Fix turrets spawning inside you and sticking you forever
+
 Minor stuff:
 Make the farm house doors not always leftmost/uppermost on the wall they're on
 highscores 
-Make you drop a gun when you pick up a new one
-put a cap on the number of items the player can have
 add a max to the ammo bar display for the mini chars
 make thrown items spawn at the closest available square
 make chargers no longer count as charging if they start sliding along a wall and being really slow
 	Thrown items too
 	Loop the step until they've moved the required distance, or until it's taken like double the steps it should have been then mark it done
+Fix the sniper's spazziness
+make his medkits land on ints
 
 Bugs:
 spitter spit being able to go through walls and also be invisible sometimes
@@ -36,15 +38,22 @@ Humans with items
 Real image rotations (i.e. seeing the back of their head, side view, etc)
 Accuracy? possibly movement-based
 or just movement-based range, i.e. double range when stopped and certain guns can't fire while moving
-grenade targetting to pick densest cluster or something rather than closest
+When you're active item changes toss it midscreen for 1/3 second but gigantic so you know what you have
+press i for an item / enemy guide
 
 
 
 Arts needed:
 	Humans
+		Medic
+
 	Zombies
 	Explosion?
 	Explosion scuffs
+
+	flameproof cape
+	light armor
+	heavy armor
 
 Ideas:
 
@@ -56,6 +65,7 @@ Items
 	grav mine
 	TANK LASSO
 	blink scroll
+	decoy
 
 Equipment
 	Guns
@@ -88,18 +98,19 @@ Specials
 		Shoots out a thing, if it hits you you're hooked and can't move away from it
 		But can still act, have to kill it before you can move on
 
+	Ice zombie
+		Shoots ice patch, can't move out of it until it's off you (melts like spitter spit)
+
 Bosses
 	Spider zombie w/ babies on back, when you hit it they fall off and fight you
-	Zombie that shoots bursts of regular zombies out of a back-cannon or something at you
 
 
 Characters
 	The Kernel: Tank riding dude KFC dude
 	Scatterbrain Jane: molotov throwing dude
-
-	Medic - tosses out health kits
 	Fiddler - lays mines & throws grenades
 	Suou Pavlichenko - Sniper that targets specials
+
 	Someone bad but immortal
 	Abraham Lincoln - A melee person
 	Panic bob - runs around screaming
@@ -131,3 +142,70 @@ Areas
 
 SNIPPETS
 
+
+// override def aiMove(g : Game) =
+	// {
+	// 	//Bot humans do everything player humans do except for movement
+	// 	super.aiMove(g)
+
+	// 	//handle text and related things
+	// 	if(! hasSeenPlayer && hasLosTo(g.player, g))
+	// 		onSeePlayer(g)
+
+	// 	if(! isLowAmmo && gun.ammo <= 10)
+	// 		onLowAmmo(g)
+
+	// 	if(! isLowHealth && hp <= 20)
+	// 		onLowHealth(g)
+
+
+	// 	//Now decide where to go!
+	// 	if(dest.is_neg_one)
+	// 	{
+	// 		//pick a new dest!
+	// 		val destX = g.player.loc.x + g.r.nextInt(GV.NORMUNITSIZE * 10) - GV.NORMUNITSIZE*5
+	// 		val destY = g.player.loc.y + g.r.nextInt(GV.NORMUNITSIZE * 10) - GV.NORMUNITSIZE*5
+	// 		dest = new Pt(destX, destY)
+	// 	}
+
+	// 	//Now cheap pathfinding as usual
+	// 	var dx = min(dest.x - loc.x, 2)
+	// 	dx = max(dx, -2)
+		
+	// 	var dy = min(dest.y - loc.y, 2)
+	// 	dy = max(dy, -2)
+
+	// 	if(! moveLoc(dx, dy, g))
+	// 	{
+	// 		dest = new Pt(-1, -1)
+	// 	}
+	// }
+
+
+
+
+		
+		// var closestAct : Actor = null
+		// var distance = 100000
+		// for(a <- g.acts)
+		// {
+		// 	if(a.faction != "NA" && valid(a) &&
+		// 		hasLosTo(a, g))
+		// 	{
+		// 		val dist = distanceTo(a)
+		// 		if(dist < distance) //new closest
+		// 		{
+		// 			closestAct = a
+		// 			distance = dist.toInt //TODO: CHECK FOR LINE OF SIGHT
+		// 		}
+		// 	}
+		// }
+
+		// return closestAct
+
+
+
+
+SEA - PRG condor: number 7807983
+
+PRG - HND emireates: JSGV3F

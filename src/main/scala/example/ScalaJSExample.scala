@@ -7,6 +7,7 @@ import objects._
 import game._
 import globalvars._
 import enemies._
+import allies._
 import scala.math.{min, max}
 
 
@@ -16,15 +17,20 @@ object ScalaJSExample
 {
 	def handlePlayerMovement(player : Player, keys : collection.mutable.Set[Int], g : Game) =
 	{
-		var dx = 0
-		var dy = 0
+		var dx = 0.0
+		var dy = 0.0
 
-		if (keys(38)) dy -= 2
-	    if (keys(37)) dx -= 2
-	    if (keys(39)) dx += 2
-	    if (keys(40)) dy += 2
+		if (keys(38)) dy -= player.speed
+	    if (keys(37)) dx -= player.speed
+	    if (keys(39)) dx += player.speed
+	    if (keys(40)) dy += player.speed
 
-	    player.moveLoc(dx, dy, g)
+	    for(i <- 1 to player.speed.toInt)
+	    {
+	    	player.moveLoc(dx / player.speed, dy/player.speed, g)
+	    }
+
+	    //player.moveLoc(dx, dy, g)
 
 	    if (keys(32)) 
 	    {
@@ -67,13 +73,17 @@ object ScalaJSExample
 
 		//make a hooman
 		//var hooman : Actor = null
+
+		val item = new EqHeavyArmor()
+		val gitem = new GroundEquip(new Pt(g.player.loc.x + 50, g.player.loc.y), item, "ak47")
+		g.addActor(gitem)
 		
 
 		//stick a gun on the ground
 		//val thegun = new Gun(GV.AK47_FIRETIME, GV.AK47_DAMAGE, GV.AK47_RANGE, GV.AK47_APS, null)
-		val thegun = new Gun(GV.SNIPER_FIRETIME, GV.SNIPER_DAMAGE, GV.SNIPER_RANGE, GV.SNIPER_APS, null)
-		val grounded = new GroundGun(new Pt(g.player.loc.x + 50, g.player.loc.y), thegun, "ak47")
-		g.addActor(grounded)
+		//val thegun = new Gun(GV.SNIPER_FIRETIME, GV.SNIPER_DAMAGE, GV.SNIPER_RANGE, GV.SNIPER_APS, GV.SNIPER_AIMTIME, null)
+		//val grounded = new GroundGun(new Pt(g.player.loc.x + 50, g.player.loc.y), thegun, "ak47")
+		//g.addActor(grounded)
 
 		//make a wall
 		val wall = new Wall(new Pt(200, 400), new Pt(200, 10))
@@ -108,7 +118,7 @@ object ScalaJSExample
 
 			//ammo
 			ctx.fillStyle = s"rgb(0, 0, 200)"
-			ctx.fillRect(GV.GAMEX, barY, min(g.player.gun.ammo/10, GV.FULLX - GV.GAMEX), 80)
+			ctx.fillRect(GV.GAMEX, barY, min(g.player.getGun.ammo/3, GV.FULLX - GV.GAMEX), 80)
 			ctx.fillStyle = "black"
 			ctx.font = "12px sans-serif"
 			ctx.fillText("ammo", GV.GAMEX, barY + 10)
@@ -144,14 +154,14 @@ object ScalaJSExample
 			for(a <- g.acts)
 			{
 				a match {
-					case h : BaseHuman => //draw it
+					case h : BaseHuman if h.name != "human" => //draw it
 						//draw a tiny health bar
 						ctx.fillStyle = s"rgb(200, 0, 0)"
 						ctx.fillRect(GV.GAMEX + 100, barY, max(100 * h.hp * 1.0/h.maxHp, 0), 5)
 
 						//draw a tiny ammo bar
 						ctx.fillStyle = s"rgb(0, 0, 200)"
-						ctx.fillRect(GV.GAMEX + 100, barY + 5, min(h.gun.ammo / 10, 100), 5)
+						ctx.fillRect(GV.GAMEX + 100, barY + 5, min(h.getGun.ammo / 10, 100), 5)
 			
 						val img = g.images(h.bigDisplayname)
 						g.ctx.drawImage(img, GV.GAMEX + 100, barY + 10, GV.NORMUNITSIZE*2, GV.NORMUNITSIZE*2)
@@ -171,8 +181,28 @@ object ScalaJSExample
 						ctx.fillText(h.name, GV.GAMEX + 125, barY + 17)
 						barY += GV.NORMUNITSIZE*2 + 5 + 5
 					case _ => //don't draw anything else
-				}
-				
+				}	
+			}
+
+			//draw a separatoer
+			barY += 5
+			ctx.fillStyle = s"rgb(0, 0, 0)"
+			ctx.fillRect(GV.GAMEX + 100, barY, 100, 3)
+			barY += 8
+
+			//draw the player's items
+			for((slot, i) <- g.player.equips)
+			{
+				//dom.console.log(i.name)
+				//draw the item
+				val img = g.images(i.displayName)
+				g.ctx.drawImage(img, GV.GAMEX + 100, barY, GV.NORMUNITSIZE*2, GV.NORMUNITSIZE*2)
+
+				//write its name
+				ctx.fillText(i.name, GV.GAMEX + 125, barY + 12)
+
+				//bump the counter
+				barY += GV.NORMUNITSIZE*2 + 5 + 5
 			}
 		}
 

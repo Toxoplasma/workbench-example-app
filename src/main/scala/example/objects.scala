@@ -7,7 +7,7 @@ import Array._
 import game._
 import globalvars._
 import enemies._
-
+import allies._
 
 
 
@@ -203,12 +203,18 @@ extends Obj(loc_, size_)
 	var lastLoc = new Pt(-1, -1)
 
 	var effects = scala.collection.mutable.Set[Effect]()
+	var equips = scala.collection.mutable.HashMap[String, Equipment]()
 
 	//flags
+	//drawing related
 	var important = true
 
+	//gameplay related
 	var flammable = true
 	var canPutSelfOut = false
+	var acidProof = false
+
+	var damageReduce = 0
 
 	def changeLoc(newLoc : Pt) = //newX : Int, newY : Int) =
 	{
@@ -318,12 +324,17 @@ extends Obj(loc_, size_)
 		momentum = new Pt(changeX, changeY)
 	}
 
-	def takeDamage(source : Actor, damage : Double, pushFactor : Double, g : Game) =
+	def takeDamage(source : Actor, damage : Double, pushFactor : Double, g : Game, irresistable : Boolean = false) =
 	{
 		//dom.console.log(source.name + " does " + damage + " damage to " + name)
-		hp -= damage
+		var adjustedDamage = damage
+		if(! irresistable)
+		{
+			adjustedDamage = max(1, adjustedDamage - damageReduce)
+		}
+		hp -= adjustedDamage
 
-		push(source, damage * pushFactor, g)
+		push(source, adjustedDamage * pushFactor, g)
 
 		//Are we dead?
 		if(hp <= 0) //we're dead
@@ -346,30 +357,82 @@ extends Obj(loc_, size_)
 		momentum = new Pt(dx * amount, dy * amount)
 	}
 
-	def getClosestValidActorInLOS(valid : Actor => Boolean, g : Game) : Actor =
+	def getCondActorInLOS(scoreFunc : Actor => Double, g : Game) : Actor =
 	{
-		var closestAct : Actor = null
-		var distance = 100000
+		var bestAct : Actor = null
+		var bestScore : Double = Double.NegativeInfinity
 		for(a <- g.acts)
 		{
-			if(a.faction != "NA" && valid(a) &&
-				hasLosTo(a, g))
+			val score = scoreFunc(a)
+			if(a.faction != "NA" && score > bestScore && hasLosTo(a, g))
 			{
-				val dist = distanceTo(a)
-				if(dist < distance) //new closest
-				{
-					closestAct = a
-					distance = dist.toInt //TODO: CHECK FOR LINE OF SIGHT
-				}
+				bestAct = a
+				bestScore = score
 			}
 		}
 
-		return closestAct
+		return bestAct
+	}
+
+	def getClosestValidActorInLOS(valid : Actor => Boolean, g : Game) : Actor =
+	{
+		def validScore(a : Actor) =
+		{
+			if(valid(a))
+				-1 * distanceTo(a)
+			else
+				Double.NegativeInfinity
+		}
+
+		getCondActorInLOS(validScore, g)
 	}
 
 	def getClosestEnemyInLOS(g : Game) : Actor = 
 	{
 		getClosestValidActorInLOS(isEnemy, g)
+	}
+
+	def inFov(o : Obj) : Boolean =
+	{
+		val facing = loc - lastLoc
+		val dir = o.loc - loc
+
+		//now, is the angle within fov?
+		//cosine rule?
+		val cosa = (facing.x * dir.x + facing.y * dir.y) / (facing.pythagLength * dir.pythagLength)
+
+		val a = acos(cosa)
+		//dom.console.log(a)
+
+		return abs(a) < GV.MAX_FOV
+	}
+
+	def getClosestEnemyInView(g : Game) : Actor =
+	{
+		getClosestValidActorInLOS(a => inFov(a) && isEnemy(a), g)
+	}
+
+	def getBestEnemyInRange(r : Int, g : Game) : Actor =
+	{
+		def score(a : Actor) =
+		{
+			//if it's an enemy that we can see, then score it
+			if(distanceTo(a) < r && inFov(a) && isEnemy(a))
+			{
+				a.points * 100.0/ pow(distanceTo(a), 2)
+			}
+			else //if not it's not the best
+			{
+				Double.NegativeInfinity
+			}
+		}
+
+		getCondActorInLOS(score, g)
+	}
+
+	def getBestEnemyInView(g : Game) : Actor =
+	{
+		getBestEnemyInRange(GV.GAMEX + GV.GAMEY, g)
 	}
 
 	//a is my enemy
@@ -431,25 +494,7 @@ extends Obj(loc_, size_)
 		spriteAngle
 	}
 
-	def inFov(o : Obj) : Boolean =
-	{
-		val facing = loc - lastLoc
-		val dir = o.loc - loc
-
-		//now, is the angle within fov?
-		//cosine rule?
-		val cosa = (facing.x * dir.x + facing.y * dir.y) / (facing.pythagLength * dir.pythagLength)
-
-		val a = acos(cosa)
-		//dom.console.log(a)
-
-		return abs(a) < GV.MAX_FOV
-	}
-
-	def getClosestEnemyInView(g : Game) : Actor =
-	{
-		getClosestValidActorInLOS(a => inFov(a) && isEnemy(a), g)
-	}
+	
 
 	def gainHealth(n : Int) =
 	{
@@ -463,7 +508,7 @@ extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE), -1, 0, "NA", 0, "i
 {
 	blocksMovement = false
 
-	def pickup(owner : Actor)
+	def pickup(owner : Actor, g : Game)
 	{
 		//yeah
 	}
@@ -475,7 +520,7 @@ extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE), -1, 0, "NA", 0, "i
 		{
 			if(collides(a) && a.canTakeItem(this))
 			{
-				pickup(a)
+				pickup(a, g)
 
 				//and remove us
 				g.removeActor(this)
@@ -496,13 +541,13 @@ extends Item(loc_)
 		g.ctx.drawImage(img, loc.x, loc.y, GV.NORMUNITSIZE, GV.NORMUNITSIZE)
 	}
 
-	override def pickup(owner: Actor)
+	override def pickup(owner: Actor, g : Game)
 	{
 		//if it's a human give 'em some ammo
 		owner match 
 		{
-			case h : BaseHuman => 
-				h.gun.ammo += amount
+			case h : BaseHuman => h.addAmmo(amount)
+				//h.gun.ammo += amount
 			case _ => //nothing
 		}
 	}
@@ -522,7 +567,7 @@ extends Item(loc_)
 		g.ctx.drawImage(img, loc.x, loc.y, GV.NORMUNITSIZE, GV.NORMUNITSIZE)
 	}
 
-	override def pickup(owner : Actor) =
+	override def pickup(owner : Actor, g : Game) =
 	{
 		//the player gets some health!
 		val n = owner.maxHp * amount / 100
@@ -534,33 +579,71 @@ class MediumHealthPack(loc_ : Pt)
 extends HealthPack(loc_, GV.HEALTHPACK_AMOUNT)
 
 
-
-class GroundGun(loc_ : Pt, gun_ : Gun, displayName_ : String)
-extends Item(loc_)
+class Equipment(slot_ : String, name_ : String, displayName_ : String, onEquip_ : Player => Any)
 {
-	val gun = gun_
+	val slot = slot_
+
+	var onEquip = onEquip_
+
+	val name = name_
 	val displayName = displayName_
 
-	override def draw(g : Game) =
+	def equip(a : Player)
 	{
-		//draw from the game thing
-		val img = g.images(displayName)
-
-		//draw the location scaled to the normal size
-		g.ctx.drawImage(img, loc.x, loc.y, GV.NORMUNITSIZE*2, GV.NORMUNITSIZE*2)
-	}
-
-	override def pickup(owner : Actor)
-	{
-		gun.owner = owner
-		owner match 
-		{
-			case h : BaseHuman => 
-				h.gun = gun
-			case _ => //nothing
-		}
+		onEquip(a)
 	}
 }
+
+
+
+class GroundEquip(loc_ : Pt, equip_ : Equipment, displayName_ : String)
+extends Item(loc_)
+{
+	val equip = equip_
+	val displayName = displayName_
+
+	override def draw(g : Game)
+	{
+		val img = g.images(displayName)
+		g.ctx.drawImage(img, loc.x, loc.y, GV.NORMUNITSIZE, GV.NORMUNITSIZE)
+	}
+
+	override def pickup(owner : Actor, g : Game)
+	{
+		owner match {
+			case p : Player => p.equip(equip, g)
+			case _ => //no one else can pick up equipment
+		}	
+	}
+}
+
+
+// class GroundGun(loc_ : Pt, gun_ : Gun, displayName_ : String)
+// extends Item(loc_)
+// {
+// 	val gun = gun_
+// 	val displayName = displayName_
+
+// 	override def draw(g : Game) =
+// 	{
+// 		//draw from the game thing
+// 		val img = g.images(displayName)
+
+// 		//draw the location scaled to the normal size
+// 		g.ctx.drawImage(img, loc.x, loc.y, GV.NORMUNITSIZE*2, GV.NORMUNITSIZE*2)
+// 	}
+
+// 	override def pickup(owner : Actor, g : Game)
+// 	{
+// 		gun.owner = owner
+// 		owner match 
+// 		{
+// 			case h : BaseHuman => 
+// 				h.gun = gun
+// 			case _ => //nothing
+// 		}
+// 	}
+// }
 
 
 class UsableItem(owner_ : Actor, name_ : String, displayName_ : String)
@@ -587,7 +670,7 @@ extends Item(loc_)
 		g.ctx.drawImage(img, loc.x, loc.y, GV.NORMUNITSIZE, GV.NORMUNITSIZE)
 	}
 
-	override def pickup(owner : Actor)
+	override def pickup(owner : Actor, g : Game)
 	{
 		owner match {
 			case p : Player => 
@@ -607,13 +690,13 @@ extends UsableItem(owner_, name_, picture_)
 
 	def hasTarget(g : Game) : Boolean =
 	{
-		val target = owner.getClosestEnemyInView(g)
+		val target = owner.getBestEnemyInView(g)
 		target != null
 	}
 
 	def getThrowPosition(g : Game) : Pt =
 	{
-		val target = owner.getClosestEnemyInView(g)
+		val target = owner.getBestEnemyInView(g)
 
 		if(target != null && owner.distanceTo(target) > minDist)
 		{
@@ -737,9 +820,9 @@ extends ThrowableItem(owner_, 0, "turret", "turret big")
 		val dest = getUntargetedThrowPosition(g)
 
 		//make a gun turret
-		val gun = new Gun(GV.TURRET_FIRETIME, GV.TURRET_DAMAGE, GV.TURRET_RANGE, GV.TURRET_APS, null)
-		val turret = new GunTurret(dest, gun, GV.TURRET_HP, "NA", "human")
-		gun.owner = turret
+		//val gun = new Gun(GV.TURRET_FIRETIME, GV.TURRET_DAMAGE, GV.TURRET_RANGE, GV.TURRET_APS, 0, null, "turret gun", "ak47")
+		val turret = new GunTurret(dest, GV.TURRET_HP, "NA", "human")
+		//gun.owner = turret
 		val spitLine = SimpleLine(owner.loc.cloone, dest, "black")
 		
 		val proj = new ProjectileActor(turret, spitLine, speed)
@@ -906,56 +989,7 @@ extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE),
 	}
 }
 
-//todo: add a build time to this
-class GunTurret(loc_ : Pt, gun_ : Gun, hp_ : Double, faction_ : String, ignoreFaction_ : String)
-extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE), hp_, 0, faction_, 0, "gun turret")
-{
-	var gun = gun_
-	var ignoreFaction = ignoreFaction_
 
-	var lastTarget : Pt = new Pt(0, 0)
-
-	var displayName = "turret"
-
-	override def draw(g : Game) =
-	{
-		val change = loc - lastTarget
-		var img = g.images("turret " + angleToSpriteAngle(change))
-
-		g.ctx.drawImage(img, loc.x, loc.y, GV.NORMUNITSIZE, GV.NORMUNITSIZE)
-
-
-
-		// g.ctx.fillStyle = s"rgb(100, 100, 100)"
-		// g.ctx.fillRect(loc.x, loc.y, size.x, size.y)
-	}
-
-	def targetIsValid(a : Actor) : Boolean =
-	{
-		faction != a.faction && ignoreFaction != a.faction
-	}
-
-	override def aiMove(g : Game) =
-	{
-		gun.tick()
-
-		//Now, check if we can SHOOT STUFF
-		if(gun.canShoot)
-		{
-			val closestAct = getClosestValidActorInLOS(targetIsValid, g)
-			if(closestAct != null)
-			{
-				val distance =  distanceTo(closestAct)
-
-				if(distance <= gun.range)
-				{
-					lastTarget = closestAct.loc
-					gun.shoot(closestAct, g)
-				}
-			}
-		}
-	}
-}
 
 
 class CausticAcid(loc_ : Pt, radius_ : Int, reduceRate_ : Int)
@@ -983,9 +1017,10 @@ extends Actor(new Pt(loc_.x - radius_, loc_.y - radius_), new Pt(radius_ * 2, ra
 		//first, check if anyone gets damaged
 		for(a <- g.acts)
 		{
-			if(a.faction != "NA" && collides(a) && hasLosTo(a, g)) //if it's a real actor and we collide with it
+			if(a.faction != "NA" && ! a.acidProof && 
+				collides(a) && hasLosTo(a, g)) //if it's a real actor and we collide with it
 			{
-				a.takeDamage(this, GV.SPITTER_SPITDAMAGE, 0, g)
+				a.takeDamage(this, GV.SPITTER_SPITDAMAGE, 0, g, true)
 			}
 		}
 
@@ -1074,7 +1109,7 @@ extends Actor(new Pt(loc_.x - radius_, loc_.y - radius_), new Pt(radius_ * 2, ra
 		//now process fire
 		for((a, t) <- actsOnFire)
 		{
-			a.takeDamage(this, GV.FIRE_DAMAGE, 0, g)
+			a.takeDamage(this, GV.FIRE_DAMAGE, 0, g, true)
 
 			
 
@@ -1252,42 +1287,7 @@ extends Actor(line_.start.cloone, new Pt(0, 0), -1, 0, "NA", 0, "projectile " + 
 			}
 			
 		}
-
-		// for(i <- 1 to rate)
-		// {
-		// 	if(! done)
-		// 	{
-		// 		if(passThrough) // it ignores collisions
-		// 		{
-		// 			changeLocRel(step.x, step.y)
-		// 		}
-		// 		else
-		// 		{
-		// 			//try to move. If it fails, we're done
-		// 			done = ! moveLocWithoutRound(step.x, step.y, g)
-		// 		}
-
-		// 		//are we there yet?
-		// 		if((loc - line.start).pythagLength > line.length)
-		// 			done = true
-
-		// 		//if(abs(loc.x - line.end.x) < 1 && abs(loc.y - line.end.y) < 1)
-
-		// 		if(done)
-		// 		{
-		// 			act.changeLoc(loc - (act.size*.5))
-
-		// 			g.removeActor(this)
-
-		// 			if(forceSpawn || ! g.collision(act))
-		// 			{
-		// 				g.addActor(act)
-		// 			}
-					
-		// 		}
-				
-		// 	}
-		//}
+		
 
 		val lineToDraw = SimpleLine(start, loc, line.color)
 		g.linesToDraw += lineToDraw
@@ -1358,3 +1358,135 @@ class Effect(effect_ : (Actor, Game) => Any, draw_ : Game => Any)
 	val effect = effect_
 	val draw = draw_
 }
+
+
+
+class EqGeneric(slot_ : String, name_ : String, displayName_ : String)
+extends Equipment(slot_, name_, displayName_, a => ())
+
+
+
+class EqLightArmor()
+extends Equipment("body", "light armor", "eq light armor big", a => ())
+{
+	def apply(a : Player)
+	{
+		a.damageReduce = 5
+		a.maxUsableItems -= 5
+	}
+
+	onEquip = apply
+}
+
+class EqHeavyArmor()
+extends Equipment("body", "heavy armor", "eq heavy armor big", a => ())
+{
+	def apply(a : Player)
+	{
+		a.damageReduce = 9
+		a.maxUsableItems -= 10
+	}
+
+	onEquip = apply
+}
+	
+
+
+class EqSpitterBoots()
+extends Equipment("legs", "rain boots", "eq acid boots big", a => a.acidProof = true)
+
+class EqSpeedBoots()
+extends Equipment("legs", "running shoes", "item running shoes big", a => a.speed += 1)
+
+
+
+
+class EqFlameCape()
+extends Equipment("cloak", "flame cape", "eq fireproof cape big", a => a.flammable = false)
+
+
+class Gun(firingSpeed_ : Int, damage_ : Int, range_ : Int, ammoPerShot_ : Int, aimTime_ : Int, name_ : String, displayName_ : String)
+extends Equipment("gun", name_, displayName_, a => ())
+{
+	val firingSpeed = firingSpeed_
+	val damage = damage_
+	val range = range_
+	val ammoPerShot = ammoPerShot_
+	val aimTimeMin = aimTime_
+
+	var owner : Actor = null
+	var ownerLastLoc = new Pt(0, 0)
+
+	var aimTime = 0
+	var shotCountdown = 0
+
+	var ammo = GV.BASE_AMMO
+
+	onEquip = apply
+
+	def canShoot() =
+	{
+		shotCountdown == 0 && ammo >= ammoPerShot && aimTime >= aimTimeMin
+	}
+
+	def shoot(target : Actor, g : Game)
+	{
+		//do we have enough ammo?
+		if(ammo >= ammoPerShot)
+		{
+			ammo -= ammoPerShot
+		
+			//SHOOOOT ITTTT
+			target.takeDamage(owner, damage, 1, g)
+			shotCountdown = firingSpeed
+
+			//add it to the graphics
+			g.linesToDraw += SimpleLine(owner.center(), target.center(), "black")
+		}
+	}
+
+	def tick()
+	{
+		if(shotCountdown > 0) shotCountdown -= 1
+
+		if(ownerLastLoc == owner.loc) //they didn't move
+			aimTime += 1
+		else
+			aimTime = 0
+
+		ownerLastLoc = owner.loc.cloone
+	}
+
+	def apply(a : Player)
+	{
+		dom.console.log("In apply")
+		owner = a
+	}
+
+	
+}
+
+
+
+class EqGun(name_ : String, displayName_ : String)
+extends Equipment("gun", name_, displayName_, a => ())
+
+class EqNoGun()
+extends Gun(0, 0, 0, 10000, 0, "no gun", "ak47")
+
+class EqPistol()
+extends Gun(GV.PISTOL_FIRETIME, GV.PISTOL_DAMAGE, GV.PISTOL_RANGE, GV.PISTOL_APS, GV.PISTOL_AIMTIME, "pistol", "ak47")
+
+class EqSMG()
+extends Gun(GV.SMG_FIRETIME, GV.SMG_DAMAGE, GV.SMG_RANGE, GV.SMG_APS, GV.SMG_AIMTIME, "smg", "ak47")
+
+class EqMG()
+extends Gun(GV.MG_FIRETIME, GV.MG_DAMAGE, GV.MG_RANGE, GV.MG_APS, GV.MG_AIMTIME, "machine gun", "ak47")
+
+
+class EqSniperRifle()
+extends Gun(GV.SNIPER_FIRETIME, GV.SNIPER_DAMAGE, GV.SNIPER_RANGE, GV.SNIPER_APS, GV.SNIPER_AIMTIME, "sniper rifle", "ak47")
+
+class EqAk47()
+extends Gun(GV.AK47_FIRETIME, GV.AK47_DAMAGE, GV.AK47_RANGE, GV.AK47_APS, GV.AK47_AIMTIME, "ak47", "ak47")
+

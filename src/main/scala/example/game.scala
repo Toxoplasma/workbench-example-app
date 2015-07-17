@@ -5,6 +5,7 @@ import org.scalajs.dom
 import globalvars._
 import objects._
 import enemies._
+import allies._
 
 
 class Game(mSizeX : Int, mSizeY : Int, ctx_ : dom.CanvasRenderingContext2D)
@@ -43,7 +44,7 @@ class Game(mSizeX : Int, mSizeY : Int, ctx_ : dom.CanvasRenderingContext2D)
 	//quest junk
 	//saloon
 	//val saloon_level = r.nextInt(GV.SALOON_LEVEL_RANGE) + GV.SALOON_LEVEL_MIN
-	val saloon_level = 2 //r.nextInt(GV.SALOON_LEVEL_RANGE) + GV.SALOON_LEVEL_MIN
+	val saloon_level = 1 //r.nextInt(GV.SALOON_LEVEL_RANGE) + GV.SALOON_LEVEL_MIN
 	var saloon_hasPickedAlly = false
 
 	def addHeadText(o : Obj, text : String, time : Int)
@@ -161,12 +162,56 @@ class Game(mSizeX : Int, mSizeY : Int, ctx_ : dom.CanvasRenderingContext2D)
 		img = loadImage("images/item grenade.png")
 		images += ("item_grenade" -> img)
 
+		img = loadImage("images/item grenade small.png")
+		images += ("item_grenade small" -> img)
+
 		img = loadImage("images/turret big.png")
 		images += ("item_gunturret" -> img)
 
 		img = loadImage("images/item zombie control.png")
 		images += ("item_zombiecontroller" -> img)
 
+		img = loadImage("images/item wet towel.png")
+		images += ("item wet towel" -> img)
+
+		img = loadImage("images/item wet towel big.png")
+		images += ("item wet towel big" -> img)
+
+		img = loadImage("images/eq acid boots.png")
+		images += ("eq acid boots" -> img)
+
+		img = loadImage("images/eq acid boots big.png")
+		images += ("eq acid boots big" -> img)
+
+		img = loadImage("images/eq fireproof cape.png")
+		images += ("eq fireproof cape" -> img)
+
+		img = loadImage("images/eq fireproof cape big.png")
+		images += ("eq fireproof cape big" -> img)
+
+		img = loadImage("images/eq heavy armor.png")
+		images += ("eq heavy armor" -> img)
+
+		img = loadImage("images/eq heavy armor big.png")
+		images += ("eq heavy armor big" -> img)
+
+		img = loadImage("images/eq light armor.png")
+		images += ("eq light armor" -> img)
+
+		img = loadImage("images/eq light armor big.png")
+		images += ("eq light armor big" -> img)
+
+		img = loadImage("images/eq running shoes.png")
+		images += ("eq running shoes" -> img)
+
+		img = loadImage("images/eq running shoes big.png")
+		images += ("eq running shoes big" -> img)
+
+		img = loadImage("images/eq flip flops.png")
+		images += ("eq flip flops" -> img)
+
+		img = loadImage("images/eq flip flops big.png")
+		images += ("eq flip flops big" -> img)
 
 
 		img = loadImage("images/turret 0.png")
@@ -191,64 +236,64 @@ class Game(mSizeX : Int, mSizeY : Int, ctx_ : dom.CanvasRenderingContext2D)
 
 
 		//img = loadImage("/Users/ravi/Documents/prog/dogedots/target/scala-2.11/character 1.png")
-		img = loadImage("images/char 1 0.png")
+		img = loadImage("images/char human 1 0.png")
 		images += ("char_human_1 0" -> img)
-		img = loadImage("images/char 1 90.png")
+		img = loadImage("images/char human 1 90.png")
 		images += ("char_human_1 90" -> img)
-		img = loadImage("images/char 1 180.png")
+		img = loadImage("images/char human 1 180.png")
 		images += ("char_human_1 180" -> img)
-		img = loadImage("images/char 1 270.png")
+		img = loadImage("images/char human 1 270.png")
 		images += ("char_human_1 270" -> img)
-		img = loadImage("images/char 1 45.png")
+		img = loadImage("images/char human 1 45.png")
 		images += ("char_human_1 45" -> img)
-		img = loadImage("images/char 1 135.png")
+		img = loadImage("images/char human 1 135.png")
 		images += ("char_human_1 135" -> img)
-		img = loadImage("images/char 1 225.png")
+		img = loadImage("images/char human 1 225.png")
 		images += ("char_human_1 225" -> img)
-		img = loadImage("images/char 1 315.png")
+		img = loadImage("images/char human 1 315.png")
 		images += ("char_human_1 315" -> img)
 
-		img = loadImage("images/char 1 big.png")
+		img = loadImage("images/char human 1 big.png")
 		images += ("char_human_1_big" -> img)
 
-		img = loadImage("images/char 2 0.png")
+		img = loadImage("images/char human 2 0.png")
 		images += ("char_human_2 0" -> img)
-		img = loadImage("images/char 2 90.png")
+		img = loadImage("images/char human 2 90.png")
 		images += ("char_human_2 90" -> img)
-		img = loadImage("images/char 2 180.png")
+		img = loadImage("images/char human 2 180.png")
 		images += ("char_human_2 180" -> img)
-		img = loadImage("images/char 2 270.png")
+		img = loadImage("images/char human 2 270.png")
 		images += ("char_human_2 270" -> img)
-		img = loadImage("images/char 2 45.png")
+		img = loadImage("images/char human 2 45.png")
 		images += ("char_human_2 45" -> img)
-		img = loadImage("images/char 2 135.png")
+		img = loadImage("images/char human 2 135.png")
 		images += ("char_human_2 135" -> img)
-		img = loadImage("images/char 2 225.png")
+		img = loadImage("images/char human 2 225.png")
 		images += ("char_human_2 225" -> img)
-		img = loadImage("images/char 2 315.png")
+		img = loadImage("images/char human 2 315.png")
 		images += ("char_human_2 315" -> img)
 
-		img = loadImage("images/char 2 big.png")
+		img = loadImage("images/char human 2 big.png")
 		images += ("char_human_2_big" -> img)
 
-		img = loadImage("images/char 3 0.png")
+		img = loadImage("images/char human 3 0.png")
 		images += ("char_human_3 0" -> img)
-		img = loadImage("images/char 3 90.png")
+		img = loadImage("images/char human 3 90.png")
 		images += ("char_human_3 90" -> img)
-		img = loadImage("images/char 3 180.png")
+		img = loadImage("images/char human 3 180.png")
 		images += ("char_human_3 180" -> img)
-		img = loadImage("images/char 3 270.png")
+		img = loadImage("images/char human 3 270.png")
 		images += ("char_human_3 270" -> img)
-		img = loadImage("images/char 3 45.png")
+		img = loadImage("images/char human 3 45.png")
 		images += ("char_human_3 45" -> img)
-		img = loadImage("images/char 3 135.png")
+		img = loadImage("images/char human 3 135.png")
 		images += ("char_human_3 135" -> img)
-		img = loadImage("images/char 3 225.png")
+		img = loadImage("images/char human 3 225.png")
 		images += ("char_human_3 225" -> img)
-		img = loadImage("images/char 3 315.png")
+		img = loadImage("images/char human 3 315.png")
 		images += ("char_human_3 315" -> img)
 
-		img = loadImage("images/char 3 big.png")
+		img = loadImage("images/char human 3 big.png")
 		images += ("char_human_3_big" -> img)
 
 		img = loadImage("images/tank rider 0.png")
@@ -270,6 +315,26 @@ class Game(mSizeX : Int, mSizeY : Int, ctx_ : dom.CanvasRenderingContext2D)
 
 		img = loadImage("images/tank rider big.png")
 		images += ("tank rider big" -> img)
+
+		img = loadImage("images/char suou 0.png")
+		images += ("char suou 0" -> img)
+		img = loadImage("images/char suou 90.png")
+		images += ("char suou 90" -> img)
+		img = loadImage("images/char suou 180.png")
+		images += ("char suou 180" -> img)
+		img = loadImage("images/char suou 270.png")
+		images += ("char suou 270" -> img)
+		img = loadImage("images/char suou 45.png")
+		images += ("char suou 45" -> img)
+		img = loadImage("images/char suou 135.png")
+		images += ("char suou 135" -> img)
+		img = loadImage("images/char suou 225.png")
+		images += ("char suou 225" -> img)
+		img = loadImage("images/char suou 315.png")
+		images += ("char suou 315" -> img)
+
+		img = loadImage("images/char suou big.png")
+		images += ("char suou big" -> img)
 
 	}
 
@@ -707,36 +772,59 @@ class Game(mSizeX : Int, mSizeY : Int, ctx_ : dom.CanvasRenderingContext2D)
 
 	def spawnItemFromDummy(d : DummyItem) =
 	{
-		var randItem : Item = null
+		var itemAct : Actor = null
+		if(r.nextInt(GV.EQUIP_CHANCE) == 0)
+		{
+			//equipment
+			val spitterboots = 	new GroundEquip(d.loc, new EqSpitterBoots(), "eq acid boots")
+			val flamecape = 	new GroundEquip(d.loc, new EqFlameCape(), "eq fireproof cape")
+			val lightarmor =	new GroundEquip(d.loc, new EqLightArmor(), "eq light armor")
+			val heavyarmor =	new GroundEquip(d.loc, new EqHeavyArmor(), "eq heavy armor")
+			val speedboots =	new GroundEquip(d.loc, new EqSpeedBoots(), "item wet towel")
+			val sniper = 		new GroundEquip(d.loc, new EqSniperRifle(), "ak47")
+			val ak = 			new GroundEquip(d.loc, new EqAk47(), "ak47")
+			val smg = 			new GroundEquip(d.loc, new EqSMG(), "ak47")
+			val mg = 			new GroundEquip(d.loc, new EqMG(), "ak47")
 
-		val ammopack = new MediumAmmoPack(d.loc)
-		val healthpack = new MediumHealthPack(d.loc)
-		val mine = new GroundUsableItem(d.loc, new UsableLandMine(null), "item_landmine")
-		val spit = new GroundUsableItem(d.loc, new UsableSpitterAcid(null), "item_acid")
-		val pipe = new GroundUsableItem(d.loc, new UsablePipeBomb(null), "item_pipebomb")
-		val grenade = new GroundUsableItem(d.loc, new UsableGrenade(null), "item_pipebomb")
-		val molotov = new GroundUsableItem(d.loc, new UsableMolotov(null), "item_molotov")
-		val turret = new GroundUsableItem(d.loc, new UsableGunTurret(null), "item_gunturret")
-		val controller = new GroundUsableItem(d.loc, new UsableZombieController(null), "item_zombiecontroller")
+			val choices = List(spitterboots, speedboots,
+				flamecape, 
+				lightarmor, heavyarmor, 
+				sniper, ak, smg, mg)
 
-		//now put them in a weighted list so to speak
-		val ammopackL = Seq.fill(GV.AMMO_CHANCE){ammopack}
-		val healthpackL = Seq.fill(GV.HEALTH_CHANCE){healthpack}
-		val mineL = Seq.fill(GV.LANDMINE_CHANCE){mine}
-		val spitL = Seq.fill(GV.SPITTERACID_CHANCE){spit}
-		val pipeL = Seq.fill(GV.PIPEBOMB_CHANCE){pipe}
-		val grenadeL = Seq.fill(GV.GRENADE_CHANCE){grenade}
-		val molotovL = Seq.fill(GV.MOLOTOV_CHANCE){molotov}
-		val turretL = Seq.fill(GV.TURRET_CHANCE){turret}
-		val controllerL = Seq.fill(GV.CONTROLLER_CHANCE){controller}
+			itemAct = choices(r.nextInt(choices.length))
 
-		val choices = ammopackL ++ healthpackL ++ mineL ++ spitL ++ pipeL ++ 
-			grenadeL ++ molotovL ++ turretL ++ controllerL
+			dom.console.log("Adding item " + itemAct.name)
+		}
+		else //consumables
+		{
+			val ammopack = new MediumAmmoPack(d.loc)
+			val healthpack = new MediumHealthPack(d.loc)
+			val mine = new GroundUsableItem(d.loc, new UsableLandMine(null), "item_landmine")
+			val spit = new GroundUsableItem(d.loc, new UsableSpitterAcid(null), "item_acid")
+			val pipe = new GroundUsableItem(d.loc, new UsablePipeBomb(null), "item_pipebomb")
+			val grenade = new GroundUsableItem(d.loc, new UsableGrenade(null), "item_pipebomb")
+			val molotov = new GroundUsableItem(d.loc, new UsableMolotov(null), "item_molotov")
+			val turret = new GroundUsableItem(d.loc, new UsableGunTurret(null), "item_gunturret")
+			val controller = new GroundUsableItem(d.loc, new UsableZombieController(null), "item_zombiecontroller")
 
-		val choice = choices(r.nextInt(choices.length))
+			//now put them in a weighted list so to speak
+			val ammopackL = Seq.fill(GV.AMMO_CHANCE){ammopack}
+			val healthpackL = Seq.fill(GV.HEALTH_CHANCE){healthpack}
+			val mineL = Seq.fill(GV.LANDMINE_CHANCE){mine}
+			val spitL = Seq.fill(GV.SPITTERACID_CHANCE){spit}
+			val pipeL = Seq.fill(GV.PIPEBOMB_CHANCE){pipe}
+			val grenadeL = Seq.fill(GV.GRENADE_CHANCE){grenade}
+			val molotovL = Seq.fill(GV.MOLOTOV_CHANCE){molotov}
+			val turretL = Seq.fill(GV.TURRET_CHANCE){turret}
+			val controllerL = Seq.fill(GV.CONTROLLER_CHANCE){controller}
 
-		//removeActor(d)
-		addActor(choice)
+			val choices = ammopackL ++ healthpackL ++ mineL ++ spitL ++ pipeL ++ 
+				grenadeL ++ molotovL ++ turretL ++ controllerL
+
+			itemAct = choices(r.nextInt(choices.length))			
+		}
+		
+		addActor(itemAct)
 	}
 
 	def isDummy(d : Obj) : Boolean =
@@ -995,7 +1083,7 @@ class Game(mSizeX : Int, mSizeY : Int, ctx_ : dom.CanvasRenderingContext2D)
 
 		val totalHeight = boothspace*2 + tableheight + 5
 
-		val seats = scala.collection.mutable.Buffer[Int]()
+		val seats = scala.collection.mutable.Buffer[(Int, String)]()
 
 		var curY = border + 5
 		var x = GV.GAMEX - border - boothwidth
@@ -1004,7 +1092,7 @@ class Game(mSizeX : Int, mSizeY : Int, ctx_ : dom.CanvasRenderingContext2D)
 			//make a booth
 			//top wall inherited from last table
 			//space for seat
-			seats += curY
+			seats += Tuple2(curY, "0")
 			curY += boothspace
 			//table
 			val table = new Barrier(new Pt(x, curY), new Pt(boothwidth, tableheight))
@@ -1012,7 +1100,7 @@ class Game(mSizeX : Int, mSizeY : Int, ctx_ : dom.CanvasRenderingContext2D)
 			curY += tableheight
 
 			//space for seat
-			seats += curY
+			seats += Tuple2(curY, "180")
 			curY += boothspace
 
 			//wall
@@ -1022,19 +1110,58 @@ class Game(mSizeX : Int, mSizeY : Int, ctx_ : dom.CanvasRenderingContext2D)
 		}
 
 		//add the dudes
-		val jane = new MolotovThrower(new Pt(player.loc.x + 50, player.loc.y))
-		val tanky = new TankRider(new Pt(player.loc.x + 50, player.loc.y))
+		val jane = (new MolotovThrower(new Pt(player.loc.x + 50, player.loc.y)),
+					GV.JANE_BAR_PHRASES, "char_human_2")
+		val tanky = (new TankRider(new Pt(player.loc.x + 50, player.loc.y)),
+					GV.TANK_RIDER_BAR_PHRASES, "tank rider")
+		dom.console.log("about to spawn sniper")
+		val sniper = (new Sniper(new Pt(player.loc.x + 50, player.loc.y)),
+					GV.SNIPER_BAR_PHRASES, "char suou")
+		dom.console.log("spawned nsniper")
+		val medic = (new Medic(new Pt(player.loc.x + 50, player.loc.y)),
+					GV.SNIPER_BAR_PHRASES, "char_human_3")
+		val sapper = (new Sapper(new Pt(player.loc.x + 50, player.loc.y)),
+					GV.SAPPER_BAR_PHRASES, "char_human_3")
 		
 		//g.addActor(hooman)
 		val seat1 = seats(r.nextInt(seats.length))
 		seats -= seat1
 		val seat2 = seats(r.nextInt(seats.length))
 		seats -= seat2
-		val dude1 = new BarDude(new Pt(x + 10, seat1), GV.JANE_BAR_PHRASES, GV.JANE_SEE_PHRASES, "char_human_2", jane)
-		val dude2 = new BarDude(new Pt(x + 10, seat2), GV.TANK_RIDER_BAR_PHRASES, GV.TANK_RIDER_SEE_PHRASES, "tank rider", tanky)
+		val seat3 = seats(r.nextInt(seats.length))
+		seats -= seat3
 
-		addActor(dude1)
-		addActor(dude2)
+		val chosenSeats = List(seat1, seat2, seat3)
+		// val seat4 = seats(r.nextInt(seats.length))
+		// seats -= seat4
+		// val seat5 = seats(r.nextInt(seats.length))
+		// seats -= seat5
+		// val dude1 = new BarDude(new Pt(x + 10, seat1._1), GV.JANE_BAR_PHRASES, "char_human_2", seat1._2, jane)
+		// val dude2 = new BarDude(new Pt(x + 10, seat2._1), GV.TANK_RIDER_BAR_PHRASES, "tank rider", seat2._2, tanky)
+		// val dude3 = new BarDude(new Pt(x + 10, seat3._1), GV.SNIPER_BAR_PHRASES, "char suou", seat3._2, sniper)
+		// val dude4 = new BarDude(new Pt(x + 10, seat4._1), GV.SNIPER_BAR_PHRASES, "char_human_3", seat4._2, medic)
+		// val dude5 = new BarDude(new Pt(x + 10, seat5._1), GV.SAPPER_BAR_PHRASES, "char_human_3", seat5._2, sapper)
+
+		val dudes = scala.collection.mutable.Set(jane, tanky, sniper, medic, sapper)
+		for(i <- 1 to GV.SALOON_NPCNUM)
+		{
+			val seat = seats(i)
+			val dude = dudes.toList(r.nextInt(dudes.size))
+			val bardude = new BarDude(new Pt(x + 10, seat._1), dude._2, dude._3, seat._2, dude._1)
+			addActor(bardude)
+
+			//remove him from the last so we don't double spawn
+			dudes remove dude
+		}
+		//val dude2 = new BarDude(new Pt(x + 10, seat2._1), GV.TANK_RIDER_BAR_PHRASES, "tank rider", seat2._2, tanky)
+		//val dude3 = new BarDude(new Pt(x + 10, seat3._1), GV.SNIPER_BAR_PHRASES, "char suou", seat3._2, sniper)
+		
+
+		// addActor(dude1)
+		// addActor(dude2)
+		// addActor(dude3)
+		// addActor(dude4)
+		// addActor(dude5)
 
 		//add some health and junk
 		val hp1 = new MediumHealthPack(new Pt(GV.GAMEX/2 - 60 - 15, border + 10))

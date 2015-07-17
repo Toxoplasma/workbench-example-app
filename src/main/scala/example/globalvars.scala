@@ -26,6 +26,7 @@ object GV
 	val PLAYER_HEALTH = 100
 	val PLAYER_THROWDISTANCE = 50
 	val PLAYER_THROWSPEED = 6
+	val PLAYER_MAX_USABLES = 15
 
 	val HUMAN_HEALTH = 50
 	val HUMAN_AMMO = 500
@@ -33,6 +34,7 @@ object GV
 	val BASE_AMMO = 1000 //player's starting ammo. 100 pistol shots
 
 	val ITEM_CHANCE = 2 //1 in this
+	val EQUIP_CHANCE = 10 //1 in 10 items is an equip
 
 	val AMMO_CHANCE = 5
 	val HEALTH_CHANCE = 5
@@ -49,16 +51,33 @@ object GV
 	val PISTOL_RANGE = 100
 	val PISTOL_APS = 10
 	val PISTOL_FIRETIME = 20
+	val PISTOL_AIMTIME = 0
 
-	val AK47_DAMAGE = 7
+	val AK47_DAMAGE = 8
 	val AK47_RANGE = 200
 	val AK47_APS = 4
 	val AK47_FIRETIME = 7
+	val AK47_AIMTIME = 10
+
+	val MG_DAMAGE = 15
+	val MG_RANGE = 250
+	val MG_APS = 6
+	val MG_FIRETIME = 8
+	val MG_AIMTIME = 30
 
 	val SNIPER_DAMAGE = 50
 	val SNIPER_RANGE = 600
 	val SNIPER_APS = 20
 	val SNIPER_FIRETIME = 50
+	val SNIPER_AIMTIME = 50
+
+	val SMG_FIRETIME = 6
+	val SMG_DAMAGE = 4
+	val SMG_RANGE = 150
+	val SMG_APS = 4
+	val SMG_AIMTIME = 0
+
+	val MEDIC_MEDRATE = 500
 
 
 	val AMMOPACK_AMOUNT = 500
@@ -80,10 +99,7 @@ object GV
 	val MOLOTOV_DURATION = 5
 
 
-	val TURRET_FIRETIME = 6
-	val TURRET_DAMAGE = 4
-	val TURRET_RANGE = 150
-	val TURRET_APS = 4
+	
 	val TURRET_HP = 100
 
 	val ZOMBIE_CONTROLLER_RADIUS = 100
@@ -93,7 +109,7 @@ object GV
 	val FIRE_DAMAGE = 0.5
 	val FIRE_EXTINGUISHTIME = 40
 
-	val ZOMBIE_ATTACKCOOLDOWN = 10
+	val ZOMBIE_ATTACKCOOLDOWN = 20
 	val ZOMBIE_DAMAGE = 10
 	
 	val ZOMBIESPAWNER_SPAWNRATE = 30
@@ -126,11 +142,24 @@ object GV
 	val CANNON_SPITRATE = 200 //100 for challenging boss?
 	val CANNON_SPITNUM = 5 //20 for challenging boss?
 
-	//load some pictures
+
+	val SAPPER_GRENADETIME = 200
+	val SAPPER_MINETIME = 250
 
 	val JANE_MOLOTOVRATE = 150
+
+	val TANK_RIDER_HP = TANK_HEALTH * 5 / 4
+	val TANK_RIDER_DAMAGE = TANK_DAMAGE * 5 / 4
+	
+
+
+	val SALOON_LEVEL_MIN = 5
+	val SALOON_LEVEL_RANGE = 6
+	val SALOON_NPCNUM = 3
+
 	val JANE_BAR_PHRASES = List("You need something burned?",
-								"I just wanna watch the world burn")
+								"I just wanna watch the world burn",
+								"I bring the heat")
 	val JANE_SEE_PHRASES = List("Wassup!",
 							"We'll bang ok",
 							"Let's kill some dudes!",
@@ -140,9 +169,6 @@ object GV
 							"Watch, or you might get burned!",
 							"They don't stand a chance!")
 
-
-	val TANK_RIDER_HP = TANK_HEALTH * 5 / 4
-	val TANK_RIDER_DAMAGE = TANK_DAMAGE * 5 / 4
 	val TANK_RIDER_BAR_PHRASES = List("Me and Bessy will kick some butt!",
 								"Let's ride!")
 	val TANK_RIDER_SEE_PHRASES = List("Yeehaw!",
@@ -154,8 +180,34 @@ object GV
 							"Yippekaya!",
 							"Ride 'em cowboy!")
 
-	val SALOON_LEVEL_MIN = 5
-	val SALOON_LEVEL_RANGE = 6
+	val SNIPER_SEE_PHRASES = List("Beeop boop replace me",
+									"write more lines please")
+	val SNIPER_BAR_PHRASES = List("I shoot guys from far away",
+								"Snipey snipey")
+
+	val SAPPER_SEE_PHRASES = List("Zooooombs",
+									"write more lines please?")
+	val SAPPER_BAR_PHRASES = List("Need something blown up?",
+								"Let's blow it sky high!")
+
+	val HUMAN_SEE_PHRASES = List("Good to see you!",
+							"We'll bang ok",
+							"Help me!",
+							"Save me!",
+							"Take the lead!",
+							"I'll follow you!",
+							"Freakin' ZOMBIES man!",
+							"Let's get out of here!",
+							"Run for your life!")
+	val HUMAN_LOWHP_PHRASES =List("I'm gonna die!",
+							"I'm dying bro!",
+							"I'm not gonna make it!",
+							"Tell my kids I love them!")
+	val HUMAN_LOWAMMO_PHRASES = List("I'm almost out of ammo!",
+							"I'm running low on bullets!",
+							"We'd better find more ammo soon!")
+
+	
 }
 
 
@@ -197,6 +249,8 @@ class Pt(x_ : Double, y_ : Double)
 	}
 
 	def -(p : Pt) : Pt = return new Pt(x - p.x, y - p.y)
+
+	def ==(p : Pt) : Boolean = x == p.x && y == p.y
 
 	override def toString(): String = "(" + x + ", " + y + ")"
 
