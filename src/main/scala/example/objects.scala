@@ -205,6 +205,12 @@ extends Obj(loc_, size_)
 	var effects = scala.collection.mutable.Set[Effect]()
 	var equips = scala.collection.mutable.HashMap[String, Equipment]()
 
+
+	//effects
+	var onFire = false
+	var burnTime = 0
+	var frozen = false
+
 	//flags
 	//drawing related
 	var important = true
@@ -213,6 +219,7 @@ extends Obj(loc_, size_)
 	var flammable = true
 	var canPutSelfOut = false
 	var acidProof = false
+	var frozenImmune = false
 
 	var damageReduce = 0
 
@@ -249,6 +256,9 @@ extends Obj(loc_, size_)
 
 	def moveLocWithoutRound(dx : Double, dy : Double, g : Game) : Boolean =
 	{
+		if(frozen) return false
+
+
 		var moved = false
 
 		val tempLoc = loc.cloone
@@ -293,6 +303,26 @@ extends Obj(loc_, size_)
 	{
 		g.ctx.fillStyle = "red"
 		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)
+	}
+
+	def drawFire(loc : Pt, area : Pt, g : Game)
+	{
+		for(i <- 1 to (area.x * area.y / 10).toInt)
+		{
+			//draw a red dot?
+			val x = g.r.nextInt(area.x.toInt) + loc.x
+			val y = g.r.nextInt(area.y.toInt) + loc.y
+			g.ctx.fillStyle = s"rgb(" + (g.r.nextInt(100) + 156) + ", 0, 0)"
+			g.ctx.fillRect(x, y, 1, 1)
+		}
+	}
+
+	def drawEffects(g : Game) = 
+	{
+		if(onFire)
+		{
+			drawFire(loc, size, g)
+		}
 	}
 
 	//Has the unit's ai pick a move and then does the move
@@ -461,13 +491,13 @@ extends Obj(loc_, size_)
 		hp <= 0
 	}
 
-	def runEffects(g : Game) = 
-	{
-		for(f <- effects)
-		{
-			f.effect(this, g)
-		}
-	}
+	// def runEffects(g : Game) = 
+	// {
+	// 	for(f <- effects)
+	// 	{
+	// 		f.effect(this, g)
+	// 	}
+	// }
 
 	def angleToSpriteAngle(change : Pt) : Int =
 	{
@@ -499,6 +529,23 @@ extends Obj(loc_, size_)
 	def gainHealth(n : Int) =
 	{
 		hp = min(hp + n, maxHp)
+	}
+
+	def runEffects(g : Game) = 
+	{
+		//Fire
+		if(onFire)
+		{
+			takeDamage(this, GV.FIRE_DAMAGE, 0, g, true)
+
+			burnTime -= 1
+			if(burnTime <= 0) onFire = false
+		}
+	}
+
+	def cloone() =
+	{
+		clone
 	}
 }
 
@@ -537,7 +584,7 @@ extends Item(loc_)
 
 	override def draw(g : Game) =
 	{
-		val img = g.images("item_ammobox")
+		val img = g.images("item ammo box")
 		g.ctx.drawImage(img, loc.x, loc.y, GV.NORMUNITSIZE, GV.NORMUNITSIZE)
 	}
 
@@ -563,7 +610,7 @@ extends Item(loc_)
 
 	override def draw(g : Game) =
 	{
-		val img = g.images("item_healthkit")
+		val img = g.images("item health kit")
 		g.ctx.drawImage(img, loc.x, loc.y, GV.NORMUNITSIZE, GV.NORMUNITSIZE)
 	}
 
@@ -596,15 +643,15 @@ class Equipment(slot_ : String, name_ : String, displayName_ : String, onEquip_ 
 
 
 
-class GroundEquip(loc_ : Pt, equip_ : Equipment, displayName_ : String)
+class GroundEquip(loc_ : Pt, equip_ : Equipment)
 extends Item(loc_)
 {
 	val equip = equip_
-	val displayName = displayName_
 
 	override def draw(g : Game)
 	{
-		val img = g.images(displayName)
+		//val img = g.images(displayName)
+		val img = g.images(equip.displayName)
 		g.ctx.drawImage(img, loc.x, loc.y, GV.NORMUNITSIZE, GV.NORMUNITSIZE)
 	}
 
@@ -655,7 +702,7 @@ class UsableItem(owner_ : Actor, name_ : String, displayName_ : String)
 	def use(g : Game) = {}
 }
 
-class GroundUsableItem(loc_ : Pt, item_ : UsableItem, displayName_ : String)
+class GroundUsableItem(loc_ : Pt, item_ : UsableItem)
 extends Item(loc_)
 {
 	val item = item_
@@ -722,7 +769,7 @@ extends UsableItem(owner_, name_, picture_)
 
 
 class UsableLandMine(owner_ : Actor)
-extends UsableItem(owner_, "land mine", "item_landmine")
+extends UsableItem(owner_, "land mine", "item landmine")
 {
 	override def use(g : Game) =
 	{
@@ -734,7 +781,7 @@ extends UsableItem(owner_, "land mine", "item_landmine")
 }
 
 class UsableZombieController(owner_ : Actor)
-extends UsableItem(owner_, "wifi router", "item_zombiecontroller")
+extends UsableItem(owner_, "wifi router", "item zombiecontroller")
 {
 	override def use(g : Game) =
 	{
@@ -746,7 +793,7 @@ extends UsableItem(owner_, "wifi router", "item_zombiecontroller")
 }
 
 class UsableGrenade(owner_ : Actor)
-extends ThrowableItem(owner_, GV.GRENADE_RADIUS * 3/2, "grenade", "item_grenade")
+extends ThrowableItem(owner_, GV.GRENADE_RADIUS * 3/2, "grenade", "item grenade")
 {
 	override def use(g : Game)
 	{
@@ -763,7 +810,7 @@ extends ThrowableItem(owner_, GV.GRENADE_RADIUS * 3/2, "grenade", "item_grenade"
 
 class UsablePipeBomb(owner_ : Actor)
 //extends UsableItem(owner_, "pipe bomb", "item_pipebomb")
-extends ThrowableItem(owner_, 0, "pipe bomb", "item_pipebomb")
+extends ThrowableItem(owner_, 0, "pipe bomb", "item pipe bomb")
 {
 	override def use(g : Game) =
 	{
@@ -779,7 +826,7 @@ extends ThrowableItem(owner_, 0, "pipe bomb", "item_pipebomb")
 }
 
 class UsableSpitterAcid(owner_ : Actor)
-extends ThrowableItem(owner_, GV.SPITTER_SPITRADIUS, "spitter acid", "item_acid")
+extends ThrowableItem(owner_, GV.SPITTER_SPITRADIUS, "spitter acid", "item acid")
 {
 	override def use(g : Game) =
 	{
@@ -796,7 +843,7 @@ extends ThrowableItem(owner_, GV.SPITTER_SPITRADIUS, "spitter acid", "item_acid"
 }
 
 class UsableMolotov(owner_ : Actor)
-extends ThrowableItem(owner_, GV.MOLOTOV_RADIUS, "molotov", "item_molotov")
+extends ThrowableItem(owner_, GV.MOLOTOV_RADIUS, "molotov", "item molotov")
 {
 	override def use(g : Game) =
 	{
@@ -813,7 +860,7 @@ extends ThrowableItem(owner_, GV.MOLOTOV_RADIUS, "molotov", "item_molotov")
 }
 
 class UsableGunTurret(owner_ : Actor)
-extends ThrowableItem(owner_, 0, "turret", "turret big")
+extends ThrowableItem(owner_, 0, "turret", "item gunturret")
 {
 	override def use(g : Game)
 	{
@@ -842,7 +889,7 @@ extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE),
 	override def draw(g : Game) =
 	{
 		//draw from the game thing
-		val img = g.images("item_pipebomb")
+		val img = g.images("item pipe bomb")
 		g.ctx.drawImage(img, loc.x, loc.y, GV.NORMUNITSIZE, GV.NORMUNITSIZE)
 	}
 
@@ -876,6 +923,11 @@ extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE),
 
 	override def aiMove(g : Game) = 
 	{
+		//add an animation for our explosion
+		val anim = new Anim(loc - new Pt(radius, radius), "explosion 50", 5)
+		g.addAnim(anim)
+
+
 		//we explode!
 		for(a <- g.acts)
 		{
@@ -904,7 +956,7 @@ extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE),
 	override def draw(g : Game) =
 	{
 		//draw from the game thing
-		val img = g.images("item_zombiecontroller")
+		val img = g.images("item zombiecontroller")
 		g.ctx.drawImage(img, loc.x, loc.y, GV.NORMUNITSIZE, GV.NORMUNITSIZE)
 	}
 
@@ -1017,11 +1069,19 @@ extends Actor(new Pt(loc_.x - radius_, loc_.y - radius_), new Pt(radius_ * 2, ra
 		//first, check if anyone gets damaged
 		for(a <- g.acts)
 		{
-			if(a.faction != "NA" && ! a.acidProof && 
+			if(a.faction != "NA" && 
 				collides(a) && hasLosTo(a, g)) //if it's a real actor and we collide with it
 			{
-				a.takeDamage(this, GV.SPITTER_SPITDAMAGE, 0, g, true)
+				if(a.acidProof)
+				{
+					a.takeDamage(this, GV.SPITTER_SPITDAMAGE / GV.SPITTER_SPITRESIST, 0, g, true)
+				}
+				else
+				{
+					a.takeDamage(this, GV.SPITTER_SPITDAMAGE, 0, g, true)
+				}
 			}
+
 		}
 
 		//Now, shrink a bit if necessary
@@ -1045,6 +1105,110 @@ extends Actor(new Pt(loc_.x - radius_, loc_.y - radius_), new Pt(radius_ * 2, ra
 		else if(reduceTimer > 0) //if we're a timed puddle, then count down the timer
 		{
 			reduceTimer -= 1
+		}
+	}
+}
+
+class ShrinkingPool(loc_ : Pt, radius_ : Int, reduceRate_ : Int)
+extends Actor(new Pt(loc_.x - radius_, loc_.y - radius_), new Pt(radius_ * 2, radius_ * 2),
+				-1, 0, "NA", 0, "caustic acid")
+{
+	var radius = radius_
+
+	var reduceRate = reduceRate_
+	var reduceTimer = reduceRate
+
+	val minRadius = GV.NORMUNITSIZE
+
+	blocksMovement = false
+	lowPriority = true
+
+	def onCollide(a : Actor, g : Game) = {}
+	def tick(g : Game) = {}
+	def onEnd(g : Game) = {}
+
+	// override def draw(g : Game) =
+	// {
+	// 	g.ctx.fillStyle = s"rgb(0, 255, 0)"
+	// 	g.ctx.fillRect(loc.x, loc.y, size.x, size.y)
+	// }
+
+	override def aiMove(g : Game) =
+	{
+		tick(g)
+
+		//anyone inside?
+		for(a <- g.acts)
+		{
+			if(a.faction != "NA" && 
+				collides(a) && hasLosTo(a, g)) //if it's a real actor and we collide with it
+			{
+				onCollide(a, g)
+			}
+
+		}
+
+		//Now, shrink a bit if necessary
+		if(reduceTimer == 0)
+		{
+			//are we at 0?
+			if(radius <= minRadius)
+			{
+				onEnd(g)
+
+				//delete ourselves
+				g.removeActor(this)
+			}
+			else
+			{
+				reduceTimer = reduceRate
+				radius -= 1
+				changeLoc(new Pt(loc.x + 1, loc.y + 1))
+				size.x -= 2
+				size.y -= 2
+			}
+		}
+		else if(reduceTimer > 0) //if we're a timed puddle, then count down the timer
+		{
+			reduceTimer -= 1
+		}
+	}
+}
+
+class IcePool(loc_ : Pt, radius_ : Int, reduceRate_ : Int)
+extends ShrinkingPool(loc_, radius_, reduceRate_)
+{
+	val frozenDudes = scala.collection.mutable.Set[Actor]()
+
+	override def draw(g : Game) =
+	{
+		g.ctx.fillStyle = s"rgb(0, 255, 232)"
+		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)
+	}
+
+	override def onCollide(a : Actor, g : Game) =
+	{
+		if(! a.frozenImmune)
+		{
+			a.frozen = true
+			frozenDudes += a
+		}
+	}
+
+	override def tick(g : Game) =
+	{
+		for(a <- frozenDudes)
+		{
+			if(! collides(a)) a.frozen = false //unfreeze people if they're no longer frozen
+		}
+	}
+
+	override def onEnd(g : Game) =
+	{
+		//just remove anyone else that's still frozen
+		for(a <- frozenDudes)
+		{
+			a.frozen = false //unfreeze them
 		}
 	}
 }
@@ -1075,71 +1239,25 @@ extends Actor(new Pt(loc_.x - radius_, loc_.y - radius_), new Pt(radius_ * 2, ra
 				g.ctx.fillRect(x, y, 1, 1)
 			}
 		}
-
-		if(timer > 0)
-			drawFire(loc, size)
-
-		//g.ctx.fillStyle = s"rgb(200, 50, 50)"
-		//g.ctx.fillRect(loc.x, loc.y, size.x, size.y)
-
-		//draw fire on all the dudes on fire
-		for((a, t) <- actsOnFire)
-		{
-			drawFire(a.loc, a.size)
-		}
+		drawFire(loc, size)
 	}
 
 	override def aiMove(g : Game) =
 	{
-		//first, check if anyone gets set on fire
-		if(timer > 0)
+		for(a <- g.acts)
 		{
-			for(a <- g.acts)
+			//if it's a real actor and we collide with it and it's flammable
+			if(a.faction != "NA" && collides(a) && hasLosTo(a, g) && a.flammable) 
 			{
-				//if it's a real actor and we collide with it and it's flammable
-				if(a.faction != "NA" && collides(a) && hasLosTo(a, g) && a.flammable) 
-				{
-					actsOnFire += (a -> 0)
-				}
-			}
-
-			timer -= 1
-		}
-
-		//now process fire
-		for((a, t) <- actsOnFire)
-		{
-			a.takeDamage(this, GV.FIRE_DAMAGE, 0, g, true)
-
-			
-
-		}
-
-		for((a, t) <- actsOnFire)
-		{
-			//did they put the fire out?
-			if(a.canPutSelfOut)
-			{
-				if(t >= GV.FIRE_EXTINGUISHTIME)
-				{
-					actsOnFire remove a
-				}
-				else
-					actsOnFire(a) += 1
-
-			}
-			//are they dead?
-			if(a.isDead)
-			{
-				actsOnFire remove a
+				a.onFire = true
+				a.burnTime = GV.BURN_TIME
 			}
 		}
 
-		if(timer <= 0 && actsOnFire.isEmpty) //all done!
+		timer -= 1
+		if(timer <= 0)
 		{
-			//remove ourselves, we're done
-			actsOnFire.clear
-			g.removeActor(this)
+			g.removeActor(this) //we're out
 		}
 	}
 }
@@ -1367,7 +1485,7 @@ extends Equipment(slot_, name_, displayName_, a => ())
 
 
 class EqLightArmor()
-extends Equipment("body", "light armor", "eq light armor big", a => ())
+extends Equipment("body", "light armor", "eq light armor", a => ())
 {
 	def apply(a : Player)
 	{
@@ -1379,7 +1497,7 @@ extends Equipment("body", "light armor", "eq light armor big", a => ())
 }
 
 class EqHeavyArmor()
-extends Equipment("body", "heavy armor", "eq heavy armor big", a => ())
+extends Equipment("body", "heavy armor", "eq heavy armor", a => ())
 {
 	def apply(a : Player)
 	{
@@ -1393,16 +1511,16 @@ extends Equipment("body", "heavy armor", "eq heavy armor big", a => ())
 
 
 class EqSpitterBoots()
-extends Equipment("legs", "rain boots", "eq acid boots big", a => a.acidProof = true)
+extends Equipment("legs", "rain boots", "eq acid boots", a => a.acidProof = true)
 
 class EqSpeedBoots()
-extends Equipment("legs", "running shoes", "item running shoes big", a => a.speed += 1)
+extends Equipment("legs", "running shoes", "eq running shoes", a => a.speed += 1)
 
 
 
 
 class EqFlameCape()
-extends Equipment("cloak", "flame cape", "eq fireproof cape big", a => a.flammable = false)
+extends Equipment("cloak", "flame cape", "eq fireproof cape", a => a.flammable = false)
 
 
 class Gun(firingSpeed_ : Int, damage_ : Int, range_ : Int, ammoPerShot_ : Int, aimTime_ : Int, name_ : String, displayName_ : String)
@@ -1472,21 +1590,50 @@ class EqGun(name_ : String, displayName_ : String)
 extends Equipment("gun", name_, displayName_, a => ())
 
 class EqNoGun()
-extends Gun(0, 0, 0, 10000, 0, "no gun", "ak47")
+extends Gun(0, 0, 0, 10000, 0, "no gun", "eq uzi")
 
 class EqPistol()
-extends Gun(GV.PISTOL_FIRETIME, GV.PISTOL_DAMAGE, GV.PISTOL_RANGE, GV.PISTOL_APS, GV.PISTOL_AIMTIME, "pistol", "ak47")
+extends Gun(GV.PISTOL_FIRETIME, GV.PISTOL_DAMAGE, GV.PISTOL_RANGE, GV.PISTOL_APS, GV.PISTOL_AIMTIME, "pistol", "eq ak47")
 
 class EqSMG()
-extends Gun(GV.SMG_FIRETIME, GV.SMG_DAMAGE, GV.SMG_RANGE, GV.SMG_APS, GV.SMG_AIMTIME, "smg", "ak47")
+extends Gun(GV.SMG_FIRETIME, GV.SMG_DAMAGE, GV.SMG_RANGE, GV.SMG_APS, GV.SMG_AIMTIME, "smg", "eq uzi")
 
 class EqMG()
-extends Gun(GV.MG_FIRETIME, GV.MG_DAMAGE, GV.MG_RANGE, GV.MG_APS, GV.MG_AIMTIME, "machine gun", "ak47")
+extends Gun(GV.MG_FIRETIME, GV.MG_DAMAGE, GV.MG_RANGE, GV.MG_APS, GV.MG_AIMTIME, "machine gun", "eq ak47")
 
 
 class EqSniperRifle()
-extends Gun(GV.SNIPER_FIRETIME, GV.SNIPER_DAMAGE, GV.SNIPER_RANGE, GV.SNIPER_APS, GV.SNIPER_AIMTIME, "sniper rifle", "ak47")
+extends Gun(GV.SNIPER_FIRETIME, GV.SNIPER_DAMAGE, GV.SNIPER_RANGE, GV.SNIPER_APS, GV.SNIPER_AIMTIME, "sniper rifle", "eq ak47")
 
 class EqAk47()
-extends Gun(GV.AK47_FIRETIME, GV.AK47_DAMAGE, GV.AK47_RANGE, GV.AK47_APS, GV.AK47_AIMTIME, "ak47", "ak47")
+extends Gun(GV.AK47_FIRETIME, GV.AK47_DAMAGE, GV.AK47_RANGE, GV.AK47_APS, GV.AK47_AIMTIME, "ak47", "eq ak47")
 
+
+
+
+
+
+
+
+
+class Anim(loc_ : Pt, displayName_ : String, maxIndex_ : Int)
+{
+	val displayName = displayName_
+	var index = 1
+	val maxIndex = maxIndex_
+	var loc = loc_
+
+	def draw(g : Game)
+	{
+		var img = g.images(displayName + " " + index)
+
+		g.ctx.drawImage(img, loc.x, loc.y)
+
+		index += 1
+
+		if(index > maxIndex)
+		{
+			g.removeAnim(this)
+		}
+	}
+}

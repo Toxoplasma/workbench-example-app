@@ -10,17 +10,13 @@ add a max range for throwing
 
 Make the direction picking for sprites octagons instead of the current thing
 
-
-Fix turrets spawning inside you and sticking you forever
+make thrown items spawn at the closest available square
+	Fixes turrets spawning inside you and sticking you forever
 
 Minor stuff:
 Make the farm house doors not always leftmost/uppermost on the wall they're on
 highscores 
 add a max to the ammo bar display for the mini chars
-make thrown items spawn at the closest available square
-make chargers no longer count as charging if they start sliding along a wall and being really slow
-	Thrown items too
-	Loop the step until they've moved the required distance, or until it's taken like double the steps it should have been then mark it done
 Fix the sniper's spazziness
 make his medkits land on ints
 
@@ -46,6 +42,7 @@ press i for an item / enemy guide
 Arts needed:
 	Humans
 		Medic
+		Fiddler
 
 	Zombies
 	Explosion?
@@ -66,6 +63,7 @@ Items
 	TANK LASSO
 	blink scroll
 	decoy
+	throwable healing cloud - throw at team mates to heal them and everyone around them
 
 Equipment
 	Guns
@@ -110,6 +108,7 @@ Characters
 	Scatterbrain Jane: molotov throwing dude
 	Fiddler - lays mines & throws grenades
 	Suou Pavlichenko - Sniper that targets specials
+	unnamed medic - throws health kits
 
 	Someone bad but immortal
 	Abraham Lincoln - A melee person
@@ -128,6 +127,15 @@ Areas
 		grav grenades (suck everyone in)
 
 	Bandit stronghold
+
+	Paired ice and fire branches where you can jump between them at any time
+		Ice level has lots of ice-resistant enemies and ice items
+		fire level has ^^ but fire
+
+
+	Spitter pits
+		Random pools of spit everywhere
+		Lots of spitters and SUPAH SPITTAHS
 	
 	Wizard tower
 		Necromancers (summons zombies around them)
@@ -204,7 +212,86 @@ SNIPPETS
 		// return closestAct
 
 
+var img = loadImage("images/ak47.png")
+		images += ("ak47" -> img)
 
+		img = loadImage("images/item_landmine.png")
+		images += ("item_landmine" -> img)
+
+		img = loadImage("images/item health kit.png")
+		images += ("item_healthkit" -> img)
+
+		img = loadImage("images/item ammo box.png")
+		images += ("item_ammobox" -> img)
+
+		img = loadImage("images/item molotov.png")
+		images += ("item_molotov" -> img)
+
+		img = loadImage("images/item pipe bomb.png")
+		images += ("item_pipebomb" -> img)
+
+		img = loadImage("images/item acid.png")
+		images += ("item_acid" -> img)
+
+		img = loadImage("images/item grenade.png")
+		images += ("item_grenade" -> img)
+
+		img = loadImage("images/item grenade small.png")
+		images += ("item_grenade small" -> img)
+
+		img = loadImage("images/turret big.png")
+		images += ("item_gunturret" -> img)
+
+		img = loadImage("images/item zombie control.png")
+		images += ("item_zombiecontroller" -> img)
+
+		// img = loadImage("images/item wet towel.png")
+		// images += ("item wet towel" -> img)
+
+		// img = loadImage("images/item wet towel big.png")
+		// images += ("item wet towel big" -> img)
+
+		img = loadImage("images/eq acid boots.png")
+		images += ("eq acid boots" -> img)
+
+		img = loadImage("images/eq acid boots big.png")
+		images += ("eq acid boots big" -> img)
+
+		// img = loadImage("images/eq fireproof cape.png")
+		// images += ("eq fireproof cape" -> img)
+
+		// img = loadImage("images/eq fireproof cape big.png")
+		// images += ("eq fireproof cape big" -> img)
+
+		img = loadImage("images/eq heavy armor.png")
+		images += ("eq heavy armor" -> img)
+
+		img = loadImage("images/eq heavy armor big.png")
+		images += ("eq heavy armor big" -> img)
+
+		img = loadImage("images/eq light armor.png")
+		images += ("eq light armor" -> img)
+
+		img = loadImage("images/eq light armor big.png")
+		images += ("eq light armor big" -> img)
+
+		img = loadImage("images/eq running shoes.png")
+		images += ("eq running shoes" -> img)
+
+		img = loadImage("images/eq running shoes big.png")
+		images += ("eq running shoes big" -> img)
+
+		img = loadImage("images/eq flip flops.png")
+		images += ("eq flip flops" -> img)
+
+		img = loadImage("images/eq flip flops big.png")
+		images += ("eq flip flops big" -> img)
+
+		img = loadImage("images/eq uzi.png")
+		images += ("eq uzi" -> img)
+
+		img = loadImage("images/eq uzi big.png")
+		images += ("eq uzi big" -> img)
 
 SEA - PRG condor: number 7807983
 

@@ -257,43 +257,39 @@ extends Actor(loc_, new Pt(GV.BIGUNITSIZE, GV.BIGUNITSIZE),
 		}
 		else if(state == "charging")
 		{
-			if(distanceTo(chargeLine.start) > chargeRange)
-			{
-				//we've gone too far, stop charging
-				stateMoving()
-			}
-			else
-			{
-				for(i <- 1 to chargeSpeed)
-				{
-					if(state == "charging") //if we hit someone we don't want to keep taking steps
-					{
-						//take a step along the line
-						val d = chargeLine.unitStep
-						
-						//try to move in that direction
-						val moveSuccess = moveLocWithoutRound(d.x, d.y, g)
+			val step = chargeLine.unitStep
 
-						if(! moveSuccess) //we hit a wall
-						{
-							stateMoving()
-						}
-						
-						//did we crash into an actor?
-						for(a <- g.acts)
-						{
-							if(a != this &&  a.faction != "NA" &&
-								a.collides(loc + d, size))
-							{
-								//we did!
-								//knock 'em up
-								a.takeDamage(this, 10, 4, g)
-								stateMoving()
-							}
-						}
+			var done = false
+
+			val start = loc.cloone
+
+			var stepCount = 0
+			while(!done && stepCount < chargeSpeed*2 && distanceTo(start) < chargeSpeed)
+			{
+				//try to move. If it fails, we're done
+				done = ! moveLocWithoutRound(step.x, step.y, g)
+
+				//have we hit anyone?
+				//did we crash into an actor?
+				for(a <- g.acts)
+				{
+					if(a != this &&  a.faction != "NA" &&
+						a.collides(loc + step, size))
+					{
+						//we did!
+						//knock 'em up
+						a.takeDamage(this, 10, 4, g)
+						stateMoving()
+						done = true
 					}
 				}
+
+				//are we there yet?
+				// if((loc - line.start).pythagLength > line.length)
+				// 	done = true
 			}
+
+			if(done) stateMoving()
 		}
 	}
 
@@ -311,7 +307,7 @@ extends Actor(loc_, new Pt(GV.BIGUNITSIZE, GV.BIGUNITSIZE),
 
 
 
-class Spitter(loc_ : Pt)
+class Spitter(loc_ : Pt, spitRate_ : Int, spit_ : Pt => Actor)
 extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE),
 	70, 1, 
 	"zombie", 5, "spitter")
@@ -319,16 +315,15 @@ extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE),
 	var direction = (0, 0)
 	val chanceToChangeDirection = 400
 
-	var spitTimer = 0
-	val spitRate = GV.SPITTER_SPITRATE
-	val spitRadius = GV.SPITTER_SPITRADIUS
-	val spitReduceRate = GV.SPITTER_SPITREDUCERATE
+	val spit = spit_
+	val spitRate = spitRate_
 
-	override def draw(g : Game) =
-	{
-		g.ctx.fillStyle = s"rgb(0, 255, 0)"
-		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)
-	}
+	var spitTimer = 0
+	// val spitRate = GV.SPITTER_SPITRATE
+	// val spitRadius = GV.SPITTER_SPITRADIUS
+	// val spitReduceRate = GV.SPITTER_SPITREDUCERATE
+
+	// acidProof = true
 
 	override def aiMove(g : Game) =
 	{
@@ -352,10 +347,10 @@ extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE),
 				//g.linesToDraw += spitLine
 
 				//make a spit
-				val spit = new CausticAcid(target.loc.cloone, spitRadius, spitReduceRate)
+				// val spit = new CausticAcid(target.loc.cloone, spitRadius, spitReduceRate)
 				//g.addActor(spit)
 
-				val proj = new ProjectileActor(spit, spitLine, 6)
+				val proj = new ProjectileActor(spit(target.loc.cloone), spitLine, 6)
 				proj.passThrough = true
 				g.addActor(proj)
 
@@ -393,15 +388,41 @@ extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE),
 		//how long it will take us to get there is loc.y/speed
 		spitTimer  = max(0, spitTimer - time) 
 	}
+}
+
+
+class AcidSpitter(loc_ : Pt)
+extends Spitter(loc_, GV.SPITTER_SPITRATE, 
+	p => new CausticAcid(p, GV.SPITTER_SPITRADIUS, GV.SPITTER_SPITREDUCERATE))
+{
+	acidProof = true
+
+	override def draw(g : Game) =
+	{
+		g.ctx.fillStyle = s"rgb(0, 255, 0)"
+		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)
+	}
 
 	override def onDeath(g : Game) = 
 	{
 		//drop a spitter spit
-		val spit = new CausticAcid(loc, spitRadius * 2/3, spitReduceRate)
+		val spit = new CausticAcid(loc, GV.SPITTER_SPITRADIUS * 2/3, GV.SPITTER_SPITREDUCERATE)
 		g.addActor(spit)
 	}
 }
 
+class IceSpitter(loc_ : Pt)
+extends Spitter(loc_, GV.SPITTER_SPITRATE, 
+	p => new IcePool(p, GV.SPITTER_SPITRADIUS, GV.SPITTER_SPITREDUCERATE))
+{
+	frozenImmune = true
+
+	override def draw(g : Game) =
+	{
+		g.ctx.fillStyle = s"rgb(0, 100, 200)"
+		g.ctx.fillRect(loc.x, loc.y, size.x, size.y)
+	}
+}
 
 
 //TODO: make them slowly heal like the tank rider

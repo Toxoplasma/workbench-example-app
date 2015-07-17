@@ -62,7 +62,7 @@ object ScalaJSExample
 
 		//MAKEA THA ZOMBIE
 		//val zed = new Zombie(GV.GAMEX / 2 - 10, GV.GAMEY - 50, 20, g.player)
-		val zed = new Spitter(new Pt(GV.GAMEX / 2 - 10, GV.GAMEY - 50))
+		// val zed = new Spitter(new Pt(GV.GAMEX / 2 - 10, GV.GAMEY - 50))
 		//g.addActor(zed)
 
 		//val item = new LandMine(new Pt(100, 100))
@@ -74,9 +74,9 @@ object ScalaJSExample
 		//make a hooman
 		//var hooman : Actor = null
 
-		val item = new EqHeavyArmor()
-		val gitem = new GroundEquip(new Pt(g.player.loc.x + 50, g.player.loc.y), item, "ak47")
-		g.addActor(gitem)
+		// val item = new EqHeavyArmor()
+		// val gitem = new GroundEquip(new Pt(g.player.loc.x + 50, g.player.loc.y), item, "eq ak47")
+		// g.addActor(gitem)
 		
 
 		//stick a gun on the ground
@@ -195,7 +195,7 @@ object ScalaJSExample
 			{
 				//dom.console.log(i.name)
 				//draw the item
-				val img = g.images(i.displayName)
+				val img = g.images(i.displayName + " big")
 				g.ctx.drawImage(img, GV.GAMEX + 100, barY, GV.NORMUNITSIZE*2, GV.NORMUNITSIZE*2)
 
 				//write its name

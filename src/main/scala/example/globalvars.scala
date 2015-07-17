@@ -57,13 +57,13 @@ object GV
 	val AK47_RANGE = 200
 	val AK47_APS = 4
 	val AK47_FIRETIME = 7
-	val AK47_AIMTIME = 10
+	val AK47_AIMTIME = 1
 
 	val MG_DAMAGE = 15
-	val MG_RANGE = 250
+	val MG_RANGE = 300
 	val MG_APS = 6
-	val MG_FIRETIME = 8
-	val MG_AIMTIME = 30
+	val MG_FIRETIME = 6
+	val MG_AIMTIME = 25
 
 	val SNIPER_DAMAGE = 50
 	val SNIPER_RANGE = 600
@@ -97,8 +97,6 @@ object GV
 
 	val MOLOTOV_RADIUS = 40
 	val MOLOTOV_DURATION = 5
-
-
 	
 	val TURRET_HP = 100
 
@@ -108,6 +106,7 @@ object GV
 
 	val FIRE_DAMAGE = 0.5
 	val FIRE_EXTINGUISHTIME = 40
+	val BURN_TIME = 400
 
 	val ZOMBIE_ATTACKCOOLDOWN = 20
 	val ZOMBIE_DAMAGE = 10
@@ -117,6 +116,7 @@ object GV
 
 	val CHARGER_CHANCE = 5
 	val SPITTER_CHANCE = 5
+	val ICESPITTER_CHANCE = 50
 	val TANK_CHANCE = 1
 	val CANNON_CHANCE = 1
 
@@ -130,6 +130,7 @@ object GV
 	val SPITTER_SPITREDUCERATE = 4 
 	val SPITTER_SPITRANGE = 300
 	val SPITTER_SPITDAMAGE = 0.7
+	val SPITTER_SPITRESIST = 10
 
 	val TANK_HEALTH = 400
 	val TANK_DAMAGE = 25
@@ -146,7 +147,7 @@ object GV
 	val SAPPER_GRENADETIME = 200
 	val SAPPER_MINETIME = 250
 
-	val JANE_MOLOTOVRATE = 150
+	val JANE_MOLOTOVRATE = 200
 
 	val TANK_RIDER_HP = TANK_HEALTH * 5 / 4
 	val TANK_RIDER_DAMAGE = TANK_DAMAGE * 5 / 4
@@ -180,8 +181,8 @@ object GV
 							"Yippekaya!",
 							"Ride 'em cowboy!")
 
-	val SNIPER_SEE_PHRASES = List("Beeop boop replace me",
-									"write more lines please")
+	val SNIPER_SEE_PHRASES = List("I'll take them down",
+									"They won't see it coming")
 	val SNIPER_BAR_PHRASES = List("I shoot guys from far away",
 								"Snipey snipey")
 
@@ -189,6 +190,11 @@ object GV
 									"write more lines please?")
 	val SAPPER_BAR_PHRASES = List("Need something blown up?",
 								"Let's blow it sky high!")
+
+	val MEDIC_SEE_PHRASES = List("Have a med kit",
+									"Who needs healing?")
+	val MEDIC_BAR_PHRASES = List("I can keep you alive",
+								"You need a medic?")
 
 	val HUMAN_SEE_PHRASES = List("Good to see you!",
 							"We'll bang ok",

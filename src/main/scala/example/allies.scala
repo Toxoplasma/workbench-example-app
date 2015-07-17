@@ -11,14 +11,14 @@ import objects._
 class Player(loc_ : Pt)
 extends BaseHuman(loc_, GV.PLAYER_HEALTH)
 {
-	bigDisplayname = "char_human_1_big"
+	bigDisplayname = "char human 1 big"
 	//var usable : UsableItem = null
 	var usableItems = new scala.collection.mutable.Stack[UsableItem]()
 	var maxUsableItems = GV.PLAYER_MAX_USABLES
 
-	equips += ("legs" -> new EqGeneric("legs", "flip flops", "eq flip flops big"))
-	equips += ("body" -> new EqGeneric("body", "sweatshirt", "item wet towel big"))
-	equips += ("cloak" -> new EqGeneric("cloak", "towel", "item wet towel big"))
+	equips += ("legs" -> new EqGeneric("legs", "flip flops", "eq flip flops"))
+	equips += ("body" -> new EqGeneric("body", "sweatshirt", "item wet towel"))
+	equips += ("cloak" -> new EqGeneric("cloak", "towel", "item wet towel"))
 	//equips += ("guns" -> new EqGeneric("cloak", "towel", "item wet towel big"))
 
 	override def canTakeItem(item : Actor) : Boolean =
@@ -40,7 +40,7 @@ extends BaseHuman(loc_, GV.PLAYER_HEALTH)
 	override def draw(g : Game) =
 	{
 		val change = lastLoc - loc
-		var img = g.images("char_human_1 " + angleToSpriteAngle(change))
+		var img = g.images("char human 1 " + angleToSpriteAngle(change))
 
 		g.ctx.drawImage(img, loc.x, loc.y, GV.NORMUNITSIZE, GV.NORMUNITSIZE)
 
@@ -86,8 +86,7 @@ extends BaseHuman(loc_, GV.PLAYER_HEALTH)
 		dom.console.log("Equipping " + e.name)
 		//toss out whatever is in e
 		val oldE = equips(e.slot)
-		val goldE = new GroundEquip(g.player.loc, oldE, oldE.displayName)
-		dom.console.log("created groundqeuop ")
+		val goldE = new GroundEquip(g.player.loc, oldE)
 
 		var dirX = g.r.nextInt(3) - 1
 		var dirY = g.r.nextInt(3) - 1
@@ -102,10 +101,8 @@ extends BaseHuman(loc_, GV.PLAYER_HEALTH)
 		val tossLine = new SimpleLine(g.player.loc.cloone, 
 			new Pt(g.player.loc.x + dirX * 50, g.player.loc.y + dirY * 50), "black")
 
-		dom.console.log("created tossline ")
 		val tossAct = new ProjectileActor(goldE, tossLine, 5)
 		g.addActor(tossAct)
-		dom.console.log("added tossline ")
 
 		//now, replace the old equipment with the new
 		equips(e.slot) = e
@@ -190,9 +187,9 @@ extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE), hp_, 2, "human", 0
 class Human(loc_ : Pt)
 extends BaseHuman(loc_, GV.HUMAN_HEALTH)
 {
-	bigDisplayname = "char_human_3_big"
+	bigDisplayname = "char human 3 big"
 
-	var displayName = "char_human_3"
+	var displayName = "char human 3"
 
 	var dest = new Pt(-1, -1)
 
@@ -380,63 +377,14 @@ extends BaseHuman(loc_, GV.HUMAN_HEALTH)
 }
 
 
-// class Gun(firingSpeed_ : Int, damage_ : Int, range_ : Int, ammoPerShot_ : Int, aimTime_ : Int, owner_ : Actor)
-// {
-// 	val firingSpeed = firingSpeed_
-// 	val damage = damage_
-// 	val range = range_
-// 	val ammoPerShot = ammoPerShot_
-// 	val aimTimeMin = aimTime_
-
-// 	var owner = owner_
-// 	var ownerLastLoc = new Pt(0, 0)
-
-// 	var aimTime = 0
-// 	var shotCountdown = 0
-
-// 	var ammo = GV.BASE_AMMO
-
-// 	def canShoot() =
-// 	{
-// 		shotCountdown == 0 && ammo >= ammoPerShot && aimTime >= aimTimeMin
-// 	}
-
-// 	def shoot(target : Actor, g : Game)
-// 	{
-// 		//do we have enough ammo?
-// 		if(ammo >= ammoPerShot)
-// 		{
-// 			ammo -= ammoPerShot
-		
-// 			//SHOOOOT ITTTT
-// 			target.takeDamage(owner, damage, 1, g)
-// 			shotCountdown = firingSpeed
-
-// 			//add it to the graphics
-// 			g.linesToDraw += SimpleLine(owner.center(), target.center(), "black")
-// 		}
-// 	}
-
-// 	def tick()
-// 	{
-// 		if(shotCountdown > 0) shotCountdown -= 1
-
-// 		if(ownerLastLoc == owner.loc) //they didn't move
-// 			aimTime += 1
-// 		else
-// 			aimTime = 0
-
-// 		ownerLastLoc = owner.loc.cloone
-// 	}
-// }
 
 
 
 class MolotovThrower(loc_ : Pt)
 extends Human(loc_)
 {
-	bigDisplayname = "char_human_2_big"
-	displayName = "char_human_2"
+	bigDisplayname = "char human 2 big"
+	displayName = "char human 2"
 	name = "Scatterbrain Jane"
 	maxHp = GV.PLAYER_HEALTH
 	hp = GV.PLAYER_HEALTH
@@ -488,8 +436,8 @@ extends Human(loc_)
 class Sapper(loc_ : Pt)
 extends Human(loc_)
 {
-	bigDisplayname = "char_human_2_big"
-	displayName = "char_human_2"
+	bigDisplayname = "char human 2 big"
+	displayName = "char human 2"
 	name = "Fiddler"
 	maxHp = GV.PLAYER_HEALTH
 	hp = GV.PLAYER_HEALTH
@@ -601,13 +549,13 @@ extends Human(loc_)
 class Medic(loc_ : Pt)
 extends Human(loc_)
 {
-	bigDisplayname = "char_human_3_big"
-	displayName = "char_human_3"
+	bigDisplayname = "char human 3 big"
+	displayName = "char human 3"
 	name = "Medic dude"
 	maxHp = GV.PLAYER_HEALTH
 	hp = GV.PLAYER_HEALTH
 
-	seePhrases = GV.JANE_SEE_PHRASES
+	seePhrases = GV.MEDIC_SEE_PHRASES
 
 	var hpTimer = 0
 	val hpTime = GV.MEDIC_MEDRATE
@@ -827,7 +775,7 @@ extends Actor(loc_, new Pt(GV.HUGEUNITSIZE, GV.HUGEUNITSIZE),
 	{
 		//he hops off the tank
 		val hooman = new Human(loc)
-		hooman.displayName = "char_human_2"
+		hooman.displayName = "char human 2"
 		hooman.name = "The Colonel"
 		g.addActor(hooman)
 	}
@@ -993,7 +941,7 @@ extends Actor(loc_, new Pt(GV.NORMUNITSIZE, GV.NORMUNITSIZE), 50, 0, "human", 0,
 
 	override def draw(g : Game)
 	{
-		var img = g.images("char_human_2 270")
+		var img = g.images("char human 2 270")
 
 		g.ctx.drawImage(img, loc.x, loc.y, GV.NORMUNITSIZE, GV.NORMUNITSIZE)
 	}
